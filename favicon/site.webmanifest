@@ -1,7 +1,7 @@
 {
   "name": "MyWebSite",
   "short_name": "MySite",
-  "icons": [
+  "feature_textIcons": [
     {
       "src": "/web-app-manifest-192x192.png",
       "sizes": "192x192",

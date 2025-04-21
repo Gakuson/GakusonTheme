@@ -1,21 +1,21 @@
 <?php get_header();?>
         <div class="empty"></div>
         <main>
-            <div class="main-body">
+            <div class="mainBody">
             <article>
             <div class="content">
             <?php the_content(); ?>
             <?php wp_link_pages(); // ページ分割用ページャー ?>
 
-        　　</div>
+        </div>
 
             </article>
             <?php get_sidebar();?>
         </div>
 
-        <section class="wanttoread">
-        <h2 class="news-title">#あわせて読みたいTopics</h2>
-        <div class="news-content-wrapper">
+        <section class="wantToRead">
+        <h2 class="wantToRead_title">#あわせて読みたいTopics</h2>
+        <div class="feature-wrapper">
         <?php
         // 現在の投稿のタグを取得
         $current_tags = wp_get_post_tags(get_the_ID());
@@ -46,18 +46,18 @@
 
         $query = new WP_Query($args);?>
 
-            <div class="news-content-wrapper">
+            <div class="feature-wrapper">
                 <?php if ($query->have_posts()): ?>
                     <?php while ($query->have_posts()): $query->the_post(); ?>
-                        <a href="<?php the_permalink(); ?>" class="news-content">
+                        <a href="<?php the_permalink(); ?>" class="feature">
                             <div class="Thumbnail">
                                 <?php the_post_thumbnail('post_thumbnails'); ?> 
                             </div>
-                            <p class="news_text"><?php the_title(); ?></p>
-                            <div class="news_text__small">
+                            <p class="feature_text"><?php the_title(); ?></p>
+                            <div class="feature_text__small">
                                 <p><?php echo get_the_date(); ?></p>
-                                <div class="news_text__acount"> 
-                                    <img class="icon" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png">
+                                <div class="feature_textAcount"> 
+                                    <img class="feature_textIcon" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png">
                                     <p><?php echo get_the_author(); ?></p>
                                 </div>
                             </div>
@@ -72,14 +72,14 @@
         </section>
 
         <section class="Hashtag">
-            <div class="Hashtag-content">
+            <div class="Hashtag_content">
             <div class="Hashtag_title">
-            <img class="Hashtag_title__icon" src="<?php echo get_template_directory_uri();?>/icon/線画のフォルダアイコン 2.png">
-            <h2 class="Hashtag_title__text">#ハッシュタグ一覧</h2>
+            <img class="Hashtag_titleIcon" src="<?php echo get_template_directory_uri();?>/icon/線画のフォルダアイコン 2.png">
+            <h2 class="Hashtag_titleText">#ハッシュタグ一覧</h2>
            </div>
            <?php   function custom_wp_tag_cloud($tag_string) {
-            // liタグにclass="Hashtag-text"を適用し、aタグの余分なclassを削除
-            $tag_string = preg_replace('/<li(.*?)>/', '<li class="Hashtag-text"$1>', $tag_string);
+            // liタグにclass="Hashtag_text"を適用し、aタグの余分なclassを削除
+            $tag_string = preg_replace('/<li(.*?)>/', '<li class="Hashtag_text"$1>', $tag_string);
             $tag_string = preg_replace('/<a (.*?)class="(.*?)"(.*?)>/', '<a $1$3>', $tag_string);
             return $tag_string;
         }
