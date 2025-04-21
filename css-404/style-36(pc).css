@@ -7,19 +7,19 @@ body {
   line-height: 1.8;
 }
 
-.transform-skewY {
+.transformSkewY {
   position: relative;
   z-index: -1;
   height: 100vh;
 }
-.transform-skewY .transform-skewY_1 {
+.transformSkewY .transformSkewY_1 {
   background-color: #BDE7FF;
   transform: skewY(-4.87deg);
   margin-top: 193px;
   height: 665px;
 }
 
-.position-absolute {
+.positionAbsolute {
   position: absolute;
   top: 0;
   left: 0;
@@ -33,7 +33,7 @@ header {
   top: 0;
   border-bottom: 2px solid black;
 }
-header .header-main {
+header .headerMain {
   height: 90px;
   display: flex;
   justify-content: space-between;
@@ -42,23 +42,20 @@ header .header-main {
   margin: 0 auto;
   max-width: 1440px;
 }
-header .header-main .headerLogo {
+header .headerMain .headerMain_logo {
   display: block;
   aspect-ratio: 1/1;
   height: 100%;
 }
-header .header-main .headerLogo .headerLogo__img {
+header .headerMain .headerMain_logo .headerMain_logoImg {
   width: 100%;
 }
-header .header-main li {
-  list-style: none;
-}
-header .header-main .header-list {
+header .headerMain .headerMain_list {
   display: flex;
   justify-content: space-between;
   gap: 20px;
 }
-header .header-main .header-list li {
+header .headerMain .headerMain_list li {
   list-style: none;
   font-size: 18px;
   line-height: 27px;
@@ -66,33 +63,12 @@ header .header-main .header-list li {
   display: inline-block;
   margin-left: 1.3rem;
 }
-header .header-main .header-list li a {
+header .headerMain .headerMain_list li a {
   display: block;
   color: #43474A;
   text-decoration: none;
 }
-header .header-main .search-container {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  border: 2px solid black;
-  border-radius: 10px;
-  width: 34%;
-  height: 44%;
-  padding: 0 5px;
-}
-header .header-main .search-container .search-icon {
-  height: 50%;
-}
-header .header-main .search-container .search-input {
-  display: inline-block;
-  height: 100%;
-  width: 90%;
-}
-header .header-main .menu-icon {
-  height: 50%;
-}
-header .header-main .sp-menu {
+header .headerMain .headerMain_spMenu {
   display: none;
 }
 header .dropdown-wrapper {
@@ -151,31 +127,31 @@ footer {
   background-color: #FAF0DB;
   padding: 90px 0 25px;
 }
-footer .footer-content {
+footer .pcFooter_content {
   width: 71%;
   margin: 0 auto;
   text-align: center;
 }
-footer .footer-content .footer-logo {
+footer .pcFooter_content .pcFooter_logo__nantopi {
   width: 14%;
 }
-footer .footer-content .footer-list {
+footer .pcFooter_content .pcFooter_list {
   border-top: 2px solid #d3d3d3;
   display: flex;
   padding: 0;
   justify-content: space-around;
   flex-wrap: wrap;
 }
-footer .footer-content .footer-list ul {
+footer .pcFooter_content .pcFooter_list ul {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
   padding: 0;
 }
-footer .footer-content .footer-list li {
+footer .pcFooter_content .pcFooter_list li {
   list-style: none;
 }
-footer .footer-content .footer-list li a {
+footer .pcFooter_content .pcFooter_list li a {
   display: block;
   color: #43474A;
   text-decoration: none;
@@ -183,7 +159,7 @@ footer .footer-content .footer-list li a {
   font-weight: bold;
   padding: 38px 10px;
 }
-footer .footer-content .footer_icon {
+footer .pcFooter_content .pcFooter_textIcon {
   width: 19%;
   margin: 0 auto;
   display: flex;
@@ -191,23 +167,23 @@ footer .footer-content .footer_icon {
   justify-content: space-between;
   margin-bottom: 49px;
 }
-footer .footer-content .footer_icon .footer-icon_sns {
+footer .pcFooter_content .pcFooter_textIcon .pcFooter_logo__sns {
   display: block;
   width: 21%;
   padding-top: 6px;
 }
-footer .footer-content .footer_icon .footer-icon_gakuson {
+footer .pcFooter_content .pcFooter_textIcon .pcFooter_logo__gakuson {
   width: 37%;
   padding-top: 0;
 }
-footer .footer-content .footer_icon img {
+footer .pcFooter_content .pcFooter_textIcon img {
   width: 100%;
   -o-object-fit: contain;
      object-fit: contain;
 }
-footer .footer-content .copy-right {
+footer .pcFooter_content .pcFooter_copyRight {
   text-align: center;
 }
-footer .sp-footer {
+footer .spFooter {
   display: none;
 }/*# sourceMappingURL=style-36(pc).css.map */
