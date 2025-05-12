@@ -3,7 +3,7 @@
         <div class="empty"></div>
         <main>
             <article>
-                <h2 class="site-title"><?php the_title();?></h2>
+                
                 <div class="content">
                       <?php the_content(); wp_link_pages();?>
                 </div>
