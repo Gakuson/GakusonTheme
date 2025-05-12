@@ -1,8 +1,8 @@
 <footer>
-            <div class="pc-footer">
-            <div class="footer-content">
-            <img class="footer-logo" src="<?php echo get_template_directory_uri();?>/icon/NanTopi_logo (5).png">
-            <ul class="footer-list">
+            <div class="pcFooter">
+            <div class="pcFooter_content">
+            <img class="pcFooter_logo__nantopi" src="<?php echo get_template_directory_uri();?>/icon/NanTopi_logo (5).png">
+            <ul class="pcFooter_list">
             <?php
                 wp_nav_menu(
                 array(
@@ -16,19 +16,19 @@
                 );
                 ?>
             </ul>
-            <div class="footer_icon">
-                <a class="footer-icon_sns" href="https://www.instagram.com/gakuson25/?igsh=NWd3YW45NG41Yzd2#"><img src="<?php echo get_template_directory_uri();?>/icon/Instagram_Glyph_Gradient.png"></a>
-                <a class="footer-icon_sns" href="https://x.com/nanzan_gakuson"><img src="<?php echo get_template_directory_uri();?>/icon/logo-black.png"></a>
-                <a class="footer-icon_gakuson" href="https://www.gakuson.com/"><img src="<?php echo get_template_directory_uri();?>/icon/logo.png"></a>
+            <div class="pcFooter_textIcon">
+                <a class="pcFooter_logo__sns" href="https://www.instagram.com/gakuson25/?igsh=NWd3YW45NG41Yzd2#"><img src="<?php echo get_template_directory_uri();?>/icon/Instagram_Glyph_Gradient.png"></a>
+                <a class="pcFooter_logo__sns" href="https://x.com/nanzan_gakuson"><img src="<?php echo get_template_directory_uri();?>/icon/logo-black.png"></a>
+                <a class="pcFooter_logo__gakuson" href="https://www.gakuson.com/"><img src="<?php echo get_template_directory_uri();?>/icon/logo.png"></a>
                 </div>
-            <div class="copy-right">
+            <div class="pcFooter_copyRight">
                 <small>&copy;2025 Nanzan Topics !</small>
             </div>
         </div>
     </div>
-    <div class="sp-footer">
-        <div class="sp-footer-content">
-        <ul class="sp-footer-list">
+    <div class="spFooter">
+        <div class="spFooter_content">
+        <ul class="spFooter_list">
         <?php
                 wp_nav_menu(
                 array(
@@ -42,16 +42,15 @@
                 );
                 ?>
         </ul>   
-            <a href="https://www.gakuson.com/"><img class="sp-footer-logo" src="<?php echo get_template_directory_uri();?>/icon/logo.png"></a>
+            <a href="https://www.gakuson.com/"><img class="spFooter_logo__nantopi" src="<?php echo get_template_directory_uri();?>/icon/logo.png"></a>
         </div>
-        <div class="sm-copy-right">
+        <div class="spFooter_copyRight">
             <small>&copy;2025 Nanzan Topics !</small>
         </div>
     </div>
         </footer>
         
     </div>
-     <!--オリジナルjs(jquery)-->
      <?php wp_footer();?>
     </body>
     </html>

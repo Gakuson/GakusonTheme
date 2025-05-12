@@ -1,5 +1,16 @@
+<!--           
+    | |       \ \  []    / /    [_______]        / /
+[___ _____ ]   \ \  []  / /           / /       / /
+    | |  | |    \ \    / /           / /       / /
+    | |  | |     \_\  / /    [___________]    / /
+    | |  | |          \ \           / /      /   /\ \
+    |_|  | |           \ \         / /      /  /   \ \　  / /
+         | |            \ \        \ \     /  /     \ \　/ /
+       [___]             \_\        \ \   /_/        \____/ 
+                                     \_\
+-->
 <!doctype html>
-<html lamg="ja">
+<html lang="ja">
     <head>
         <meta charset="utf-8">
         <title>Nanzan Topics !</title>
@@ -8,20 +19,12 @@
         <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
         <!--viewport-->
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!--オリジナルjs(jquery)-->
-       <!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>-->
 
         <?php if(is_front_page()):?>
         <!--オリジナルcss(pc)(sass)-->
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css/style-33(pc).css">
         <!--オリジナルcss(sp)(sass)-->
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css/style-33(sp).css">
-        <!--slick-css-->
-        <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css/slick.css">
-        <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css/slick-theme.css">
-        <!--slick-js-->
-        <script src="js/slick.js"></script>
-        <script src="js/slick.min.js"></script>
 
         <?php elseif(is_page('newindex')):?>
         <!--オリジナルcss(pc)(sass)-->
@@ -77,31 +80,31 @@
     </head>
     <body <?php body_class();?>>
         <?php if(is_front_page()): ?>
-            <div class="transform-skewY">
-                <div class="transform-skewY_1"></div>
-                <div class="transform-skewY_2"></div>
-                <div class="transform-skewY_3"></div>
+            <div class="transformSkewY">
+                <div class="transformSkewY_1"></div>
+                <div class="transformSkewY_2"></div>
+                <div class="transformSkewY_3"></div>
             </div>
         <?php else:?>
-            <div class="transform-skewY">
-                <div class="transform-skewY_1"></div>
+            <div class="transformSkewY">
+                <div class="transformSkewY_1"></div>
             </div>
         <?php endif;?>        
     
-        <div class="position-absolute">
+        <div class="positionAbsolute">
         <header>
-            <div class="header-main">
-                <a  class="headerLogo" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-                 <img class="headerLogo__img" src="<?php echo get_template_directory_uri();?>/icon/NanTopi_logo (5).png"  alt="souzou">
+            <div class="headerMain">
+                <a  class="headerMain_logo" href="<?php echo esc_url( home_url( '/' ) ); ?>">
+                 <img class="headerMain_logoImg" src="<?php echo get_template_directory_uri();?>/icon/NanTopi_logo (5).png"  alt="souzou">
                 </a>
-            <nav class="header-list">   
+            <nav class="headerMain_list">   
             <?php
                 wp_nav_menu(
                 array(
                         'menu' => 'mainmenu',
                         'container' => '',
                         'container_id' => '',
-                        'container_class' => 'header-list',
+                        'container_class' => 'headerMain_list',
                         'menu_id' => '',
                         'fallback_cb' => ''
                     )
@@ -109,9 +112,9 @@
                 ?>
             </nav>
 
-           <div class="sp-menu">
-                <div class="sp-menu-content">
-                    <img class="sp-menu__menu-icon" src="<?php echo get_template_directory_uri();?>/icon/bars_hoso.png" alt="asd">
+           <div class="headerMain_spMenu">
+                <div class="headerMain_spMenuContent">
+                    <img class="headerMain_spMenuImg" src="<?php echo get_template_directory_uri();?>/icon/bars_hoso.png" alt="asd">
                 </div>
             </div>
         </div>
@@ -129,7 +132,7 @@
                 'menu' => 'mainmenu',
                 'container' => '',
                 'container_id' => '',
-                'container_class' => 'header-list',
+                'container_class' => 'headerMain_list',
                 'menu_id' => '',
                 'menu_class' => 'dropdown', // ulタグに適用
                 'fallback_cb' => ''
