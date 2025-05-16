@@ -21,24 +21,28 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <?php if(is_front_page()):?>
+        <title>Nanzan Topics !</title>
         <!--オリジナルcss(pc)(sass)-->
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css/style-33(pc).css">
         <!--オリジナルcss(sp)(sass)-->
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css/style-33(sp).css">
 
         <?php elseif(is_page('newindex')):?>
+        <title>Nanzan Topics !</title>
         <!--オリジナルcss(pc)(sass)-->
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css-category-tag/style-37(pc).css">
         <!--オリジナルcss(sp)(sass)-->
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css-category-tag/style-37(sp).css">
 
         <?php elseif(is_page()):?>
+        <title><?php the_title(); ?></title>
         <!--オリジナルcss(pc)(sass)-->
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css-fixed/style-35(pc).css">
         <!--オリジナルcss(sp)(sass)-->
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css-fixed/style-35(sp).css">
 
         <?php elseif(is_single()):?>
+        <title><?php the_title(); ?></title>
         <!--オリジナルcss(pc)(sass)-->
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css-post/style-34(pc).css">
         <!--オリジナルcss(sp)(sass)-->
@@ -51,19 +55,20 @@
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css-404/style-36(sp).css">
 
         <?php elseif(is_category()):?>
+        <title>『<?php single_cat_title(); ?>』の記事一覧</title>
         <!--オリジナルcss(pc)(sass)-->
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css-category-tag/style-37(pc).css">
         <!--オリジナルcss(sp)(sass)-->
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css-category-tag/style-37(sp).css">
 
         <?php elseif(is_tag()):?>
+        <title>『<?php single_cat_title(); ?>』の記事一覧</title>
         <!--オリジナルcss(pc)(sass)-->
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css-category-tag/style-37(pc).css">
         <!--オリジナルcss(sp)(sass)-->
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css-category-tag/style-37(sp).css">
 
         <?php endif; ?>
-
 
         <!--googleFonts-->
         <link rel="preconnect" href="https://fonts.googleapis.com">
