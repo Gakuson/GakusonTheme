@@ -5,7 +5,7 @@
         <img src="<?php echo get_template_directory_uri();?>/img/TopiBannerV2.png" class="topi-banner">
 
         <article class="bestTopics">
-        <h2 class="bestTopics_title">＃BestTopics</h2>
+        <h2 class="bestTopics_title">＃BestTopics!</h2>
          <div class="feature-wrapper">
         <?php
         // 投稿を9件に制限

@@ -72,7 +72,63 @@
 
 
 @media(max-width:800px){
+    header{
+   
+        .headerMain{
+            height: 79px;
     
+            .headerMain_list{
+                display:none;
+            }
+            .headerMain_spMenu{
+                display: block;
+                height: 100%;
+    
+                .headerMain_spMenuContent{
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    height: 100%;
+    
+                    .headerMain_spMenuImg{
+                        height: 70%;
+                    }   
+        }
+    }
+            .dropdown-wrapper{
+                display: none;
+        }
+    }    
+    }
+    
+    
+    .empty{
+        height: 79px;
+    }
+
+
+    .mainBody{
+        .popular{
+            .feature-wrapper{
+                flex-wrap: wrap;
+
+                .feature{
+                    margin: 0 0 74px 0;
+                    width: 48%;
+                }
+            }
+
+            .advertisement{
+                .advertisement_content{
+                    width: 48%;
+                }
+            }
+
+        }
+    }
+}
+
+@media(max-width:550px){
 .transformSkewY{
     
     .transformSkewY_1{
@@ -82,34 +138,6 @@
     }
     }
     
-header{
-   
-    .headerMain{
-        height: 79px;
-
-        .headerMain_list{
-            display:none;
-        }
-        .headerMain_spMenu{
-            display: block;
-            height: 100%;
-
-            .headerMain_spMenuContent{
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                height: 100%;
-
-                .headerMain_spMenuImg{
-                    height: 70%;
-                }   
-    }
-}
-        .dropdown-wrapper{
-            display: none;
-    }
-}    
-}
     
     .empty{
         height: 79px;
@@ -126,92 +154,29 @@ header{
         box-shadow: 0 4px 2px gray;
     }
 }
-    .popular{
-        margin-top: 116px;
-    
-        .feature-wrapper{
-            display: block;
-            
-            .feature{
-                margin: 0 auto;
-                width: 88%;
-                margin-bottom:74px ;
-        
-                .Thumbnail{
-                    margin-bottom: 15px;
-                }
-                .feature_text{
-                    font-size: 18px;
-                    margin-bottom: 20px;
-                }
-                .feature_text__small{
-                
-                    .feature_textAcount{
-                        gap: 7px;
-                        
-                        .feature_textIcon{
-                            width: 33px;
-                        }
-                    }
-            }
-            }
-        }
-        .popular_title{
-            font-size: 24px;
-            margin:0 auto 17px;
-            width: 100%;
-        }
-        .feature_popularTitle{
-         font-size:24px ;  
-        }
+.popular{
+    margin-top: 116px;
 
-        .advertisement{
-            display: flex;
-            flex-direction: column;
-            gap: 90px;
-            margin: 40px 0;
-
-            .advertisement_content{
-                width: 100%;
-                margin: 0 auto;
-
-                img{
-                    width: 100%;
-                }
-            }
-        }
-    }
-}
-.wantToRead{
-
-    .wantToRead_title{
-        font-size: 24px;
-        width: 100%;
-        margin-bottom: 65px;
-    }
     .feature-wrapper{
-    
+        display: block;
+        
         .feature{
-            width: 88%;
-            margin:0 auto 74px;
+            margin: 0 auto 20px;
+            width: 70%;
     
             .Thumbnail{
-                margin-bottom: 15px;
-
-                img{
-                    width: 100%;
-                    height: 100%;
-                }
+                margin-bottom: 0px;
             }
             .feature_text{
-                font-size: 18px;
-                margin-bottom: 20px;
+                font-size: 16px;
+                margin-bottom: 10px;
             }
             .feature_text__small{
-            
+                font-size: 13px;
+
                 .feature_textAcount{
                     gap: 7px;
-
+                    
                     .feature_textIcon{
                         width: 33px;
                     }
@@ -219,6 +184,17 @@ header{
         }
         }
     }
+    .popular_title{
+        font-size: 24px;
+        margin-bottom:17px;
+        width: 100%;
+    }
+    .feature_popularTitle{
+     font-size:24px ;  
+    }
+
+   
+}
 }
 .Hashtag{
     margin-top:30px ;

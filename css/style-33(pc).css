@@ -57,7 +57,6 @@ header .headerMain {
   align-items: center;
   width: 95%;
   margin: 0 auto;
-  max-width: 1440px;
 }
 header .headerMain .headerMain_logo {
   display: block;
@@ -116,7 +115,7 @@ header .dropdown-wrapper .dropdown a {
 }
 
 main {
-  max-width: 1440px;
+  max-width: 100vw;
   margin: 0 auto;
 }
 
@@ -207,6 +206,7 @@ main {
 }
 
 .popular {
+  background-image: url("img/GakusonLogo.png");
   width: 92%;
   margin: 88px auto 0;
 }

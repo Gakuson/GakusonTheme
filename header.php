@@ -13,7 +13,6 @@
 <html lang="ja">
     <head>
         <meta charset="utf-8">
-        <title>Nanzan Topics !</title>
         <meta name="description" content="Nanzan Topics！(通称Nanトピ！)は南山大学生によって運営されている、南山大学生の為のメディアサイトです！">
         <!--リセットCSS-->
         <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
@@ -69,6 +68,7 @@
         <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css-category-tag/style-37(sp).css">
 
         <?php endif; ?>
+
 
         <!--googleFonts-->
         <link rel="preconnect" href="https://fonts.googleapis.com">
