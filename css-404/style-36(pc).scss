@@ -48,7 +48,6 @@ header{
         align-items: center;
         width: 95%;
         margin: 0 auto;
-        max-width: 1440px;
 
         .headerMain_logo{
             display:block;
@@ -111,7 +110,7 @@ header{
     height: 90px;
 }
 main{
-    max-width: 1440px;
+    max-width: 100%;
     margin: 0 auto;
 }
 .mainvisual{

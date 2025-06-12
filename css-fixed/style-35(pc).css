@@ -40,7 +40,6 @@ header .headerMain {
   align-items: center;
   width: 95%;
   margin: 0 auto;
-  max-width: 1440px;
 }
 header .headerMain .headerMain_logo {
   display: block;
@@ -95,7 +94,7 @@ header .dropdown-wrapper .dropdown a {
 }
 
 main {
-  max-width: 1440px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
@@ -107,7 +106,7 @@ article {
   width: 64%;
   margin: 100px auto 0;
 }
-article .site-title {
+article .wp-block-post-title {
   width: 100%;
   box-sizing: border-box;
   font-size: 32px;

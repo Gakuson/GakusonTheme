@@ -64,6 +64,7 @@
   }
   .mainBody .popular .advertisement {
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: space-between;
     gap: 0;
     margin: 40px 0;
@@ -73,11 +74,6 @@
   }
 }
 @media (max-width: 800px) {
-  .transformSkewY .transformSkewY_1 {
-    transform: skewY(-11.09deg);
-    margin-top: 193px;
-    height: 665px;
-  }
   header .headerMain {
     height: 79px;
   }
@@ -102,6 +98,30 @@
   }
   .empty {
     height: 79px;
+  }
+  .mainBody .popular .feature-wrapper {
+    flex-wrap: wrap;
+  }
+  .mainBody .popular .feature-wrapper .feature {
+    margin: 0 0 74px 0;
+    width: 48%;
+  }
+  .mainBody .popular .advertisement .advertisement_content {
+    width: 48%;
+  }
+  .wantToRead .feature-wrapper {
+    flex-wrap: wrap;
+  }
+  .wantToRead .feature-wrapper .feature {
+    margin: 0 0 74px 0;
+    width: 48%;
+  }
+}
+@media (max-width: 550px) {
+  .transformSkewY .transformSkewY_1 {
+    transform: skewY(-11.09deg);
+    margin-top: 193px;
+    height: 665px;
   }
   .mainBody {
     display: block;
@@ -134,16 +154,18 @@
     display: block;
   }
   .mainBody .popular .feature-wrapper .feature {
-    margin: 0 auto;
-    width: 88%;
-    margin-bottom: 74px;
+    margin: 0 auto 20px;
+    width: 70%;
   }
   .mainBody .popular .feature-wrapper .feature .Thumbnail {
-    margin-bottom: 15px;
+    margin-bottom: 0px;
   }
   .mainBody .popular .feature-wrapper .feature .feature_text {
-    font-size: 18px;
-    margin-bottom: 20px;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .mainBody .popular .feature-wrapper .feature .feature_text__small {
+    font-size: 13px;
   }
   .mainBody .popular .feature-wrapper .feature .feature_text__small .feature_textAcount {
     gap: 7px;
@@ -153,44 +175,34 @@
   }
   .mainBody .popular .popular_title {
     font-size: 24px;
-    margin: 0 auto 17px;
+    margin-bottom: 17px;
     width: 100%;
   }
   .mainBody .popular .feature_popularTitle {
     font-size: 24px;
   }
-  .mainBody .popular .advertisement {
-    display: flex;
-    flex-direction: column;
-    gap: 90px;
-    margin: 40px 0;
-  }
-  .mainBody .popular .advertisement .advertisement_content {
-    width: 100%;
-    margin: 0 auto;
-  }
-  .mainBody .popular .advertisement .advertisement_content img {
-    width: 100%;
-  }
   .wantToRead .wantToRead_title {
     font-size: 24px;
     width: 100%;
-    margin-bottom: 65px;
+    margin-bottom: 40px;
   }
   .wantToRead .feature-wrapper .feature {
-    width: 88%;
-    margin: 0 auto 74px;
+    width: 70%;
+    margin: 0 auto 20px;
   }
   .wantToRead .feature-wrapper .feature .Thumbnail {
-    margin-bottom: 15px;
+    margin-bottom: 0px;
   }
   .wantToRead .feature-wrapper .feature .Thumbnail img {
     width: 100%;
     height: 100%;
   }
   .wantToRead .feature-wrapper .feature .feature_text {
-    font-size: 18px;
-    margin-bottom: 20px;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .wantToRead .feature-wrapper .feature .feature_text__small {
+    font-size: 13px;
   }
   .wantToRead .feature-wrapper .feature .feature_text__small .feature_textAcount {
     gap: 7px;
