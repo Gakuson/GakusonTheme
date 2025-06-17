@@ -27,7 +27,7 @@ body {
 
 header {
   width: 100%;
-  background-color: red;
+  background-color: white;
   position: fixed;
   z-index: 10;
   top: 0;
