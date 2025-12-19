@@ -12,6 +12,7 @@ body {
   z-index: -1;
   height: 100vh;
 }
+
 .transformSkewY .transformSkewY_1 {
   background-color: #BDE7FF;
   transform: skewY(-4.87deg);
@@ -33,6 +34,7 @@ header {
   top: 0;
   border-bottom: 2px solid black;
 }
+
 header .headerMain {
   height: 90px;
   display: flex;
@@ -41,19 +43,23 @@ header .headerMain {
   width: 95%;
   margin: 0 auto;
 }
+
 header .headerMain .headerMain_logo {
   display: block;
   aspect-ratio: 1/1;
   height: 100%;
 }
+
 header .headerMain .headerMain_logo .headerMain_logoImg {
   width: 100%;
 }
+
 header .headerMain .headerMain_list {
   display: flex;
   justify-content: space-between;
   gap: 20px;
 }
+
 header .headerMain .headerMain_list li {
   list-style: none;
   font-size: 18px;
@@ -62,17 +68,21 @@ header .headerMain .headerMain_list li {
   display: inline-block;
   margin-left: 1.3rem;
 }
+
 header .headerMain .headerMain_list li a {
   display: block;
   color: #43474A;
   text-decoration: none;
 }
+
 header .headerMain .headerMain_spMenu {
   display: none;
 }
+
 header .dropdown-wrapper {
   display: none;
 }
+
 header .dropdown-wrapper .dropdown {
   display: flex;
   justify-content: space-around;
@@ -81,9 +91,11 @@ header .dropdown-wrapper .dropdown {
   max-width: 2000px;
   margin: 0 auto;
 }
+
 header .dropdown-wrapper .dropdown li {
   list-style: none;
 }
+
 header .dropdown-wrapper .dropdown a {
   display: block;
   color: #43474A;
@@ -109,104 +121,252 @@ main {
   width: 92%;
   margin: 50px auto 0;
 }
+
 .mainBody article {
   width: 70%;
 }
+
 .mainBody .content {
   width: 90%;
   margin-bottom: 55px;
-  font-size: 20px;
+  margin-bottom: 55px;
+  font-size: 17px;
+  /* 20pxから縮小 */
+  line-height: 1.9;
+  letter-spacing: 0.05em;
 }
+
+.mainBody .content p {
+  margin-bottom: 2em;
+  /* 段落間の自動余白 */
+}
+
 .mainBody .content .toc-list li a {
   color: #43474A;
 }
+
 .mainBody .content .wp-block-post-title {
   width: 100%;
   box-sizing: border-box;
-  font-size: 32px;
-  padding: 24px 40px;
-  background-color: white;
-  border-left: 29px solid #BDE7FF;
-  margin-bottom: 20px;
-  box-shadow: 0 5px 3px gray;
+  font-size: 28px;
+  /* 32pxから調整 */
+  padding: 24px 0;
+  /* 左Padding削除 */
+  border-bottom: 3px solid #BDE7FF;
+  /* 左線から下線へ変更 */
+  border-left: none;
+  background-color: transparent;
+  /* 背景色削除 */
+  margin-bottom: 30px;
+  box-shadow: none;
+  /* 影削除 */
+  font-weight: 700;
 }
+
+.mainBody .content h2,
 .mainBody .content .wp-block-heading {
   width: 100%;
   box-sizing: border-box;
   font-size: 24px;
-  padding: 10px 20px;
-  background-color: white;
-  border-left: 22px solid #BDE7FF;
-  box-shadow: 0 4px 2px gray;
+  padding: 10px 15px;
+  background-color: transparent;
+  border-left: 6px solid #BDE7FF;
+  /* 線を細く */
+  border-bottom: 2px solid #f0f0f0;
+  /* 下線追加 */
+  box-shadow: none;
+  /* 影削除 */
+  margin-top: 4em;
+  /* 上部余白特大 */
+  margin-bottom: 1.5em;
+  /* 下部余白 */
 }
+
+.mainBody .content h3,
 .mainBody .content .middle {
   width: 100%;
   box-sizing: border-box;
-  font-size: 22px;
-  padding: 10px;
-  border-left: 15px solid #BDE7FF;
+  font-size: 20px;
+  padding: 5px 0 5px 10px;
+  border-left: 4px solid #BDE7FF;
+  margin-top: 3em;
+  /* 上部余白大 */
+  margin-bottom: 1.2em;
+  /* 下部余白 */
+  font-weight: bold;
+}
+
+/* 引用 */
+.mainBody .content blockquote {
+  margin: 2em 0;
+  padding: 1.5em;
+  background-color: #f9f9f9;
+  border-left: 5px solid #43474A;
+  color: #666;
+}
+
+/* コードブロック */
+.mainBody .content pre {
+  background-color: #f5f5f5;
+  padding: 1em;
+  overflow-x: auto;
+  margin: 2em 0;
+  border-radius: 4px;
+}
+
+.mainBody .content code {
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  background-color: #f5f5f5;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.mainBody .content pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+/* テキスト装飾 */
+.mainBody .content .marker-red {
+  background: linear-gradient(transparent 60%, #ffcccc 60%);
+  font-weight: bold;
+}
+
+.mainBody .content .marker-blue {
+  background: linear-gradient(transparent 60%, #cce5ff 60%);
+  font-weight: bold;
+}
+
+.mainBody .content .underline {
+  border-bottom: 2px solid #43474A;
+}
+
+.mainBody .content strong {
+  font-weight: 700;
+  color: #000;
+}
+
+.mainBody .content strong {
+  font-weight: 700;
+  color: #000;
+}
+
+/* リストスタイル */
+.mainBody .content ul,
+.mainBody .content ol {
+  margin: 1.5em 0;
+  padding-left: 2em;
+  /* 字下げ */
+}
+
+.mainBody .content ul li,
+.mainBody .content ol li {
+  margin-bottom: 0.5em;
+}
+
+.mainBody .content ul {
+  list-style-type: disc;
+}
+
+.mainBody .content ol {
+  list-style-type: decimal;
+}
+
+/* ネストされたリストのスタイル */
+.mainBody .content ul ul,
+.mainBody .content ol ol,
+.mainBody .content ul ol,
+.mainBody .content ol ul {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+  /* さらなる字下げ */
+}
+
+.mainBody .content ul ul {
+  list-style-type: circle;
+  /* 2階層目は白丸 */
+}
+
+.mainBody .content ul ul ul {
+  list-style-type: square;
+  /* 3階層目は四角 */
 }
 
 .popular {
   width: 28%;
   margin-top: 116px;
 }
+
 .popular .feature-wrapper .feature {
   display: block;
   color: #43474A;
   text-decoration: none;
 }
+
 .popular .feature-wrapper .feature .Thumbnail {
   width: 100%;
   margin-bottom: 22px;
   aspect-ratio: 17/10;
 }
+
 .popular .feature-wrapper .feature .Thumbnail img {
   border: 1.5px solid #575454;
   border-radius: 5px;
   width: 100%;
   height: 100%;
 }
+
 .popular .feature-wrapper .feature .feature_text {
   font-weight: bold;
 }
+
 .popular .feature-wrapper .feature .feature_text__small {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .popular .feature-wrapper .feature .feature_text__small .feature_textAcount {
   display: flex;
   align-items: center;
 }
+
 .popular .feature-wrapper .feature .feature_text__small .feature_textAcount .feature_textIcon {
   aspect-ratio: 1/1;
   border-radius: 50%;
   -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
+
 .popular .feature-wrapper .feature {
   margin: 0 auto;
   width: 88%;
   margin-bottom: 74px;
 }
+
 .popular .feature-wrapper .feature .Thumbnail {
   margin-bottom: 25px;
 }
+
 .popular .feature-wrapper .feature .feature_text {
   font-size: 18px;
   margin-bottom: 20px;
 }
+
 .popular .feature-wrapper .feature img {
   width: 100%;
   height: 100%;
 }
+
 .popular .feature-wrapper .feature .feature_text__small .feature_textAcount {
   gap: 7px;
 }
+
 .popular .feature-wrapper .feature .feature_text__small .feature_textAcount .feature_textIcon {
   width: 33px;
 }
+
 .popular .popular_title {
   font-size: 24px;
   text-align: center;
@@ -214,37 +374,44 @@ main {
   width: 100%;
   border-bottom: 2px solid #d3d3d3;
 }
+
 .popular .feature_popularTitle {
   font-size: 32px;
   display: inline-block;
 }
+
 .popular .st {
   background-color: -webkit-linear-gradient(left, #998100, #FFC778);
   background: linear-gradient(to right, #998100, #FFC778);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 .popular .nd {
   background-color: -webkit-linear-gradient(left, #363B3E, #909DA4);
   background: linear-gradient(to right, #363B3E, #909DA4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 .popular .rd {
   background-color: -webkit-linear-gradient(left, #99672A, #FFAB47);
   background: linear-gradient(to right, #99672A, #FFAB47);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 .popular .advertisement {
   display: flex;
   flex-direction: column;
   gap: 90px;
   margin: 40px 0;
 }
+
 .popular .advertisement img {
   width: 100%;
 }
+
 .popular .advertisement .advertisement_content {
   width: 100%;
   margin: 0 auto;
@@ -256,40 +423,48 @@ main {
   margin: 88px auto 0;
   width: 92%;
 }
+
 .wantToRead .feature-wrapper .feature {
   display: block;
   color: #43474A;
   text-decoration: none;
 }
+
 .wantToRead .feature-wrapper .feature .Thumbnail {
   width: 100%;
   margin-bottom: 22px;
   aspect-ratio: 17/10;
 }
+
 .wantToRead .feature-wrapper .feature .Thumbnail img {
   border: 1.5px solid #575454;
   border-radius: 5px;
   width: 100%;
   height: 100%;
 }
+
 .wantToRead .feature-wrapper .feature .feature_text {
   font-weight: bold;
 }
+
 .wantToRead .feature-wrapper .feature .feature_text__small {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .wantToRead .feature-wrapper .feature .feature_text__small .feature_textAcount {
   display: flex;
   align-items: center;
 }
+
 .wantToRead .feature-wrapper .feature .feature_text__small .feature_textAcount .feature_textIcon {
   aspect-ratio: 1/1;
   border-radius: 50%;
   -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
+
 .wantToRead .wantToRead_title {
   font-size: 32px;
   line-height: 1.5;
@@ -298,25 +473,31 @@ main {
   margin: 0 auto 65px;
   border-bottom: 2px solid #d3d3d3;
 }
+
 .wantToRead .feature-wrapper {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
+
 .wantToRead .feature-wrapper .feature {
   width: 31%;
   margin-bottom: 72px;
 }
+
 .wantToRead .feature-wrapper .feature .feature_text {
   font-size: 20px;
   margin-bottom: 24px;
 }
+
 .wantToRead .feature-wrapper .feature .feature_text__small {
   gap: 28px;
 }
+
 .wantToRead .feature-wrapper .feature .feature_text__small .feature_textAcount {
   gap: 14px;
 }
+
 .wantToRead .feature-wrapper .feature .feature_text__small .feature_textAcount .feature_textIcon {
   width: 40px;
 }
@@ -327,12 +508,15 @@ main {
   border-top: 4px dotted #4a4848;
   border-bottom: 4px dotted #4a4848;
 }
+
 .Hashtag ul {
   padding: 0;
 }
+
 .Hashtag .Hashtag_content {
   padding: 36px 0 54px;
 }
+
 .Hashtag .Hashtag_content .Hashtag_title {
   display: flex;
   justify-content: center;
@@ -340,14 +524,17 @@ main {
   gap: 12px;
   margin: 0 auto 37px;
 }
+
 .Hashtag .Hashtag_content .Hashtag_title .Hashtag_titleIcon {
   width: 83px;
 }
+
 .Hashtag .Hashtag_content .Hashtag_title .Hashtag_titleText {
   font-size: 32px;
   line-height: 1.5;
   text-align: center;
 }
+
 .Hashtag .Hashtag_content .Hashtag-wrapper {
   width: 92%;
   margin: 0 auto;
@@ -356,10 +543,12 @@ main {
   justify-content: center;
   flex-wrap: wrap;
 }
+
 .Hashtag .Hashtag_content .Hashtag-wrapper .Hashtag_text {
   background-color: #30261e;
   list-style: none;
 }
+
 .Hashtag .Hashtag_content .Hashtag-wrapper .Hashtag_text a {
   display: block;
   color: white;
@@ -368,6 +557,7 @@ main {
   line-height: 27px;
   margin: 5px;
 }
+
 .Hashtag .Hashtag_content .wp-tag-cloud {
   width: 92%;
   margin: 0 auto;
@@ -376,10 +566,12 @@ main {
   justify-content: center;
   flex-wrap: wrap;
 }
+
 .Hashtag .Hashtag_content .Hashtag_text {
   background-color: #30261e;
   list-style: none;
 }
+
 .Hashtag .Hashtag_content .Hashtag_text a {
   display: block;
   color: white;
@@ -394,14 +586,17 @@ footer {
   background-color: #FAF0DB;
   padding: 90px 0 25px;
 }
+
 footer .pcFooter_content {
   width: 71%;
   margin: 0 auto;
   text-align: center;
 }
+
 footer .pcFooter_content .pcFooter_logo__nantopi {
   width: 14%;
 }
+
 footer .pcFooter_content .pcFooter_list {
   border-top: 2px solid #d3d3d3;
   display: flex;
@@ -409,15 +604,18 @@ footer .pcFooter_content .pcFooter_list {
   justify-content: space-around;
   flex-wrap: wrap;
 }
+
 footer .pcFooter_content .pcFooter_list ul {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
   padding: 0;
 }
+
 footer .pcFooter_content .pcFooter_list li {
   list-style: none;
 }
+
 footer .pcFooter_content .pcFooter_list li a {
   display: block;
   color: #43474A;
@@ -426,6 +624,7 @@ footer .pcFooter_content .pcFooter_list li a {
   font-weight: bold;
   padding: 38px 10px;
 }
+
 footer .pcFooter_content .pcFooter_textIcon {
   width: 19%;
   margin: 0 auto;
@@ -434,23 +633,30 @@ footer .pcFooter_content .pcFooter_textIcon {
   justify-content: space-between;
   margin-bottom: 49px;
 }
+
 footer .pcFooter_content .pcFooter_textIcon .pcFooter_logo__sns {
   display: block;
   width: 21%;
   padding-top: 6px;
 }
+
 footer .pcFooter_content .pcFooter_textIcon .pcFooter_logo__gakuson {
   width: 37%;
   padding-top: 0;
 }
+
 footer .pcFooter_content .pcFooter_textIcon img {
   width: 100%;
   -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
+
 footer .pcFooter_content .pcFooter_copyRight {
   text-align: center;
 }
+
 footer .spFooter {
   display: none;
-}/*# sourceMappingURL=style-34(pc).css.map */
+}
+
+/*# sourceMappingURL=style-34(pc).css.map */
