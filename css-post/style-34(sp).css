@@ -1,3 +1,18 @@
+/* Base Layout Styles (Copied from PC CSS) */
+.transformSkewY {
+  position: relative;
+  z-index: -1;
+  height: 100vh;
+}
+
+.positionAbsolute {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* SP needs full width */
+}
+
 @media (max-width: 1000px) {
 
   .Hashtag-section-wrapper .Hashtag-section:nth-child(5),
@@ -148,11 +163,15 @@
   }
 }
 
-@media (max-width: 550px) {
+@media (max-width: 768px) {
   .transformSkewY .transformSkewY_1 {
-    transform: skewY(-11.09deg);
-    margin-top: 193px;
-    height: 665px;
+    transform: none;
+    /* Skew効果を解除 */
+    margin-top: 90px;
+    /* ヘッダー高さ分のみ確保 */
+    height: auto;
+    min-height: 200px;
+    padding-bottom: 50px;
   }
 
   .mainBody {
@@ -162,6 +181,101 @@
 
   .mainBody .main-visual {
     width: 100%;
+    /* 重複削除 */
+  }
+
+  /* SP用ヘッダー調整 */
+  .mainBody .post-header {
+    margin-bottom: 30px;
+    padding: 0 5%;
+    /* 横幅調整 */
+  }
+
+  .mainBody .post-header-img img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .mainBody .post-title {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+
+  .mainBody .post-meta {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  /* カテゴリ・タグのスタイリング (SP) */
+  .mainBody .post-taxonomy {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+    align-items: center;
+  }
+
+  .mainBody .post-category,
+  .mainBody .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .mainBody .post-category a {
+    display: inline-block;
+    background-color: #fff;
+    border: 1px solid #BDE7FF;
+    color: #444;
+    /* 視認性向上: #555 -> #444 */
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 2px 3px rgba(189, 231, 255, 0.4);
+  }
+
+  .mainBody .post-category a::before {
+    content: "#";
+    margin-right: 2px;
+    color: #007bff;
+    /* 視認性向上: #BDE7FF -> #007bff (濃い青) */
+    font-weight: bold;
+  }
+
+  .mainBody .post-tags a {
+    display: inline-block;
+    color: #555;
+    /* 視認性向上: #777 -> #555 */
+    font-size: 11px;
+    text-decoration: none;
+    padding: 2px 0;
+  }
+
+  .mainBody .post-tags a::before {
+    content: "#";
+    margin-right: 1px;
+    color: #007bff;
+    /* 視認性向上: #BDE7FF -> #007bff */
+    font-weight: bold;
+  }
+
+  .mainBody .post-summary {
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+
+  .mainBody .post-summary-title {
+    font-size: 16px;
+  }
+
+  .mainBody .post-summary p {
+    font-size: 14px;
   }
 
   .mainBody .content {

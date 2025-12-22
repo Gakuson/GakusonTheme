@@ -48,8 +48,8 @@ function gakuson_enqueue_assets() {
     $css_path = '';
     
     if (is_front_page()) {
-        wp_enqueue_style('gakuson-style-pc', $uri . '/css/style-33(pc).css', array('ress'), '1.0.0', 'screen and (min-width: 769px)');
-        wp_enqueue_style('gakuson-style-sp', $uri . '/css/style-33(sp).css', array('ress'), '1.0.0', 'screen and (max-width: 768px)');
+        wp_enqueue_style('gakuson-style-pc', $uri . '/css/style-33(pc).css', array('ress'), '1.0.1', 'screen and (min-width: 769px)');
+        wp_enqueue_style('gakuson-style-sp', $uri . '/css/style-33(sp).css', array('ress'), '1.0.1', 'screen and (max-width: 768px)');
     } elseif (is_page('newindex')) {
         wp_enqueue_style('gakuson-style-cat-pc', $uri . '/css-category-tag/style-37(pc).css', array('ress'), '1.0.0', 'screen and (min-width: 769px)');
         wp_enqueue_style('gakuson-style-cat-sp', $uri . '/css-category-tag/style-37(sp).css', array('ress'), '1.0.0', 'screen and (max-width: 768px)');
@@ -57,8 +57,8 @@ function gakuson_enqueue_assets() {
         wp_enqueue_style('gakuson-style-fixed-pc', $uri . '/css-fixed/style-35(pc).css', array('ress'), '1.0.0', 'screen and (min-width: 769px)');
         wp_enqueue_style('gakuson-style-fixed-sp', $uri . '/css-fixed/style-35(sp).css', array('ress'), '1.0.0', 'screen and (max-width: 768px)');
     } elseif (is_single()) {
-        wp_enqueue_style('gakuson-style-post-pc', $uri . '/css-post/style-34(pc).css', array('ress'), '1.0.0', 'screen and (min-width: 769px)');
-        wp_enqueue_style('gakuson-style-post-sp', $uri . '/css-post/style-34(sp).css', array('ress'), '1.0.0', 'screen and (max-width: 768px)');
+        wp_enqueue_style('gakuson-style-post-pc', $uri . '/css-post/style-34(pc).css', array('ress'), '1.0.2', 'screen and (min-width: 769px)');
+        wp_enqueue_style('gakuson-style-post-sp', $uri . '/css-post/style-34(sp).css', array('ress'), '1.0.2', 'screen and (max-width: 768px)');
     } elseif (is_404()) {
         wp_enqueue_style('gakuson-style-404-pc', $uri . '/css-404/style-36(pc).css', array('ress'), '1.0.0', 'screen and (min-width: 769px)');
         wp_enqueue_style('gakuson-style-404-sp', $uri . '/css-404/style-36(sp).css', array('ress'), '1.0.0', 'screen and (max-width: 768px)');

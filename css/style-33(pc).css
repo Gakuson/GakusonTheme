@@ -152,14 +152,20 @@ main {
   text-decoration: none;
   width: 30%;
   margin-bottom: 72px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 8px;
-  /* カード全体の角丸 */
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  background-color: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 3px solid transparent;
+  /* Hover時の枠線用 */
 }
 
 .bestTopics .feature-wrapper .feature:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(189, 231, 255, 0.4);
+  border-color: #BDE7FF;
+  /* 外枠の色 */
 }
 
 .bestTopics .feature-wrapper .feature .Thumbnail {
@@ -261,14 +267,18 @@ main {
   text-decoration: none;
   width: 30%;
   margin-bottom: 72px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 8px;
-  /* カード全体の角丸 */
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  background-color: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 3px solid transparent;
 }
 
 .popular .feature-wrapper .feature:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(189, 231, 255, 0.4);
+  border-color: #BDE7FF;
 }
 
 .popular .feature-wrapper .feature .Thumbnail {

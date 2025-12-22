@@ -3,8 +3,39 @@
         <main>
             <div class="mainBody">
             <article>
-            <div class="content">
-            <?php the_content(); ?>
+                <div class="post-header">
+                    <div class="post-header-img">
+                        <?php if (has_post_thumbnail()) {
+                            the_post_thumbnail('full');
+                        } ?>
+                    </div>
+                    <!-- カテゴリ・タグ -->
+                    <div class="post-taxonomy">
+                        <div class="post-category">
+                            <?php the_category(' '); ?>
+                        </div>
+                        <div class="post-tags">
+                            <?php the_tags('', ' ', ''); ?>
+                        </div>
+                    </div>
+                    <h1 class="post-title"><?php the_title(); ?></h1>
+                    <div class="post-meta">
+                        <time datetime="<?php echo get_the_date('Y-m-d'); ?>"><?php echo get_the_date(); ?></time>
+                        <span class="post-author">
+                            <img class="post-author-icon" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png" alt="author">
+                            <?php the_author(); ?>
+                        </span>
+                    </div>
+                    <?php if (has_excerpt()): ?>
+                        <div class="post-summary">
+                            <h3 class="post-summary-title">記事の概要</h3>
+                            <?php the_excerpt(); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="content">
+                    <?php the_content(); ?>
             <?php wp_link_pages(); // ページ分割用ページャー ?>
 
         </div>

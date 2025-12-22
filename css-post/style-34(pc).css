@@ -116,29 +116,31 @@ main {
 
 .mainBody {
   display: flex;
-  justify-content: center;
-  gap: 18px;
-  width: 92%;
+  justify-content: flex-start;
+  /* 左寄せ */
+  gap: 40px;
+  /* 記事とサイドバーの間隔を広げる */
+  width: 90%;
+  max-width: 1200px;
+  /* 最大幅を設定して広がりすぎ防止 */
   margin: 50px auto 0;
 }
 
 .mainBody article {
-  width: 70%;
+  width: 65%;
+  /* 記事幅を少し狭める */
 }
 
 .mainBody .content {
-  width: 90%;
-  margin-bottom: 55px;
+  width: 100%;
   margin-bottom: 55px;
   font-size: 17px;
-  /* 20pxから縮小 */
   line-height: 1.9;
   letter-spacing: 0.05em;
 }
 
 .mainBody .content p {
   margin-bottom: 2em;
-  /* 段落間の自動余白 */
 }
 
 .mainBody .content .toc-list li a {
@@ -147,8 +149,145 @@ main {
 
 .mainBody .content .wp-block-post-title {
   width: 100%;
+}
+
+/* 記事ヘッダー周り */
+.mainBody .post-header {
+  margin-bottom: 40px;
+}
+
+.mainBody .post-header-img img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* カテゴリ・タグのスタイリング */
+.mainBody .post-taxonomy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.mainBody .post-category,
+.mainBody .post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mainBody .post-category a {
+  display: inline-block;
+  background-color: #fff;
+  border: 1px solid #BDE7FF;
+  color: #555;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 3px rgba(189, 231, 255, 0.4);
+}
+
+.mainBody .post-category a::before {
+  content: "#";
+  margin-right: 2px;
+  color: #BDE7FF;
+  font-weight: bold;
+}
+
+.mainBody .post-category a:hover {
+  background-color: #BDE7FF;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(189, 231, 255, 0.6);
+}
+
+.mainBody .post-tags a {
+  display: inline-block;
+  color: #777;
+  font-size: 12px;
+  text-decoration: none;
+  padding: 2px 0;
+}
+
+.mainBody .post-tags a::before {
+  content: "#";
+  margin-right: 1px;
+  color: #BDE7FF;
+  font-weight: bold;
+}
+
+.mainBody .post-tags a:hover {
+  text-decoration: underline;
+  color: #444;
+}
+
+.mainBody .post-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  line-height: 1.4;
+  color: #333;
+}
+
+.mainBody .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 32px;
+}
+
+.mainBody .post-meta .post-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mainBody .post-meta .post-author-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+/* 記事概要ボックス */
+.mainBody .post-summary {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 40px;
+}
+
+.mainBody .post-summary-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #43474A;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 8px;
+  display: inline-block;
+}
+
+.mainBody .post-summary p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #666;
+  margin: 0;
+}
+
+.mainBody .content {
+  width: 100%;
   box-sizing: border-box;
-  font-size: 28px;
+  font-size: 17px;
+  /* 32pxから調整 */
   /* 32pxから調整 */
   padding: 24px 0;
   /* 左Padding削除 */
