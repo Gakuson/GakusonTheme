@@ -162,11 +162,14 @@
     .mainBody {
         .popular {
             .feature-wrapper {
+                display: flex;
+                justify-content: center;
                 flex-wrap: wrap;
+                gap: 30px;
 
                 .feature {
-                    margin: 0 0 74px 0;
-                    width: 48%;
+                    margin: 0;
+                    width: calc((100% - 30px) / 2);
                 }
             }
 
@@ -182,10 +185,12 @@
     .wantToRead {
         .feature-wrapper {
             flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
 
             .feature {
-                margin: 0 0 74px 0;
-                width: 48%;
+                margin: 0;
+                width: calc((100% - 30px) / 2);
             }
         }
     }
@@ -256,6 +261,7 @@
             background-color: #fff;
             border: 1px solid #BDE7FF;
             color: #444;
+            /* 視認性向上: #555 -> #444 */
             padding: 3px 10px;
             border-radius: 20px;
             font-size: 12px;
@@ -267,6 +273,7 @@
                 content: "#";
                 margin-right: 2px;
                 color: #007bff;
+                /* 視認性向上: #BDE7FF -> #007bff (濃い青) */
                 font-weight: bold;
             }
         }
@@ -274,6 +281,7 @@
         .post-tags a {
             display: inline-block;
             color: #555;
+            /* 視認性向上: #777 -> #555 */
             font-size: 11px;
             text-decoration: none;
             padding: 2px 0;
@@ -282,6 +290,7 @@
                 content: "#";
                 margin-right: 1px;
                 color: #007bff;
+                /* 視認性向上: #BDE7FF -> #007bff */
                 font-weight: bold;
             }
         }

@@ -37,11 +37,15 @@
 
     @mixin feature33sp800() {
         .feature-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
 
             .feature {
-                margin: 0 auto;
-                width: 45%;
-                margin-bottom: 74px;
+                margin: 0;
+                width: calc((100% - 30px) / 2);
+                /* margin-bottom handled by gap */
 
                 .Thumbnail {
                     aspect-ratio: 17/ 10;
@@ -72,18 +76,24 @@
     .transformSkewY {
 
         .transformSkewY_1 {
+            background-color: rgba(189, 231, 255, 0.5);
+            /* 透明度を追加 */
             transform: skewY(-11.09deg);
             margin-top: 0px;
             height: 488px;
         }
 
         .transformSkewY_2 {
+            background-color: rgba(189, 231, 255, 0.5);
+            /* 透明度を追加 */
             transform: skewY(5deg);
             margin-top: 1498px;
             height: 600px
         }
 
         .transformSkewY_3 {
+            background-color: rgba(189, 231, 255, 0.5);
+            /* 透明度を追加 */
             transform: skewY(-4.83deg);
             margin-top: 471px;
             height: 881px;
@@ -319,6 +329,7 @@
         .feature-wrapper {
             .feature {
                 width: 92%;
+                /* 88% -> 92% (paddingを入れたので少し広げる) */
             }
         }
     }

@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* Base Layout Styles (Copied from PC CSS) */
 .transformSkewY {
   position: relative;
@@ -14,18 +15,14 @@
 }
 
 @media (max-width: 1000px) {
-
-  .Hashtag-section-wrapper .Hashtag-section:nth-child(5),
-  .Hashtag-section-wrapper .Hashtag-section:nth-child(6) {
+  .Hashtag-section-wrapper .Hashtag-section:nth-child(5), .Hashtag-section-wrapper .Hashtag-section:nth-child(6) {
     display: none;
   }
 }
-
 @media (max-width: 750px) {
   .Hashtag-section:nth-child(3) {
     display: none;
   }
-
   .Hashtag-section h3.middle {
     width: 100%;
     box-sizing: border-box;
@@ -34,66 +31,53 @@
     border-left: 15px solid #BDE7FF;
   }
 }
-
 @media (max-width: 530px) {
   .Hashtag-section:nth-child(4) {
     display: none;
   }
 }
-
 @media (max-width: 1200px) {
   .mainBody {
     display: block;
     width: 92%;
     margin: 101px auto 0;
   }
-
   .mainBody article {
     width: 100%;
   }
-
   .mainBody .popular {
     width: 100%;
     margin-top: 100px;
   }
-
   .mainBody .popular .feature-wrapper {
     display: flex;
     justify-content: space-between;
   }
-
   .mainBody .popular .feature-wrapper .feature {
     width: 31%;
     margin-bottom: 72px;
   }
-
   .mainBody .popular .feature-wrapper .feature .Thumbnail {
     margin-bottom: 22px;
   }
-
   .mainBody .popular .feature-wrapper .feature .feature_text {
     font-size: 20px;
     margin-bottom: 24px;
   }
-
   .mainBody .popular .feature-wrapper .feature .feature_text__small {
     gap: 28px;
   }
-
   .mainBody .popular .feature-wrapper .feature .feature_text__small .feature_textAcount {
     gap: 14px;
   }
-
   .mainBody .popular .feature-wrapper .feature .feature_text__small .feature_textAcount .feature_textIcon {
     width: 40px;
   }
-
   .mainBody .popular .popular_title {
     font-size: 32px;
     margin: 0 auto 51px;
     width: 76%;
   }
-
   .mainBody .popular .advertisement {
     flex-direction: row;
     flex-wrap: wrap;
@@ -101,68 +85,59 @@
     gap: 0;
     margin: 40px 0;
   }
-
   .mainBody .popular .advertisement .advertisement_content {
     width: 31%;
   }
 }
-
 @media (max-width: 800px) {
   header .headerMain {
     height: 79px;
   }
-
   header .headerMain .headerMain_list {
     display: none;
   }
-
   header .headerMain .headerMain_spMenu {
     display: block;
     height: 100%;
   }
-
   header .headerMain .headerMain_spMenu .headerMain_spMenuContent {
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 100%;
   }
-
   header .headerMain .headerMain_spMenu .headerMain_spMenuContent .headerMain_spMenuImg {
     height: 70%;
   }
-
   header .headerMain .dropdown-wrapper {
     display: none;
   }
-
   .empty {
     height: 79px;
   }
-
   .mainBody .popular .feature-wrapper {
+    display: flex;
+    justify-content: center;
     flex-wrap: wrap;
+    gap: 30px;
   }
-
   .mainBody .popular .feature-wrapper .feature {
-    margin: 0 0 74px 0;
-    width: 48%;
+    margin: 0;
+    width: calc((100% - 30px) / 2);
   }
-
   .mainBody .popular .advertisement .advertisement_content {
     width: 48%;
   }
-
   .wantToRead .feature-wrapper {
     flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
   }
-
   .wantToRead .feature-wrapper .feature {
-    margin: 0 0 74px 0;
-    width: 48%;
+    margin: 0;
+    width: calc((100% - 30px) / 2);
   }
 }
-
 @media (max-width: 768px) {
   .transformSkewY .transformSkewY_1 {
     transform: none;
@@ -173,24 +148,20 @@
     min-height: 200px;
     padding-bottom: 50px;
   }
-
   .mainBody {
     display: block;
     margin: 20px auto 0;
   }
-
   .mainBody .main-visual {
     width: 100%;
-    /* 重複削除 */
   }
-
-  /* SP用ヘッダー調整 */
+  .mainBody {
+    /* SP用ヘッダー調整 */
+  }
   .mainBody .post-header {
     margin-bottom: 30px;
     padding: 0 5%;
-    /* 横幅調整 */
   }
-
   .mainBody .post-header-img img {
     width: 100%;
     height: auto;
@@ -198,19 +169,18 @@
     margin-bottom: 16px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
-
   .mainBody .post-title {
     font-size: 24px;
     margin-bottom: 12px;
   }
-
   .mainBody .post-meta {
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 20px;
   }
-
-  /* カテゴリ・タグのスタイリング (SP) */
+  .mainBody {
+    /* カテゴリ・タグのスタイリング (SP) */
+  }
   .mainBody .post-taxonomy {
     display: flex;
     flex-wrap: wrap;
@@ -218,14 +188,12 @@
     margin-bottom: 12px;
     align-items: center;
   }
-
   .mainBody .post-category,
   .mainBody .post-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
   }
-
   .mainBody .post-category a {
     display: inline-block;
     background-color: #fff;
@@ -239,7 +207,6 @@
     font-weight: bold;
     box-shadow: 0 2px 3px rgba(189, 231, 255, 0.4);
   }
-
   .mainBody .post-category a::before {
     content: "#";
     margin-right: 2px;
@@ -247,7 +214,6 @@
     /* 視認性向上: #BDE7FF -> #007bff (濃い青) */
     font-weight: bold;
   }
-
   .mainBody .post-tags a {
     display: inline-block;
     color: #555;
@@ -256,7 +222,6 @@
     text-decoration: none;
     padding: 2px 0;
   }
-
   .mainBody .post-tags a::before {
     content: "#";
     margin-right: 1px;
@@ -264,27 +229,21 @@
     /* 視認性向上: #BDE7FF -> #007bff */
     font-weight: bold;
   }
-
   .mainBody .post-summary {
     padding: 20px;
     margin-bottom: 30px;
   }
-
   .mainBody .post-summary-title {
     font-size: 16px;
   }
-
   .mainBody .post-summary p {
     font-size: 14px;
   }
-
   .mainBody .content {
     width: 100%;
     font-size: 16px;
-    /* SPは16px */
     line-height: 1.8;
   }
-
   .mainBody .content .wp-block-post-title {
     font-size: 24px;
     padding: 15px 0;
@@ -293,7 +252,6 @@
     box-shadow: none;
     background-color: transparent;
   }
-
   .mainBody .content .wp-block-heading,
   .mainBody .content h2 {
     font-size: 20px;
@@ -305,7 +263,6 @@
     margin-top: 3em;
     margin-bottom: 1.2em;
   }
-
   .mainBody .content .middle,
   .mainBody .content h3 {
     font-size: 18px;
@@ -314,183 +271,146 @@
     margin-top: 2.5em;
     margin-bottom: 1em;
   }
-
   .mainBody .content p {
     margin-bottom: 1.8em;
   }
-
-  /* リストスタイル (SP) */
+  .mainBody .content {
+    /* リストスタイル (SP) */
+  }
   .mainBody .content ul,
   .mainBody .content ol {
     margin: 1.5em 0;
     padding-left: 1.5em;
-    /* SPは少し詰め気味に */
   }
-
   .mainBody .content ul li,
   .mainBody .content ol li {
     margin-bottom: 0.5em;
   }
-
   .mainBody .content ul {
     list-style-type: disc;
   }
-
   .mainBody .content ol {
     list-style-type: decimal;
   }
-
-  /* ネストされたリストのスタイル */
+  .mainBody .content {
+    /* ネストされたリストのスタイル */
+  }
   .mainBody .content ul ul,
   .mainBody .content ol ol,
   .mainBody .content ul ol,
   .mainBody .content ol ul {
     margin: 0.5em 0;
     padding-left: 1em;
-    /* SP用の字下げ */
   }
-
   .mainBody .content ul ul {
     list-style-type: circle;
   }
-
   .mainBody .content ul ul ul {
     list-style-type: square;
   }
-
   .mainBody .popular {
     margin-top: 116px;
   }
-
   .mainBody .popular .feature-wrapper {
     display: block;
   }
-
   .mainBody .popular .feature-wrapper .feature {
     margin: 0 auto 20px;
     width: 70%;
   }
-
   .mainBody .popular .feature-wrapper .feature .Thumbnail {
     margin-bottom: 0px;
   }
-
   .mainBody .popular .feature-wrapper .feature .feature_text {
     font-size: 16px;
     margin-bottom: 10px;
   }
-
   .mainBody .popular .feature-wrapper .feature .feature_text__small {
     font-size: 13px;
   }
-
   .mainBody .popular .feature-wrapper .feature .feature_text__small .feature_textAcount {
     gap: 7px;
   }
-
   .mainBody .popular .feature-wrapper .feature .feature_text__small .feature_textAcount .feature_textIcon {
     width: 33px;
   }
-
   .mainBody .popular .popular_title {
     font-size: 24px;
     margin-bottom: 17px;
     width: 100%;
   }
-
   .mainBody .popular .feature_popularTitle {
     font-size: 24px;
   }
-
   .wantToRead .wantToRead_title {
     font-size: 24px;
     width: 100%;
     margin-bottom: 40px;
   }
-
   .wantToRead .feature-wrapper .feature {
     width: 70%;
     margin: 0 auto 20px;
   }
-
   .wantToRead .feature-wrapper .feature .Thumbnail {
     margin-bottom: 0px;
   }
-
   .wantToRead .feature-wrapper .feature .Thumbnail img {
     width: 100%;
     height: 100%;
   }
-
   .wantToRead .feature-wrapper .feature .feature_text {
     font-size: 16px;
     margin-bottom: 10px;
   }
-
   .wantToRead .feature-wrapper .feature .feature_text__small {
     font-size: 13px;
   }
-
   .wantToRead .feature-wrapper .feature .feature_text__small .feature_textAcount {
     gap: 7px;
   }
-
   .wantToRead .feature-wrapper .feature .feature_text__small .feature_textAcount .feature_textIcon {
     width: 33px;
   }
-
   .Hashtag {
     margin-top: 30px;
     padding: 36px 0;
   }
-
   .Hashtag .Hashtag_content {
     padding: 19px 0 15px;
   }
-
   .Hashtag .Hashtag_content .Hashtag_title {
     gap: 3px;
     margin: 0 auto 24px;
   }
-
   .Hashtag .Hashtag_content .Hashtag_title .Hashtag_titleIcon {
     width: 52px;
   }
-
   .Hashtag .Hashtag_content .Hashtag_title .Hashtag_titleText {
     font-size: 24px;
   }
-
   .Hashtag .Hashtag_content .wp_tag_cloud {
     width: 82%;
   }
-
   .Hashtag .Hashtag_content .wp_tag_cloud .Hashtag_text ul {
     padding: 0;
   }
-
   .Hashtag .Hashtag_content .wp_tag_cloud .Hashtag_text a {
     font-size: 18px;
     margin: 3px;
   }
-
   footer {
     margin-top: 80px;
     padding: 59px 0 27px;
   }
-
   footer ul {
     padding: 0;
   }
-
   footer .pcFooter {
     display: none;
   }
-
   footer .spFooter {
     display: block;
   }
-
   footer .spFooter .spFooter_content {
     display: flex;
     align-items: flex-end;
@@ -498,11 +418,9 @@
     width: 81%;
     margin: 0 auto;
   }
-
   footer .spFooter .spFooter_content .spFooter_list li {
     list-style: none;
   }
-
   footer .spFooter .spFooter_content .spFooter_list li a {
     display: block;
     color: #43474A;
@@ -513,11 +431,9 @@
     padding-bottom: 23px;
     width: auto;
   }
-
   footer .spFooter .spFooter_content .spFooter_list li a:last-child {
     padding-bottom: none;
   }
-
   footer .spFooter .spFooter_content .spFooter_list li ul {
     border-top: 2px solid #d3d3d3;
     display: flex;
@@ -525,16 +441,13 @@
     flex-wrap: wrap;
     padding: 0;
   }
-
   footer .spFooter .spFooter_content a {
     display: block;
     width: 33%;
   }
-
   footer .spFooter .spFooter_content a .spFooter_logo__nantopi {
     width: 100%;
   }
-
   footer .spFooter .spFooter_copyRight {
     font-size: 16px;
     line-height: 24px;
@@ -543,5 +456,3 @@
     margin-top: 62px;
   }
 }
-
-/*# sourceMappingURL=style-34(sp).css.map */
