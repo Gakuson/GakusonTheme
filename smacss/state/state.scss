@@ -1,0 +1,21 @@
+.feature:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(189, 231, 255, 0.4);
+    border-color: #BDE7FF;
+    /* 外枠の色 */
+}
+.headerMain_humburgerContainer:focus-visible{
+    border-radius: 5px;
+    outline: 2px solid black;
+    transform: scale(1.1);
+    transition: transform 0.3s;
+}
+.hamburgerLine__1__is-active {
+    transform: rotate(45deg);
+}
+.hamburgerLine__2__is-active {
+    opacity: 0 ;
+}
+.hamburgerLine__3__is-active {
+    transform: rotate(-45deg);
+}
