@@ -1,0 +1,171 @@
+@charset "UTF-8";
+//関数読み込み--------------------------------------------------
+@mixin title() {
+    font-size: 2rem;
+    line-height: 1.5;
+    text-align: center;
+
+    @include media-sp{
+        font-size: 1.75rem;
+    }
+}
+
+//ブレークポイント設定--------------------------------------------------
+$breakpoints: (
+    'sp': 750px,
+    'tablet': 1024px,
+);
+@mixin media-sp {
+    @media (max-width: map-get($breakpoints, 'sp')) {
+        @content; 
+    }
+}
+@mixin media-tablet {
+    @media (max-width: map-get($breakpoints, 'tablet')){
+        @content;
+    }
+}
+
+//個別Layout--------------------------------------------------
+.l-mainVisual{
+    width: 100%;
+}
+.l-bestTopics {
+    margin: 0px auto 0;
+    width: 92%;
+}
+.l-about{
+    width: 92%;
+    margin: 80px auto 0;
+
+    @include media-sp{
+        margin-top: 10px;
+    }
+}
+
+//個別State--------------------------------------------------
+
+
+
+
+//その他--------------------------------------------------
+
+//メインビジュアル部分---------
+.topi-banner{
+    width: 100%;
+    object-fit: cover;
+}
+
+//ベストトピックス部分---------
+.bestTopics_title {
+    @include title();
+    margin: 0 auto 34px;
+    width: 76%;
+    border-bottom: 2px solid #d3d3d3;
+    color: #FFB916;
+
+    @include media-sp{
+        width: 100%;
+    }
+}
+.feature-wrapper__bestTopics {
+    justify-content: space-between;
+}
+.feature__bestTopics{
+    &:nth-child(7),
+    &:nth-child(8),
+    &:nth-child(9) {
+        display: none;
+    }
+    //この読み取り無駄なんとかしたい
+}
+.bestTopics_button {
+    margin: 50px auto 0;
+    padding: 26.5px;
+    width: 33vw;
+    background-color: white;
+    border: 2px solid #43474A;
+    border-radius: 8px;
+
+    @include media-sp{
+        margin-top: 8px;
+        width: 74vw;
+        padding: 18px;
+        border-radius: 5px;
+    }
+}
+.bestTopics_buttonContent {
+    display: flex;
+    justify-content: center;
+    gap: 3.2vw;
+    align-items: center;
+}
+.bestTopics_buttonText {
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-align: center;
+}
+.bestTopics_buttonIcon {
+    width: 1.3rem;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+
+    @include media-sp{
+        width: 1.5rem;
+    }
+}
+
+//団体説明部分---------
+.about_title {
+    @include title();
+    width: 76%;
+    border-bottom: 2px solid #d3d3d3;
+    margin: 0 auto;
+
+    @include media-sp{
+        width: 100%;
+    }
+}
+.about_contentContainer {
+    margin-top: 62px;
+    display: flex;
+    justify-content: center;
+    gap: 65px;
+
+    @include media-sp{
+        flex-direction: column;
+        margin-top: 20px;
+        gap: 20px;
+    }
+}
+.about_contentWrapper {
+    background-color: white;
+    padding: 16px 0 54px;
+    border-radius: 60px;
+    border: 1px solid black;
+
+    @include media-sp{
+        padding-bottom: 20px;
+    }
+}
+.about_content {
+    width: 66%;
+    margin: 0 auto;
+
+    @include media-sp{
+        width: 85%;
+    }
+}
+.about_contentTitle {
+    @include title;
+    margin-bottom: 54px;
+
+    @include media-sp{
+        margin: 20px 0 27px;
+    }
+}
+.about_contentText {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 32px;
+}

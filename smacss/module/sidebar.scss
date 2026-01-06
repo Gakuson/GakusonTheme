@@ -1,0 +1,75 @@
+@charset "UTF-8";
+//注：このファイルは必ずmodule.scssと一緒に呼び出す。
+
+//関数読み込み
+@mixin title() {
+    font-size: 2rem;
+    line-height: 1.5;
+    text-align: center;
+
+    @include media-sp{
+        font-size: 1.75rem;
+    }
+}
+@mixin back($deg) {
+    background-color: rgba(189, 231, 255, 0.5);
+    /* 透明度を追加 */
+    transform: skewY($deg);
+}
+
+//ブレークポイント設定
+$breakpoints: (
+    'sp': 750px,
+    'tablet': 1024px,
+);
+@mixin media-sp {
+    @media (max-width: map-get($breakpoints, 'sp')) {
+        @content; 
+    }
+}
+@mixin media-tablet {
+    @media (max-width: map-get($breakpoints, 'tablet')){
+        @content;
+    }
+}
+
+.feature-wrapper__sidebar{
+    display: block;
+    padding-bottom: 30px;
+}
+.feature__sidebar{
+    padding: 20px 10px;
+}
+.feature_text__sidebar{
+    font-size: 1.8vw;
+}
+.popular_title__sidebar{
+    width: 100%;
+    font-size: 2.3vw;
+
+    @include media-sp{
+        font-size: 1.75rem;
+    }
+}
+.feature_popularTitle__sidebar{
+    font-size: 2vw;
+
+    @include media-sp{
+        font-size: 1.5rem;
+    }
+}
+.advertisement {
+    display: flex;
+    flex-direction: column;
+    gap: 90px;
+    margin: 40px 0;
+
+    img {
+        width: 100%;
+    }
+}
+.advertisement_content {
+    width: 100%;
+    margin: 0 auto;
+    aspect-ratio: 128/ 183;
+}

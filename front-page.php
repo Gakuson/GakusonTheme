@@ -27,7 +27,11 @@
                 ?>
                 <a href="<?php echo $href; ?>" class="feature" <?php echo $style; ?>>
                     <div class="Thumbnail">
-                        <?php the_post_thumbnail('post_thumbnails'); ?> 
+                        <?php if (has_post_thumbnail()): ?>
+                            <?php the_post_thumbnail('post_thumbnails'); ?> 
+                        <?php else: ?>
+                            <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
+                        <?php endif; ?>
                     </div>
                     <h3 class="feature_text"><?php the_title(); ?></h3>
                     <div class="feature_text__small">
@@ -75,7 +79,11 @@
                             <a href="<?php the_permalink(); ?>" class="feature">
                                 <h3 class="feature_popularTitle st">1st.TIPS</h3>
                                 <div class="Thumbnail">
-                                    <?php the_post_thumbnail('post_thumbnails'); ?> 
+                                    <?php if (has_post_thumbnail()): ?>
+                                        <?php the_post_thumbnail('post_thumbnails'); ?> 
+                                    <?php else: ?>
+                                        <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
+                                    <?php endif; ?>
                                 </div>
                                 <h3 class="feature_text"><?php the_title(); ?></h3>
                                 <div class="feature_text__small">
@@ -90,7 +98,11 @@
                             <a href="<?php the_permalink(); ?>" class="feature">
                                 <h3 class="feature_popularTitle nd">2nd.TIPS</h3>
                                 <div class="Thumbnail">
-                                    <?php the_post_thumbnail('post_thumbnails'); ?> 
+                                    <?php if (has_post_thumbnail()): ?>
+                                        <?php the_post_thumbnail('post_thumbnails'); ?> 
+                                    <?php else: ?>
+                                        <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
+                                    <?php endif; ?>
                                 </div>
                                 <h3 class="feature_text"><?php the_title(); ?></h3>
                                 <div class="feature_text__small">
@@ -105,7 +117,11 @@
                             <a href="<?php the_permalink(); ?>" class="feature">
                                 <h3 class="feature_popularTitle rd">3rd.TIPS</h3>
                                 <div class="Thumbnail">
-                                    <?php the_post_thumbnail('post_thumbnails'); ?> 
+                                    <?php if (has_post_thumbnail()): ?>
+                                        <?php the_post_thumbnail('post_thumbnails'); ?> 
+                                    <?php else: ?>
+                                        <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
+                                    <?php endif; ?>
                                 </div>
                                 <h3 class="feature_text"><?php the_title(); ?></h3>
                                 <div class="feature_text__small">
@@ -120,7 +136,11 @@
                             <a href="<?php the_permalink(); ?>" class="feature">
                                 <h3 class="feature_popularTitle"><?php echo $count;?>th.TIPS</h3>
                                 <div class="Thumbnail">
-                                    <?php the_post_thumbnail('post_thumbnails'); ?> 
+                                    <?php if (has_post_thumbnail()): ?>
+                                        <?php the_post_thumbnail('post_thumbnails'); ?> 
+                                    <?php else: ?>
+                                        <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
+                                    <?php endif; ?>
                                 </div>
                                 <h3 class="feature_text"><?php the_title(); ?></h3>
                                 <div class="feature_text__small">
