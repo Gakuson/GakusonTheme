@@ -74,13 +74,6 @@
             <img class="Hashtag_titleIcon" src="<?php echo get_template_directory_uri();?>/icon/線画のフォルダアイコン 2.png">
             <h2 class="Hashtag_titleText">#ハッシュタグ一覧</h2>
            </div>
-           <?php   function custom_wp_tag_cloud($tag_string) {
-            // liタグにclass="Hashtag_text"を適用し、aタグの余分なclassを削除
-            $tag_string = preg_replace('/<li(.*?)>/', '<li class="Hashtag_text"$1>', $tag_string);
-            $tag_string = preg_replace('/<a (.*?)class="(.*?)"(.*?)>/', '<a $1$3>', $tag_string);
-            return $tag_string;
-        }
-        add_filter('wp_tag_cloud', 'custom_wp_tag_cloud');?>
 
         <ul class="Hashtag-wrapper">
             <?php wp_tag_cloud(array(

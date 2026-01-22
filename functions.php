@@ -143,3 +143,17 @@ function gakuson_limit_wp_nav_menu_items($items, $args) {
     return $items;
 }
 add_filter('wp_nav_menu_objects', 'gakuson_limit_wp_nav_menu_items', 10, 2);
+
+/**
+ * タグクラウドのカスタマイズ
+ * liタグにclass="Hashtag_text"を適用し、aタグの余分なclassを削除
+ * 
+ * @param string $tag_string タグクラウドのHTML文字列
+ * @return string カスタマイズされたHTML文字列
+ */
+function custom_wp_tag_cloud($tag_string) {
+    $tag_string = preg_replace('/<li(.*?)>/', '<li class="Hashtag_text"$1>', $tag_string);
+    $tag_string = preg_replace('/<a (.*?)class="(.*?)"(.*?)>/', '<a $1$3>', $tag_string);
+    return $tag_string;
+}
+add_filter('wp_tag_cloud', 'custom_wp_tag_cloud');
