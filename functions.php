@@ -48,28 +48,22 @@ function gakuson_enqueue_assets() {
     $css_path = '';
     
     if (is_front_page()) {
-        wp_enqueue_style('gakuson-style-pc', $uri . '/css/style-33(pc).css', array('ress'), '1.0.1');
-        wp_enqueue_style('gakuson-style-sp', $uri . '/css/style-33(sp).css', array('ress', 'gakuson-style-pc'), '1.0.1', 'screen and (max-width: 768px)');
-    } elseif (is_page('newindex')) {
-        wp_enqueue_style('gakuson-style-cat-pc', $uri . '/css-category-tag/style-37(pc).css', array('ress'), '1.0.0');
-        wp_enqueue_style('gakuson-style-cat-sp', $uri . '/css-category-tag/style-37(sp).css', array('ress', 'gakuson-style-cat-pc'), '1.0.0', 'screen and (max-width: 768px)');
-    } elseif (is_page()) {
-        wp_enqueue_style('gakuson-style-fixed-pc', $uri . '/css-fixed/style-35(pc).css', array('ress'), '1.0.0');
-        wp_enqueue_style('gakuson-style-fixed-sp', $uri . '/css-fixed/style-35(sp).css', array('ress', 'gakuson-style-fixed-pc'), '1.0.0', 'screen and (max-width: 768px)');
-    } elseif (is_single()) {
-        wp_enqueue_style('gakuson-style-post-pc', $uri . '/css-post/style-34(pc).css', array('ress'), '1.0.2');
-        wp_enqueue_style('gakuson-style-post-sp', $uri . '/css-post/style-34(sp).css', array('ress', 'gakuson-style-post-pc'), '1.0.2', 'screen and (max-width: 768px)');
-    } elseif (is_404()) {
-        wp_enqueue_style('gakuson-style-404-pc', $uri . '/css-404/style-36(pc).css', array('ress'), '1.0.0');
-        wp_enqueue_style('gakuson-style-404-sp', $uri . '/css-404/style-36(sp).css', array('ress', 'gakuson-style-404-pc'), '1.0.0', 'screen and (max-width: 768px)');
-    } elseif (is_category() || is_tag()) {
-        wp_enqueue_style('gakuson-style-cat-pc', $uri . '/css-category-tag/style-37(pc).css', array('ress'), '1.0.0');
-        wp_enqueue_style('gakuson-style-cat-sp', $uri . '/css-category-tag/style-37(sp).css', array('ress', 'gakuson-style-cat-pc'), '1.0.0', 'screen and (max-width: 768px)');
+        wp_enqueue_style('gakuson-style-pc', $uri . '/smacss/main/main-top.css', array('ress'), '1.0.1');
+    }elseif (is_page()) {
+        wp_enqueue_style('gakuson-style-pc', $uri . '/smacss/main/main-fixed.css', array('ress'), '1.0.1');
+    }elseif (is_single()) {
+        wp_enqueue_style('gakuson-style-pc', $uri . '/smacss/main/main-post.css', array('ress'), '1.0.1');
+    }elseif(is_category() || is_tag()) {
+        wp_enqueue_style('gakuson-style-pc', $uri . '/smacss/main/main-category-tag.css', array('ress'), '1.0.1');
+    }elseif (is_page('newindex')) {
+        wp_enqueue_style('gakuson-style-pc', $uri . '/smacss/main/main-category-tag.css', array('ress'), '1.0.1');
+    }elseif (is_404()) {
+        wp_enqueue_style('gakuson-style-404-pc', $uri . '/smacss/main/main-404.css', array('ress'), '1.0.0');
     }
 
     // JavaScript
     // jQueryはWordPress同梱のものを使用
-    wp_enqueue_script('gakuson-navbutton', $uri . '/js/navbutton.js', array('jquery'), '1.0.0', true);
+    wp_enqueue_script('gakuson-js-animation', $uri . '/js/script.js', array('jquery'), '1.0.0', true);
 }
 add_action('wp_enqueue_scripts', 'gakuson_enqueue_assets');
 
