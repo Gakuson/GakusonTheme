@@ -1,0 +1,80 @@
+@charset "UTF-8";
+//関数読み込み--------------------------------------------------
+@mixin title() {
+    font-size: 2rem;
+    line-height: 1.5;
+    text-align: center;
+
+    @include media-sp{
+        font-size: 1.75rem;
+    }
+}
+
+//ブレークポイント設定--------------------------------------------------
+$breakpoints: (
+    'sp': 750px,
+    'tablet': 1024px,
+);
+@mixin media-sp {
+    @media (max-width: map-get($breakpoints, 'sp')) {
+        @content; 
+    }
+}
+@mixin media-tablet {
+    @media (max-width: map-get($breakpoints, 'tablet')){
+        @content;
+    }
+}
+
+//個別Layout--------------------------------------------------
+.l-mainBody{
+    display: flex;
+    justify-content: space-between;
+    width: 95%;
+    margin: 50px auto 0;
+
+    @include media-sp{
+        display: block;
+        margin: 20px auto 0;
+        width: 90%;
+    }
+}
+.l-article{
+    width: 64%;
+    margin: 100px auto 0 0;
+
+    @include media-sp{
+        width: 100%;
+        margin-top: 50px;
+    }
+}
+.l-popular{
+    width: 28%;
+
+    @include media-sp{
+        width: 100%;
+        margin-top: 100px;
+    }
+}
+
+//その他--------------------------------------------------
+.feature-wrapper{
+    grid-template-columns: 1fr 1fr;
+}
+.article_title{
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 2rem;
+    padding: 24px 40px;
+    background-color: white;
+    border-left: 29px solid #BDE7FF;
+    margin-bottom: 60px;
+    box-shadow: 0 5px 3px gray;
+
+    @include media-sp{
+        font-size: 1.5rem;
+        padding: 18px 20px;
+        border-left: 22px solid #BDE7FF;
+        box-shadow: 0 4px 2px gray;
+    }
+}
