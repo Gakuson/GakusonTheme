@@ -140,6 +140,54 @@ function gakuson_get_post_tag_names($post = null) {
 }
 
 /**
+ * Keep the top-page taxonomy chips consistent without forcing a shared card partial.
+ *
+ * @param WP_Post|int|null $post    Optional post object or ID.
+ * @param string           $context Optional context suffix such as pc or sp.
+ * @return string
+ */
+function gakuson_get_article_taxonomy_markup($post = null, $context = '') {
+    $post = get_post($post);
+
+    if (! $post instanceof WP_Post) {
+        return '';
+    }
+
+    $wrapper_classes = array('article_taxonomy');
+
+    if ('' !== $context) {
+        $wrapper_classes[] = 'article_taxonomy__' . sanitize_html_class($context);
+    }
+
+    $category_name = gakuson_get_post_primary_category_name($post);
+    $tag_names     = gakuson_get_post_tag_names($post);
+
+    ob_start();
+    ?>
+    <div class="<?php echo esc_attr(implode(' ', $wrapper_classes)); ?>">
+        <div class="article_taxonomyInner">
+            <div class="article_taxonomyItem">
+                <span class="article_taxonomyItemText">
+                    <?php echo '' !== $category_name ? esc_html('#' . $category_name) : esc_html('カテゴリなし'); ?>
+                </span>
+            </div>
+            <div class="article_taxonomyItem article_taxonomyItem__category">
+                <?php if (empty($tag_names)) : ?>
+                    <span class="article_taxonomyItemText article_taxonomyItemText__category"><?php echo esc_html('タグなし'); ?></span>
+                <?php else : ?>
+                    <?php foreach ($tag_names as $tag_name) : ?>
+                        <span class="article_taxonomyItemText article_taxonomyItemText__category"><?php echo esc_html($tag_name); ?></span>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <?php
+
+    return trim(ob_get_clean());
+}
+
+/**
  * Keep thumbnail lookup in one place so fallback behavior can change later.
  *
  * @param WP_Post|int|null $post Optional post object or ID.

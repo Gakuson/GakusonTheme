@@ -16,7 +16,7 @@
                     if ($popular_posts->have_posts()): ?>
                         <?php while ($popular_posts->have_posts()): $popular_posts->the_post(); ?>
                             <?php if ($count == 1): ?>
-                                <a href="<?php the_permalink(); ?>" class="feature feature__sidebar">
+                                <a href="<?php the_permalink(); ?>" <?php post_class(array('feature', 'feature__sidebar')); ?>>
                                     <h3 class="feature_popularTitle feature_popularTitle__sidebar feature_popularTitle__st">1st.TIPS</h3>
                                     <div class="Thumbnail Thumbnail__sidebar">
                                         <?php the_post_thumbnail('post_thumbnails'); ?> 
@@ -31,7 +31,7 @@
                                     </div>
                                 </a>
                             <?php elseif ($count == 2): ?>
-                                <a href="<?php the_permalink(); ?>" class="feature feature__sidebar">
+                                <a href="<?php the_permalink(); ?>" <?php post_class(array('feature', 'feature__sidebar')); ?>>
                                     <h3 class="feature_popularTitle feature_popularTitle__sidebar feature_popularTitle__nd">2nd.TIPS</h3>
                                     <div class="Thumbnail Thumbnail__sidebar">
                                         <?php the_post_thumbnail('post_thumbnails'); ?> 
@@ -46,7 +46,7 @@
                                     </div>
                                 </a>
                             <?php elseif ($count == 3): ?>
-                                <a href="<?php the_permalink(); ?>" class="feature feature_sidebar">
+                                <a href="<?php the_permalink(); ?>" <?php post_class(array('feature', 'feature__sidebar')); ?>>
                                     <h3 class="feature_popularTitle feature_popularTitle__sidebar feature_popularTitle__rd">3rd.TIPS</h3>
                                     <div class="Thumbnail Thumbnail__sidebar">
                                         <?php the_post_thumbnail('post_thumbnails'); ?> 
@@ -61,7 +61,7 @@
                                     </div>
                                 </a>
                             <?php else: ?>
-                                <a href="<?php the_permalink(); ?>" class="feature feature__sidebar">
+                                <a href="<?php the_permalink(); ?>" <?php post_class(array('feature', 'feature__sidebar')); ?>>
                                     <h3 class="feature_popularTitle feature_popularTitle__sidebar"><?php echo $count;?>th.TIPS</h3>
                                     <div class="Thumbnail Thumbnail__sidebar">
                                         <?php the_post_thumbnail('post_thumbnails'); ?> 
