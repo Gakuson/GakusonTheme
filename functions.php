@@ -3,6 +3,8 @@
  * GakusonTheme Functions
  */
 
+require_once get_template_directory() . '/inc/gakuson-content-helpers.php';
+
 /**
  * テーマのセットアップ
  */
