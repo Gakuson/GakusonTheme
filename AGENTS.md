@@ -102,23 +102,44 @@
 
 ## Ticket Workflow
 - Work one ticket at a time unless the user explicitly asks to batch multiple tickets.
-- Keep a per-ticket implementation log under `docs/worklogs/`.
-- Use one Markdown file per ticket, named like `docs/worklogs/TK-03.md`.
-- Each ticket log should be updated as work progresses and should include:
-  - ticket id and title
-  - goal
-  - implementation summary
-  - touched files
-  - review notes / risks
-  - follow-up items if any
-- After finishing a ticket, prepare a user-facing review summary before moving to the next ticket.
-- Treat user review as a checkpoint between tickets whenever practical.
-- Create one git commit per ticket after the ticket has been reviewed/approved by the user, unless the user explicitly asks for a different workflow.
+- At the start of each ticket, reread `AGENTS.md`, `docs/3-17-yuki-design.md`, and `docs/3-17-yuki-tickets.md`.
+- Work only on the requested ticket. Do not touch other tickets unless the user explicitly asks for it.
+- Use `AgentLog/TK-xx.md` as the per-ticket operating log for this repository.
+- Treat user review as a checkpoint between tickets.
+- Stop after each review summary or re-review summary. Do not commit until the user explicitly approves that ticket.
 - Use commit messages that start with the ticket id, for example:
   - `TK-03: implement header search modal`
 
+### Initial Implementation
+- Implement while checking `docs/3-17-yuki-design.md` and `docs/3-17-yuki-tickets.md`.
+- Create or update `AgentLog/TK-xx.md` as work progresses.
+- Each ticket log should include at least:
+  - ticket id and title
+  - goal
+  - 変更内容
+  - 判断理由
+  - Touched files
+  - Review notes / risks
+  - Next steps
+- After finishing the ticket work, prepare a user-facing review summary and stop. Do not commit.
+
+### Review Follow-up
+- When continuing a ticket after user review, reread `AGENTS.md`, `docs/3-17-yuki-design.md`, and `docs/3-17-yuki-tickets.md` before making changes.
+- Apply only the minimum changes needed for the current review of that ticket.
+- Append the response details and remaining risks to the same `AgentLog/TK-xx.md`.
+- After the review fixes, prepare a re-review summary and stop. Do not commit.
+
+### Approved Finalization
+- When the user says the ticket is approved, reread `AGENTS.md` and the related docs before finalizing.
+- Confirm the diff stays within the approved ticket scope.
+- If needed, do only light cleanup that stays within the same ticket.
+- Create one git commit for that ticket with message format `TK-xx: ...`.
+- Append the final summary, validation performed, remaining risks, and commit hash to `AgentLog/TK-xx.md`.
+- Stop after finalizing that ticket. Do not begin the next ticket unless the user explicitly asks.
+
 ## Safety Notes
 - This repository contains some mojibake in terminal output. Avoid bulk text rewrites unless the task specifically asks for content cleanup.
+- When reading `.md` files in the terminal, always specify UTF-8 encoding explicitly each time, for example `Get-Content -Encoding UTF8`.
 - Keep changes scoped. Do not opportunistically refactor unrelated files.
 - If working on styles, verify both desktop and mobile behavior.
 - If changing JS-driven UI, verify ARIA attributes and keyboard behavior as part of the task.

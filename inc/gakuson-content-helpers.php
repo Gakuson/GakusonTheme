@@ -654,6 +654,200 @@ function gakuson_format_tag_cloud_markup($tag_string, $options = array()) {
 }
 
 /**
+ * Reuse the top-page section heading pattern on lower templates without new template-local functions.
+ *
+ * @param string $title     Visible section title.
+ * @param string $icon_path Theme-relative icon path.
+ * @param array  $args      Optional wrapper, icon, and heading settings.
+ * @return string
+ */
+function gakuson_get_section_title_markup($title, $icon_path, $args = array()) {
+    $args = wp_parse_args(
+        $args,
+        array(
+            'heading_tag'    => 'h2',
+            'wrapper_class'  => '',
+            'title_class'    => '',
+            'icon_class'     => '',
+            'title_id'       => '',
+            'icon_alt'       => '',
+        )
+    );
+
+    $heading_tag = strtolower((string) $args['heading_tag']);
+
+    if (! in_array($heading_tag, array('h1', 'h2', 'h3', 'p'), true)) {
+        $heading_tag = 'h2';
+    }
+
+    $wrapper_classes = array_merge(array('section_TitleConteiner'), gakuson_parse_class_names($args['wrapper_class']));
+    $title_classes   = array_merge(array('section_title'), gakuson_parse_class_names($args['title_class']));
+    $icon_classes    = array_merge(array('section_titleIcon'), gakuson_parse_class_names($args['icon_class']));
+    $icon_url        = trailingslashit(get_template_directory_uri()) . ltrim((string) $icon_path, '/');
+    $title_id        = '' !== $args['title_id'] ? ' id="' . esc_attr($args['title_id']) . '"' : '';
+
+    ob_start();
+    ?>
+    <div class="<?php echo esc_attr(implode(' ', array_unique($wrapper_classes))); ?>">
+        <img
+            class="<?php echo esc_attr(implode(' ', array_unique($icon_classes))); ?>"
+            src="<?php echo esc_url($icon_url); ?>"
+            alt="<?php echo esc_attr($args['icon_alt']); ?>"
+        >
+        <<?php echo esc_html($heading_tag); ?> class="<?php echo esc_attr(implode(' ', array_unique($title_classes))); ?>"<?php echo $title_id; ?>>
+            <?php echo esc_html($title); ?>
+        </<?php echo esc_html($heading_tag); ?>>
+    </div>
+    <?php
+
+    return trim(ob_get_clean());
+}
+
+/**
+ * Keep article cards consistent across archives, related-post lists, and future side rails.
+ *
+ * @param WP_Post|int|null $post Optional post object or ID.
+ * @param array            $args Optional card settings.
+ * @return string
+ */
+function gakuson_get_article_card_markup($post = null, $args = array()) {
+    $post = get_post($post);
+
+    if (! $post instanceof WP_Post) {
+        return '';
+    }
+
+    $args = wp_parse_args(
+        $args,
+        array(
+            'card_classes'  => array(),
+            'title_tag'     => 'h3',
+            'show_taxonomy' => true,
+            'ranking'       => 0,
+            'image_size'    => 'post_thumbnails',
+            'link_url'      => '',
+        )
+    );
+
+    $title_tag = strtolower((string) $args['title_tag']);
+
+    if (! in_array($title_tag, array('h2', 'h3', 'p'), true)) {
+        $title_tag = 'h3';
+    }
+
+    $ranking      = max(0, (int) $args['ranking']);
+    $card_classes = array_merge(array('article_item'), gakuson_parse_class_names($args['card_classes']));
+
+    if ($ranking > 0) {
+        $card_classes[] = 'article_item__popu';
+    }
+
+    $title            = get_the_title($post);
+    $permalink        = '' !== $args['link_url'] ? (string) $args['link_url'] : get_permalink($post);
+    $author_name      = get_the_author_meta('display_name', (int) $post->post_author);
+    $taxonomy_pc      = $args['show_taxonomy'] ? gakuson_get_article_taxonomy_markup($post, 'pc') : '';
+    $taxonomy_sp      = $args['show_taxonomy'] ? gakuson_get_article_taxonomy_markup($post, 'sp') : '';
+    $thumbnail_markup = has_post_thumbnail($post)
+        ? get_the_post_thumbnail($post->ID, $args['image_size'])
+        : sprintf(
+            '<img src="%1$s" alt="%2$s">',
+            esc_url(get_template_directory_uri() . '/img/no-image.png'),
+            esc_attr($title)
+        );
+
+    ob_start();
+    ?>
+    <a href="<?php echo esc_url($permalink); ?>" class="<?php echo esc_attr(implode(' ', get_post_class($card_classes, $post->ID))); ?>">
+        <?php if ($ranking > 0) : ?>
+            <p class="article_num<?php echo 1 === $ranking ? ' article_num__1st' : ''; ?>">
+                <?php echo esc_html((string) $ranking); ?>
+            </p>
+        <?php endif; ?>
+        <div class="article_main">
+            <div class="article_itemThumbnail">
+                <?php echo $thumbnail_markup; ?>
+            </div>
+            <div class="article_text">
+                <<?php echo esc_html($title_tag); ?> class="article_title"><?php echo esc_html($title); ?></<?php echo esc_html($title_tag); ?>>
+                <div class="article_desc">
+                    <p class="article_date"><?php echo esc_html(get_the_date('', $post)); ?></p>
+                    <p class="article_author"><?php echo esc_html($author_name); ?></p>
+                </div>
+                <?php if ('' !== $taxonomy_pc) : ?>
+                    <?php echo $taxonomy_pc; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php if ('' !== $taxonomy_sp) : ?>
+            <?php echo $taxonomy_sp; ?>
+        <?php endif; ?>
+    </a>
+    <?php
+
+    return trim(ob_get_clean());
+}
+
+/**
+ * Reuse the top-page tag directory markup on lower templates while keeping the featured tag hidden.
+ *
+ * @param array $args Optional wrapper and heading settings.
+ * @return string
+ */
+function gakuson_get_tag_directory_markup($args = array()) {
+    $args = wp_parse_args(
+        $args,
+        array(
+            'section_class' => 'l-tag',
+            'title'         => 'タグ一覧',
+            'heading_tag'   => 'h2',
+        )
+    );
+
+    $tag_cloud_markup = wp_tag_cloud(
+        gakuson_get_tag_cloud_args(
+            array(
+                'echo' => false,
+            )
+        )
+    );
+
+    if ('' === trim((string) $tag_cloud_markup)) {
+        return '';
+    }
+
+    $formatted_tag_cloud = gakuson_format_tag_cloud_markup(
+        $tag_cloud_markup,
+        array(
+            'list_class'   => 'tag_list',
+            'item_class'   => 'tag_listItem',
+            'item_classes' => array(
+                'tag_listItem__blue',
+                'tag_listItem__yellow',
+            ),
+            'link_class'   => 'tag_itemLink',
+        )
+    );
+
+    ob_start();
+    ?>
+    <section class="<?php echo esc_attr(implode(' ', array_unique(array_merge(array('l-tag'), gakuson_parse_class_names($args['section_class']))))); ?>">
+        <?php
+        echo gakuson_get_section_title_markup(
+            $args['title'],
+            'icon/tagIcon.png',
+            array(
+                'heading_tag' => $args['heading_tag'],
+            )
+        );
+        ?>
+        <?php echo $formatted_tag_cloud; ?>
+    </section>
+    <?php
+
+    return trim(ob_get_clean());
+}
+
+/**
  * Invalidate the shared carousel cache when post content changes.
  *
  * @param int $post_id Post ID.

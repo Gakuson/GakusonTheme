@@ -37,6 +37,16 @@ $breakpoints: (
     display: block;
     padding-bottom: 30px;
 }
+.sidebarSection + .sidebarSection{
+    margin-top: 56px;
+
+    @include media-sp{
+        margin-top: 48px;
+    }
+}
+.sidebarSection .section_TitleConteiner{
+    margin-bottom: 22px;
+}
 .feature__sidebar{
     padding: 20px 10px;
 }
@@ -65,15 +75,19 @@ $breakpoints: (
 .advertisement {
     display: flex;
     flex-direction: column;
-    gap: 90px;
-    margin: 40px 0;
+    gap: 36px;
+    margin: 0;
 
     img {
         width: 100%;
+        display: block;
     }
 }
 .advertisement_content {
     width: 100%;
     margin: 0 auto;
     aspect-ratio: 128/ 183;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(17, 29, 79, 0.12);
 }

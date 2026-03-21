@@ -78,3 +78,26 @@ $breakpoints: (
         margin-bottom: 40px;
     }
 }
+
+.contentRail{
+    width: 92%;
+    margin: 88px auto 0;
+
+    @include media-sp{
+        width: 100%;
+        margin-top: 72px;
+    }
+}
+.contentRail .section_TitleConteiner{
+    margin-bottom: 28px;
+}
+.contentRail .article_emptyMessage{
+    margin-top: 0;
+}
+.l-tag--secondary{
+    margin-top: 88px;
+
+    @include media-sp{
+        margin-top: 72px;
+    }
+}

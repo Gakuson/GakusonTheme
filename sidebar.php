@@ -1,88 +1,84 @@
 <aside class="l-popular">
-                <h2 class="popular_title popular_title__sidebar">#人気記事ランキング</h2>
-                <div class="feature-wrapper feature-wrapper__sidebar">
-                    <?php
-                    // 人気記事ランキング用のクエリ
-                    $args = array(
-                        'meta_key'       => 'post_views_count', // ビュー数のカスタムフィールド
-                        'orderby'        => 'meta_value_num',   // 数値としてソート
-                        'posts_per_page' => 3,                  // 取得する記事数
-                        'order'          => 'DESC',             // 降順（閲覧数が多い順）
-                        'ignore_sticky_posts' => true           // スティッキーポストを除外
-                    );
+    <section class="sidebarSection sidebarSection--popular">
+        <?php
+        echo gakuson_get_section_title_markup(
+            '人気記事',
+            'icon/graphIcon.png'
+        );
+        ?>
+        <div class="feature-wrapper feature-wrapper__sidebar">
+            <?php
+            // サイドバーは順位表現を残しつつ、トップに寄せた見出しトーンで出す。
+            $args = array(
+                'meta_key'            => 'post_views_count',
+                'orderby'             => 'meta_value_num',
+                'posts_per_page'      => 3,
+                'order'               => 'DESC',
+                'ignore_sticky_posts' => true,
+            );
 
-                    $popular_posts = new WP_Query($args);
-                    $count = 1;
-                    if ($popular_posts->have_posts()): ?>
-                        <?php while ($popular_posts->have_posts()): $popular_posts->the_post(); ?>
-                            <?php if ($count == 1): ?>
-                                <a href="<?php the_permalink(); ?>" <?php post_class(array('feature', 'feature__sidebar')); ?>>
-                                    <h3 class="feature_popularTitle feature_popularTitle__sidebar feature_popularTitle__st">1st.TIPS</h3>
-                                    <div class="Thumbnail Thumbnail__sidebar">
-                                        <?php the_post_thumbnail('post_thumbnails'); ?> 
-                                    </div>
-                                    <h3 class="feature_text feature_text__sidebar"><?php the_title(); ?></h3>
-                                    <div class="feature_text__small feature_text__small__sidebar">
-                                        <p><?php echo get_the_date(); ?></p>
-                                        <div class="feature_textAcount feature_textAcount__sidebar"> 
-                                            <img class="feature_textIcon feature_textIcon__sidebar" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png">
-                                            <p><?php echo get_the_author(); ?></p>
-                                        </div>
-                                    </div>
-                                </a>
-                            <?php elseif ($count == 2): ?>
-                                <a href="<?php the_permalink(); ?>" <?php post_class(array('feature', 'feature__sidebar')); ?>>
-                                    <h3 class="feature_popularTitle feature_popularTitle__sidebar feature_popularTitle__nd">2nd.TIPS</h3>
-                                    <div class="Thumbnail Thumbnail__sidebar">
-                                        <?php the_post_thumbnail('post_thumbnails'); ?> 
-                                    </div>
-                                    <h3 class="feature_text feature_text__sidebar"><?php the_title(); ?></h3>
-                                    <div class="feature_text__small feature_text__small__sidebar">
-                                        <p><?php echo get_the_date(); ?></p>
-                                        <div class="feature_textAcount feature_textAcount__sidebar"> 
-                                            <img class="feature_textIcon feature_textIcon_sidebar" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png">
-                                            <p><?php echo get_the_author(); ?></p>
-                                        </div>
-                                    </div>
-                                </a>
-                            <?php elseif ($count == 3): ?>
-                                <a href="<?php the_permalink(); ?>" <?php post_class(array('feature', 'feature__sidebar')); ?>>
-                                    <h3 class="feature_popularTitle feature_popularTitle__sidebar feature_popularTitle__rd">3rd.TIPS</h3>
-                                    <div class="Thumbnail Thumbnail__sidebar">
-                                        <?php the_post_thumbnail('post_thumbnails'); ?> 
-                                    </div>
-                                    <h3 class="feature_text feature_text__sidebar"><?php the_title(); ?></h3>
-                                    <div class="feature_text__small feature_text__small__sidebar">
-                                        <p><?php echo get_the_date(); ?></p>
-                                        <div class="feature_textAcount feature_textAcount__sidebar"> 
-                                            <img class="feature_textIcon feature_textIcon__sidebar" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png">
-                                            <p><?php echo get_the_author(); ?></p>
-                                        </div>
-                                    </div>
-                                </a>
-                            <?php else: ?>
-                                <a href="<?php the_permalink(); ?>" <?php post_class(array('feature', 'feature__sidebar')); ?>>
-                                    <h3 class="feature_popularTitle feature_popularTitle__sidebar"><?php echo $count;?>th.TIPS</h3>
-                                    <div class="Thumbnail Thumbnail__sidebar">
-                                        <?php the_post_thumbnail('post_thumbnails'); ?> 
-                                    </div>
-                                    <h3 class="feature_text feature_text__sidebar"><?php the_title(); ?></h3>
-                                    <div class="feature_text__small feature_text__small__sidebar">
-                                        <p><?php echo get_the_date(); ?></p>
-                                        <div class="feature_textAcount feature_textAcount__sidebar"> 
-                                            <img class="feature_textIcon feature_textIcon__sidebar" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png">
-                                            <p><?php echo get_the_author(); ?></p>
-                                        </div>
-                                    </div>
-                                </a>                        
+            $popular_posts = new WP_Query($args);
+            $count         = 1;
+
+            if ($popular_posts->have_posts()) :
+                while ($popular_posts->have_posts()) :
+                    $popular_posts->the_post();
+
+                    $popular_title_classes = array('feature_popularTitle', 'feature_popularTitle__sidebar');
+                    $popular_label         = $count . 'th.TIPS';
+
+                    if (1 === $count) {
+                        $popular_title_classes[] = 'feature_popularTitle__st';
+                        $popular_label           = '1st.TIPS';
+                    } elseif (2 === $count) {
+                        $popular_title_classes[] = 'feature_popularTitle__nd';
+                        $popular_label           = '2nd.TIPS';
+                    } elseif (3 === $count) {
+                        $popular_title_classes[] = 'feature_popularTitle__rd';
+                        $popular_label           = '3rd.TIPS';
+                    }
+                    ?>
+                    <a href="<?php echo esc_url(get_permalink()); ?>" class="<?php echo esc_attr(implode(' ', get_post_class(array('feature', 'feature__sidebar')))); ?>">
+                        <h3 class="<?php echo esc_attr(implode(' ', $popular_title_classes)); ?>"><?php echo esc_html($popular_label); ?></h3>
+                        <div class="Thumbnail Thumbnail__sidebar">
+                            <?php if (has_post_thumbnail()) : ?>
+                                <?php the_post_thumbnail('post_thumbnails'); ?>
+                            <?php else : ?>
+                                <img src="<?php echo esc_url(get_template_directory_uri() . '/img/no-image.png'); ?>" alt="<?php echo esc_attr(get_the_title()); ?>">
                             <?php endif; ?>
-                            <?php $count++;?>
-                        <?php endwhile; ?>
-                        <?php wp_reset_postdata(); ?> <!-- WP_Query のデータをリセット -->
-                    <?php endif; ?>
-                </div>  
-                <div class="advertisement">
-                    <a href="https://x.com/nanzan_gakuson" class="advertisement_content"><img src="<?php echo get_template_directory_uri(); ?>/poster/gakuson.png" class="advertisement_contentImg"></a>
-                    <a href="https://www.instagram.com/activate_nrl/" class="advertisement_content"><img src="<?php echo get_template_directory_uri(); ?>/poster/nrl.png" class="advertisement_contentImg"></a>
-                </div>
+                        </div>
+                        <h3 class="feature_text feature_text__sidebar"><?php the_title(); ?></h3>
+                        <div class="feature_text__small feature_text__small__sidebar">
+                            <p><?php echo esc_html(get_the_date()); ?></p>
+                            <div class="feature_textAcount feature_textAcount__sidebar">
+                                <img class="feature_textIcon feature_textIcon__sidebar" src="<?php echo esc_url(get_template_directory_uri() . '/img/GakusonLogo.png'); ?>" alt="">
+                                <p><?php echo esc_html(get_the_author()); ?></p>
+                            </div>
+                        </div>
+                    </a>
+                    <?php
+                    $count++;
+                endwhile;
+                wp_reset_postdata();
+            endif;
+            ?>
+        </div>
+    </section>
+
+    <section class="sidebarSection sidebarSection--links">
+        <?php
+        echo gakuson_get_section_title_markup(
+            '公式リンク',
+            'icon/watchIcon.png'
+        );
+        ?>
+        <div class="advertisement">
+            <a href="<?php echo esc_url('https://x.com/nanzan_gakuson'); ?>" class="advertisement_content">
+                <img src="<?php echo esc_url(get_template_directory_uri() . '/poster/gakuson.png'); ?>" class="advertisement_contentImg" alt="がくそん公式Xへのリンク">
+            </a>
+            <a href="<?php echo esc_url('https://www.instagram.com/activate_nrl/'); ?>" class="advertisement_content">
+                <img src="<?php echo esc_url(get_template_directory_uri() . '/poster/nrl.png'); ?>" class="advertisement_contentImg" alt="NRL公式Instagramへのリンク">
+            </a>
+        </div>
+    </section>
 </aside>

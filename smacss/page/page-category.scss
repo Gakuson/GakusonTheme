@@ -61,38 +61,40 @@ $breakpoints: (
 .feature-wrapper{
     grid-template-columns: 1fr 1fr;
 }
-.article_title{
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 2rem;
-    padding: 24px 40px;
+.archivePage_intro{
+    margin: 0 0 36px;
+    padding: 24px 28px;
     background-color: white;
-    border-left: 29px solid #BDE7FF;
-    margin-bottom: 60px;
+    border-radius: 16px;
     box-shadow: 0 5px 3px gray;
+    line-height: 1.8;
 
     @include media-sp{
-        font-size: 1.5rem;
-        padding: 18px 20px;
-        border-left: 22px solid #BDE7FF;
-        box-shadow: 0 4px 2px gray;
+        margin-bottom: 28px;
+        padding: 18px 16px;
+        border-radius: 12px;
+    }
+
+    p:last-child{
+        margin-bottom: 0;
     }
 }
 
 .search_resultsCount{
-    margin: -28px 0 36px;
+    margin: 0 0 36px;
     font-size: 1.05rem;
     font-weight: 700;
     color: #43474A;
 
     @include media-sp{
-        margin: -36px 0 28px;
+        margin-bottom: 28px;
         font-size: 1rem;
     }
 }
 
 .search_resultsSummary,
-.search_resultsEmpty{
+.search_resultsEmpty,
+.archivePage_empty{
     background-color: white;
     border-radius: 16px;
     box-shadow: 0 5px 3px gray;
@@ -151,11 +153,13 @@ $breakpoints: (
     line-height: 1.7;
 }
 
-.search_resultsEmpty{
+.search_resultsEmpty,
+.archivePage_empty{
     text-align: center;
 }
 
-.search_resultsEmptyText{
+.search_resultsEmptyText,
+.archivePage_emptyText{
     font-size: 1.2rem;
     font-weight: 700;
     margin-bottom: 12px;
@@ -166,6 +170,19 @@ $breakpoints: (
     line-height: 1.7;
 }
 
+.search_resultsRefine{
+    .gakuson-search-form--default{
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .header_searchActions{
+        justify-content: flex-start;
+    }
+}
+
+.archivePagination,
 .search_resultsPagination{
     margin-top: 40px;
 

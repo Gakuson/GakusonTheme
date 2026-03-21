@@ -4,16 +4,16 @@ get_header();
 global $wp_query;
 
 $current_keyword       = get_search_query();
-$current_category_slug = (string) get_query_var('category_name');
-$current_tag_slug      = (string) get_query_var('tag');
+$current_category_slug = isset($_GET['category_name']) ? sanitize_title(wp_unslash($_GET['category_name'])) : (string) get_query_var('category_name');
+$current_tag_slug      = isset($_GET['tag']) ? sanitize_title(wp_unslash($_GET['tag'])) : (string) get_query_var('tag');
 
-if ( in_array( $current_tag_slug, gakuson_get_internal_only_tag_slugs(), true ) ) {
+if (in_array($current_tag_slug, gakuson_get_internal_only_tag_slugs(), true)) {
     $current_tag_slug = '';
 }
 
-$current_category      = '' !== $current_category_slug ? get_category_by_slug($current_category_slug) : null;
-$current_tag           = '' !== $current_tag_slug ? get_term_by('slug', $current_tag_slug, 'post_tag') : null;
-$active_filters        = array();
+$current_category = '' !== $current_category_slug ? get_category_by_slug($current_category_slug) : null;
+$current_tag      = '' !== $current_tag_slug ? get_term_by('slug', $current_tag_slug, 'post_tag') : null;
+$active_filters   = array();
 
 if ('' !== $current_keyword) {
     $active_filters[] = array(
@@ -45,8 +45,17 @@ if ($current_tag instanceof WP_Term) {
     </div>
     <div class="l-mainContent">
         <div class="l-mainBody">
-            <article class="l-article search_results">
-                <h1 class="article_title">検索結果</h1>
+            <article class="l-article archivePage archivePage--search">
+                <?php
+                echo gakuson_get_section_title_markup(
+                    '検索結果',
+                    'icon/searchIcon.png',
+                    array(
+                        'heading_tag' => 'h1',
+                    )
+                );
+                ?>
+
                 <p class="search_resultsCount">
                     <?php echo esc_html(number_format_i18n((int) $wp_query->found_posts)); ?>件の記事が見つかりました
                 </p>
@@ -67,22 +76,15 @@ if ($current_tag instanceof WP_Term) {
                     <?php endif; ?>
                 </section>
 
+                <section class="search_resultsSummary search_resultsRefine" aria-labelledby="search-refine-title">
+                    <h2 class="search_resultsSectionTitle" id="search-refine-title">条件を変えて検索</h2>
+                    <?php get_search_form(); ?>
+                </section>
+
                 <?php if (have_posts()) : ?>
-                    <div class="feature-wrapper">
+                    <div class="article_content article_content--archive">
                         <?php while (have_posts()) : the_post(); ?>
-                            <a href="<?php the_permalink(); ?>" <?php post_class('feature'); ?>>
-                                <div class="Thumbnail">
-                                    <?php the_post_thumbnail('post_thumbnails'); ?>
-                                </div>
-                                <h2 class="feature_text"><?php the_title(); ?></h2>
-                                <div class="feature_text__small">
-                                    <p><?php echo esc_html(get_the_date()); ?></p>
-                                    <div class="feature_textAcount">
-                                        <img class="feature_textIcon" src="<?php echo esc_url(get_template_directory_uri() . '/img/GakusonLogo.png'); ?>" alt="">
-                                        <p><?php echo esc_html(get_the_author()); ?></p>
-                                    </div>
-                                </div>
-                            </a>
+                            <?php echo gakuson_get_article_card_markup(get_the_ID(), array('title_tag' => 'h2')); ?>
                         <?php endwhile; ?>
                     </div>
                 <?php else : ?>
@@ -93,7 +95,7 @@ if ($current_tag instanceof WP_Term) {
                 <?php endif; ?>
 
                 <?php if ($wp_query->max_num_pages > 1) : ?>
-                    <div class="search_resultsPagination">
+                    <div class="archivePagination">
                         <?php
                         the_posts_pagination(
                             array(
@@ -109,32 +111,7 @@ if ($current_tag instanceof WP_Term) {
             </article>
             <?php get_sidebar(); ?>
         </div>
-        <section class="l-Hashtag">
-            <div class="Hashtag_content">
-                <div class="Hashtag_title">
-                    <img class="Hashtag_titleIcon" src="<?php echo esc_url(get_template_directory_uri() . '/icon/線画のフォルダアイコン 2.png'); ?>" alt="">
-                    <h2 class="Hashtag_titleText">#ハッシュタグ一覧</h2>
-                </div>
-                <div class="wp_tag_cloud-wrapper">
-                    <?php
-                    $tag_cloud_markup = wp_tag_cloud(
-                        gakuson_get_tag_cloud_args(
-                            array(
-                                'echo' => false,
-                            )
-                        )
-                    );
-
-                    echo gakuson_format_tag_cloud_markup(
-                        $tag_cloud_markup,
-                        array(
-                            'item_class' => 'Hashtag_text',
-                        )
-                    );
-                    ?>
-                </div>
-            </div>
-        </section>
+        <?php echo gakuson_get_tag_directory_markup(array('section_class' => 'l-tag l-tag--secondary')); ?>
     </div>
 </main>
 <?php get_footer(); ?>
