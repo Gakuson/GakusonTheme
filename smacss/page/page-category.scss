@@ -78,3 +78,121 @@ $breakpoints: (
         box-shadow: 0 4px 2px gray;
     }
 }
+
+.search_resultsCount{
+    margin: -28px 0 36px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #43474A;
+
+    @include media-sp{
+        margin: -36px 0 28px;
+        font-size: 1rem;
+    }
+}
+
+.search_resultsSummary,
+.search_resultsEmpty{
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 5px 3px gray;
+    margin-bottom: 32px;
+    padding: 28px 32px;
+
+    @include media-sp{
+        border-radius: 12px;
+        margin-bottom: 24px;
+        padding: 20px 18px;
+    }
+}
+
+.search_resultsSectionTitle{
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+
+    @include media-sp{
+        font-size: 1.15rem;
+        margin-bottom: 14px;
+    }
+}
+
+.search_resultsConditions{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+}
+
+.search_resultsCondition{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    background-color: #EBF0FF;
+    border-radius: 999px;
+    padding: 10px 16px;
+}
+
+.search_resultsConditionLabel{
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #617BFA;
+}
+
+.search_resultsConditionValue{
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.search_resultsConditionFallback{
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.search_resultsEmpty{
+    text-align: center;
+}
+
+.search_resultsEmptyText{
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.search_resultsEmptyNote{
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.search_resultsPagination{
+    margin-top: 40px;
+
+    .pagination{
+        .nav-links{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .page-numbers{
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 44px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background-color: white;
+            box-shadow: 0 0 4px rgba(0,0,0,0.25);
+            font-weight: 700;
+        }
+
+        .page-numbers.current{
+            background-color: #617BFA;
+            color: white;
+        }
+    }
+}

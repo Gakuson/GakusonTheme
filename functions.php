@@ -56,7 +56,7 @@ function gakuson_enqueue_assets() {
         wp_enqueue_style('gakuson-style-pc', $uri . '/smacss/main/main-fixed.css', array('ress'), '1.0.1');
     }elseif (is_single()) {
         wp_enqueue_style('gakuson-style-pc', $uri . '/smacss/main/main-post.css', array('ress'), '1.0.1');
-    }elseif(is_category() || is_tag()) {
+    }elseif(is_search() || is_category() || is_tag()) {
         wp_enqueue_style('gakuson-style-pc', $uri . '/smacss/main/main-category-tag.css', array('ress'), '1.0.1');
     }elseif (is_page('newindex')) {
         wp_enqueue_style('gakuson-style-pc', $uri . '/smacss/main/main-category-tag.css', array('ress'), '1.0.1');
@@ -69,6 +69,38 @@ function gakuson_enqueue_assets() {
     wp_enqueue_script('gakuson-js-animation', $uri . '/js/script.js', array('jquery'), '1.0.0', true);
 }
 add_action('wp_enqueue_scripts', 'gakuson_enqueue_assets');
+
+/**
+ * Keep search results on posts while honoring the header modal filters.
+ *
+ * @param WP_Query $query Search query instance.
+ * @return void
+ */
+function gakuson_customize_search_query($query) {
+    if (is_admin() || ! $query->is_main_query() || ! $query->is_search()) {
+        return;
+    }
+
+    $query->set('post_type', 'post');
+    $query->set('ignore_sticky_posts', true);
+
+    $category_slug = isset($_GET['category_name']) ? sanitize_title(wp_unslash($_GET['category_name'])) : '';
+    $tag_slug      = isset($_GET['tag']) ? sanitize_title(wp_unslash($_GET['tag'])) : '';
+
+    // Keep internal-only control tags out of the public search UI and query state.
+    if (in_array($tag_slug, gakuson_get_internal_only_tag_slugs(), true)) {
+        $tag_slug = '';
+    }
+
+    if ('' !== $category_slug) {
+        $query->set('category_name', $category_slug);
+    }
+
+    if ('' !== $tag_slug) {
+        $query->set('tag', $tag_slug);
+    }
+}
+add_action('pre_get_posts', 'gakuson_customize_search_query');
 
 
 /* 人気記事一覧

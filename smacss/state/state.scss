@@ -4,6 +4,9 @@ a:hover{
     transform: scale(1.2);
     transition: transform 0.3s;
 }
+.header_logo:hover{
+    transform: none;
+}
 .slideInput__is-open{
     opacity: 1;
     visibility: visible;
