@@ -519,58 +519,177 @@ $breakpoints: (
 
 //フッター部分--------------------
 .footer_title{
-    font-size: 3.5dvw;
+    font-size: clamp(2.1rem, 3.5vw, 3.4rem);
     color: white;
     text-align: center;
-    padding: 40px;
+    letter-spacing: 0.08em;
+    padding: 36px 20px 24px;
 
     @include media-sp{
-        font-size: 9dvw;
-        padding: 20px;
+        font-size: clamp(1.55rem, 7vw, 2rem);
+        padding: 16px 16px 14px;
+    }
+}
+.footer_inner{
+    width: min(100%, 1120px);
+    margin: 0 auto;
+    padding: 0 24px;
+
+    @include media-sp{
+        padding: 0 16px;
+    }
+}
+.footer_main{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 22px;
+
+    @include media-sp{
+        flex-direction: column;
+        gap: 16px;
+        padding-bottom: 16px;
+    }
+}
+.footer_nav{
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.footer_menu{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    margin: 0;
+    padding: 0;
+
+    @include media-sp{
+        justify-content: center;
+        gap: 8px 18px;
+    }
+}
+.footer_menu .menu-item{
+    margin: 0;
+}
+.footer_menu a{
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.98rem;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+
+    @include media-sp{
+        font-size: 0.88rem;
     }
 }
 .footer_list{
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
-    margin-bottom: 20px;
-}
-.footer_item{
-    width: 4dvw;
-    aspect-ratio: 1/1;
-    margin-left: 2dvw;
+    flex-wrap: nowrap;
+    gap: clamp(10px, 1.6vw, 18px);
+    margin: 0;
+    padding: 0;
 
     @include media-sp{
-        width: 10dvw;
+        justify-content: center;
     }
 }
-.footer_item__nantopi{
-    width: 7.78vw;
-    aspect-ratio: 7/5;
-    margin-left: 1dvw;
+.footer_item{
+    width: clamp(58px, 4.8vw, 72px);
+    aspect-ratio: 1/1;
 
     @include media-sp{
-        width: 19dvw;
+        width: 52px;
+    }
+}
+.footer_item__gakuson{
+    width: clamp(60px, 5vw, 74px);
+
+    @include media-sp{
+        width: 56px;
     }
 }
 .footer_itemLink{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     height: 100%;
-    aspect-ratio: 1/1;
+    border-radius: 50%;
+    padding: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+
+    @include media-sp{
+        padding: 12px;
+    }
 }
-.footer_itemLink__nantopi{
-    aspect-ratio: 7/5;
+.footer_itemLink::after{
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.footer_itemLink__gakuson{
+    padding: 10px;
+
+    @include media-sp{
+        padding: 8px;
+    }
 }
 .footer_itemIcon{
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 30px;
+    max-height: 30px;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.25));
+
+    @include media-sp{
+        max-width: 24px;
+        max-height: 24px;
+    }
+}
+.footer_itemIcon__gakuson{
     width: 100%;
     height: 100%;
-    aspect-ratio: 1/1;
-    object-fit: cover;
+    max-width: none;
+    max-height: none;
+    object-fit: contain;
+    object-position: center;
+    transform: none;
+
+    @include media-sp{
+        width: 100%;
+        height: 100%;
+    }
 }
-.footer_itemIcon__nantopi{
-    aspect-ratio: 7/5;
+.footer_copyRight{
+    padding: 0 0 24px;
+    text-align: center;
+
+    @include media-sp{
+        padding-bottom: 20px;
+    }
 }
 .footer_copyRight small{
-    font-size: 10px;
-    color: white;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.82);
+    letter-spacing: 0.08em;
+
+    @include media-sp{
+        font-size: 10px;
+    }
 }
