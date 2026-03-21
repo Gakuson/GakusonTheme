@@ -13,6 +13,113 @@ function gakuson_get_featured_tag_slug() {
 }
 
 /**
+ * Keep internal processing tags out of public UI by default.
+ *
+ * @return string[]
+ */
+function gakuson_get_internal_only_tag_slugs() {
+    $slugs = apply_filters(
+        'gakuson_internal_only_tag_slugs',
+        array(gakuson_get_featured_tag_slug())
+    );
+
+    $slugs = array_map('sanitize_title', (array) $slugs);
+    $slugs = array_values(array_unique(array_filter($slugs)));
+
+    return $slugs;
+}
+
+/**
+ * Resolve internal-only tag IDs once per request for cloud/search exclusions.
+ *
+ * @return int[]
+ */
+function gakuson_get_internal_only_tag_ids() {
+    static $tag_ids = null;
+
+    if (null !== $tag_ids) {
+        return $tag_ids;
+    }
+
+    $tag_ids = array();
+
+    foreach (gakuson_get_internal_only_tag_slugs() as $slug) {
+        $term = get_term_by('slug', $slug, 'post_tag');
+
+        if ($term instanceof WP_Term) {
+            $tag_ids[] = (int) $term->term_id;
+        }
+    }
+
+    $tag_ids = array_values(array_unique(array_filter($tag_ids)));
+
+    return $tag_ids;
+}
+
+/**
+ * Reuse the same public-facing tag list anywhere the theme renders post tags.
+ *
+ * @param WP_Post|int|null $post Optional post object or ID.
+ * @param array            $args Optional filters such as excluded slugs.
+ * @return WP_Term[]
+ */
+function gakuson_get_public_post_tags($post = null, $args = array()) {
+    $post = get_post($post);
+
+    if (! $post instanceof WP_Post) {
+        return array();
+    }
+
+    $args = wp_parse_args(
+        $args,
+        array(
+            'exclude_slugs' => gakuson_get_internal_only_tag_slugs(),
+        )
+    );
+
+    $tags = get_the_tags($post->ID);
+
+    if (empty($tags) || is_wp_error($tags)) {
+        return array();
+    }
+
+    $excluded_slugs = array_map('sanitize_title', (array) $args['exclude_slugs']);
+
+    if (empty($excluded_slugs)) {
+        return array_values($tags);
+    }
+
+    $public_tags = array();
+
+    foreach ($tags as $tag) {
+        if (in_array($tag->slug, $excluded_slugs, true)) {
+            continue;
+        }
+
+        $public_tags[] = $tag;
+    }
+
+    return array_values($public_tags);
+}
+
+/**
+ * Give related-post queries the same public tag set used by visible UI.
+ *
+ * @param WP_Post|int|null $post Optional post object or ID.
+ * @param array            $args Optional filters such as excluded slugs.
+ * @return int[]
+ */
+function gakuson_get_public_post_tag_ids($post = null, $args = array()) {
+    $tags = gakuson_get_public_post_tags($post, $args);
+
+    if (empty($tags)) {
+        return array();
+    }
+
+    return array_values(array_map('intval', wp_list_pluck($tags, 'term_id')));
+}
+
+/**
  * Keep the featured post limit aligned across templates and endpoint payloads.
  *
  * @return int
@@ -115,21 +222,28 @@ function gakuson_get_post_primary_category_name($post = null) {
  * Flatten tag objects to plain text for templates and JSON payloads.
  *
  * @param WP_Post|int|null $post Optional post object or ID.
+ * @param array            $args Optional filters such as excluded slugs.
  * @return string[]
  */
-function gakuson_get_post_tag_names($post = null) {
+function gakuson_get_post_tag_names($post = null, $args = array()) {
     $post = get_post($post);
 
     if (! $post instanceof WP_Post) {
         return array();
     }
 
-    $tags = get_the_tags($post->ID);
+    $args = wp_parse_args(
+        $args,
+        array(
+            'exclude_slugs' => array(),
+        )
+    );
 
-    if (empty($tags) || is_wp_error($tags)) {
-        return array();
+    if (empty($args['exclude_slugs'])) {
+        $args['exclude_slugs'] = gakuson_get_internal_only_tag_slugs();
     }
 
+    $tags      = gakuson_get_public_post_tags($post, $args);
     $tag_names = array();
 
     foreach ($tags as $tag) {
@@ -137,6 +251,53 @@ function gakuson_get_post_tag_names($post = null) {
     }
 
     return array_values(array_filter($tag_names));
+}
+
+/**
+ * Render public tag links without exposing internal-only processing tags.
+ *
+ * @param WP_Post|int|null $post Optional post object or ID.
+ * @param array            $args Optional separator or excluded slugs.
+ * @return string
+ */
+function gakuson_get_post_tag_links_markup($post = null, $args = array()) {
+    $post = get_post($post);
+
+    if (! $post instanceof WP_Post) {
+        return '';
+    }
+
+    $args = wp_parse_args(
+        $args,
+        array(
+            'separator'     => ' ',
+            'exclude_slugs' => gakuson_get_internal_only_tag_slugs(),
+        )
+    );
+
+    $tags = gakuson_get_public_post_tags($post, $args);
+
+    if (empty($tags)) {
+        return '';
+    }
+
+    $links = array();
+
+    foreach ($tags as $tag) {
+        $tag_link = get_term_link($tag);
+
+        if (is_wp_error($tag_link)) {
+            continue;
+        }
+
+        $links[] = sprintf(
+            '<a href="%1$s" rel="tag">%2$s</a>',
+            esc_url($tag_link),
+            esc_html($tag->name)
+        );
+    }
+
+    return implode((string) $args['separator'], $links);
 }
 
 /**
@@ -329,6 +490,14 @@ function gakuson_get_carousel_response($force_refresh = false) {
  * @return array
  */
 function gakuson_get_tag_cloud_args($overrides = array()) {
+    $overrides   = is_array($overrides) ? $overrides : array();
+    $exclude_ids = gakuson_get_internal_only_tag_ids();
+
+    if (isset($overrides['exclude'])) {
+        $exclude_ids = array_merge($exclude_ids, wp_parse_id_list($overrides['exclude']));
+        unset($overrides['exclude']);
+    }
+
     $defaults = array(
         'format'   => 'list',
         'smallest' => 1,
@@ -338,6 +507,10 @@ function gakuson_get_tag_cloud_args($overrides = array()) {
         'order'    => 'DESC',
         'number'   => 0,
     );
+
+    if (! empty($exclude_ids)) {
+        $defaults['exclude'] = array_values(array_unique(array_filter($exclude_ids)));
+    }
 
     return wp_parse_args($overrides, $defaults);
 }
