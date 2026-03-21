@@ -468,7 +468,7 @@ $breakpoints: (
 .postReaction_counter{
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     min-height: 46px;
     padding: 9px 15px;
     border-radius: 999px;
@@ -478,7 +478,7 @@ $breakpoints: (
     color: #1F2940;
 
     @include media-sp{
-        gap: 8px;
+        gap: 7px;
         min-height: 42px;
         padding: 8px 12px;
     }
@@ -498,39 +498,19 @@ $breakpoints: (
         height: 18px;
     }
 }
-.postReaction_counterBoost{
-    font-size: 0.92rem;
-    font-weight: 800;
-    line-height: 1;
-    color: #E56B75;
-
-    @include media-sp{
-        font-size: 0.86rem;
-    }
-}
-.postReaction_counterDivider{
-    width: 1px;
-    height: 20px;
-    background-color: rgba(17, 29, 79, 0.12);
-}
-.postReaction_counterTotal{
-    display: inline-flex;
-    align-items: baseline;
-    gap: 4px;
-    font-weight: 700;
-    color: #43474A;
-}
 .postReaction_counterTotalLabel,
 .postReaction_counterTotalSuffix{
-    font-size: 0.7rem;
+    font-size: 0.72rem;
+    font-weight: 700;
     color: #667085;
 }
 .postReaction_counterTotalValue{
-    font-size: 0.9rem;
+    font-size: 0.94rem;
+    font-weight: 800;
     color: #1F2940;
 
     @include media-sp{
-        font-size: 0.84rem;
+        font-size: 0.88rem;
     }
 }
 .postReaction_status{

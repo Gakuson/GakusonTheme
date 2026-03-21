@@ -535,27 +535,87 @@ $breakpoints: (
     }
 }
 .article_num{
-    font-size: 3.5dvw;
-    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-width: clamp(46px, 5.2vw, 62px);
+    min-height: clamp(30px, 3.4vw, 38px);
+    padding: 0 10px;
+    font-size: clamp(0.86rem, 0.76rem + 0.24vw, 1rem);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #1F2940;
     text-align: center;
-    border-radius: 500px;
-    width: 6dvw;
-    aspect-ratio: 1/1;
-    background-color: #617BFA;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-    margin-right: 1.7dvw;
+    border-radius: 999px;
+    border: 1px solid rgba(17, 29, 79, 0.16);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(237, 242, 255, 0.96) 100%);
+    box-shadow: 0 8px 16px rgba(17, 29, 79, 0.12);
+    margin-right: clamp(10px, 1.2vw, 16px);
 
     @include media-sp{
         position: absolute;
-        top: -20px;
-        font-size: 26px;
-        width: 45px;
+        top: -14px;
+        left: 12px;
+        min-width: 48px;
+        min-height: 30px;
+        font-size: 0.86rem;
+        padding: 0 10px;
         margin-bottom: 10px;
     }
 }
+.article_numIcon,
+.article_numPrefix,
+.article_numValue{
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+}
+.article_numPrefix{
+    margin-right: 2px;
+    font-size: 0.78em;
+    font-weight: 700;
+    opacity: 0.65;
+}
+.article_numIcon{
+    margin-right: 4px;
+}
+.article_numValue{
+    font-weight: 800;
+}
+.articleCrownIcon{
+    width: 16px;
+    height: 16px;
+    filter: drop-shadow(0 2px 4px rgba(17, 29, 79, 0.14));
+
+    @include media-sp{
+        width: 15px;
+        height: 15px;
+    }
+}
 .article_num__1st{
-    color: black;
-    background-color: #F9C54A;
+    color: #5E4500;
+    border-color: rgba(201, 149, 0, 0.38);
+    background: linear-gradient(135deg, #FFE9A2 0%, #F9C54A 54%, #EAAF2D 100%);
+}
+.article_num__2nd{
+    color: #33415C;
+    border-color: rgba(120, 133, 166, 0.34);
+    background: linear-gradient(135deg, #F6F8FF 0%, #E2E8F7 56%, #CBD5E8 100%);
+}
+.article_num__3rd{
+    color: #5D3A26;
+    border-color: rgba(146, 103, 77, 0.3);
+    background: linear-gradient(135deg, #F8E4D6 0%, #E8C3A6 56%, #D7AA87 100%);
+}
+.articleCrownIcon--gold{
+    color: #8A5A00;
+}
+.articleCrownIcon--silver{
+    color: #47536F;
+}
+.articleCrownIcon--bronze{
+    color: #7A4A31;
 }
 .article_emptyMessage{
     padding: 26px 20px;

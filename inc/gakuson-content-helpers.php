@@ -1470,6 +1470,36 @@ function gakuson_get_heart_icon_markup($args = array()) {
 }
 
 /**
+ * Render compact crown icons for the top ranks so ranking badges feel less mechanical.
+ *
+ * @param int $ranking Ranking position.
+ * @return string
+ */
+function gakuson_get_ranking_crown_icon_markup($ranking) {
+    $ranking = (int) $ranking;
+
+    if ($ranking < 1 || $ranking > 3) {
+        return '';
+    }
+
+    $variant_classes = array(
+        1 => 'articleCrownIcon--gold',
+        2 => 'articleCrownIcon--silver',
+        3 => 'articleCrownIcon--bronze',
+    );
+
+    ob_start();
+    ?>
+    <svg class="articleCrownIcon <?php echo esc_attr($variant_classes[$ranking]); ?>" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path fill="currentColor" d="M4 7.5c.42 0 .8.19 1.05.48l2.77 3.36 3.36-4.8c.18-.25.47-.4.82-.4.34 0 .64.15.81.4l3.37 4.8 2.77-3.36c.25-.29.62-.48 1.04-.48.75 0 1.35.61 1.35 1.35 0 .15-.03.3-.08.45L19.2 17.5c-.15.39-.53.65-.95.65H5.75c-.43 0-.81-.26-.96-.65L2.73 9.3a1.3 1.3 0 0 1-.08-.45c0-.74.6-1.35 1.35-1.35Z"/>
+        <rect x="5.2" y="18.35" width="13.6" height="2.1" rx="1.05" fill="currentColor"/>
+    </svg>
+    <?php
+
+    return trim(ob_get_clean());
+}
+
+/**
  * Keep compact like counts consistent across cards and the single-page reaction box.
  *
  * @param WP_Post|int|null $post Optional post object or ID.
@@ -1527,7 +1557,7 @@ function gakuson_get_like_panel_markup($post = null) {
     $like_count      = gakuson_get_post_like_count($post);
     $button_disabled = $remaining_likes <= 0;
     $counter_label   = sprintf(
-        'この端末では最大10回いいねできます。現在の総いいね数は%s回です。',
+        'この端末では最大10回いいねできます。現在の合計いいね数は%s回です。',
         number_format_i18n($like_count)
     );
 
@@ -1559,18 +1589,14 @@ function gakuson_get_like_panel_markup($post = null) {
                 </button>
             </div>
             <div class="postReaction_counter" aria-label="<?php echo esc_attr($counter_label); ?>">
+                <span class="postReaction_counterTotalLabel">合計</span>
                 <span class="postReaction_counterIcon" aria-hidden="true">
                     <?php echo gakuson_get_heart_icon_markup(array('class' => 'postHeartIcon--stats')); ?>
                 </span>
-                <span class="postReaction_counterBoost" aria-hidden="true">+10</span>
-                <span class="postReaction_counterDivider" aria-hidden="true"></span>
-                <span class="postReaction_counterTotal">
-                    <span class="postReaction_counterTotalLabel">総</span>
-                    <span class="postReaction_counterTotalValue" data-post-like-total data-post-id="<?php echo esc_attr((string) $post->ID); ?>">
-                        <?php echo esc_html(number_format_i18n($like_count)); ?>
-                    </span>
-                    <span class="postReaction_counterTotalSuffix">回</span>
+                <span class="postReaction_counterTotalValue" data-post-like-total data-post-id="<?php echo esc_attr((string) $post->ID); ?>">
+                    <?php echo esc_html(number_format_i18n($like_count)); ?>
                 </span>
+                <span class="postReaction_counterTotalSuffix">回</span>
             </div>
         </div>
         <p class="postReaction_status" data-like-status aria-live="polite"></p>
@@ -1638,13 +1664,29 @@ function gakuson_get_article_card_markup($post = null, $args = array()) {
             esc_url(get_template_directory_uri() . '/img/no-image.png'),
             esc_attr($title)
         );
+    $ranking_badge_classes = array('article_num');
+
+    if (1 === $ranking) {
+        $ranking_badge_classes[] = 'article_num__1st';
+    } elseif (2 === $ranking) {
+        $ranking_badge_classes[] = 'article_num__2nd';
+    } elseif (3 === $ranking) {
+        $ranking_badge_classes[] = 'article_num__3rd';
+    }
 
     ob_start();
     ?>
     <a href="<?php echo esc_url($permalink); ?>" class="<?php echo esc_attr(implode(' ', get_post_class($card_classes, $post->ID))); ?>"<?php echo '' !== $attribute_markup ? ' ' . $attribute_markup : ''; ?>>
         <?php if ($ranking > 0) : ?>
-            <p class="article_num<?php echo 1 === $ranking ? ' article_num__1st' : ''; ?>">
-                <?php echo esc_html((string) $ranking); ?>
+            <p class="<?php echo esc_attr(implode(' ', $ranking_badge_classes)); ?>">
+                <?php if ($ranking <= 3) : ?>
+                    <span class="article_numIcon" aria-hidden="true">
+                        <?php echo gakuson_get_ranking_crown_icon_markup($ranking); ?>
+                    </span>
+                <?php else : ?>
+                    <span class="article_numPrefix" aria-hidden="true">#</span>
+                <?php endif; ?>
+                <span class="article_numValue"><?php echo esc_html((string) $ranking); ?></span>
             </p>
         <?php endif; ?>
         <div class="article_main">
