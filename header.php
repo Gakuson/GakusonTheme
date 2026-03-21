@@ -57,7 +57,13 @@
                             aria-controls="header-search-panel"
                             aria-expanded="false"
                         >
-                            <img class="header_searchButtonIcon" src="<?php echo $gakuson_search_icon_url; ?>" alt="">
+                            <span class="header_searchButtonInner">
+                                <svg class="header_searchButtonIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <circle cx="11" cy="11" r="6.5"></circle>
+                                    <path d="M16 16L21 21"></path>
+                                </svg>
+                                <span class="header_searchButtonText">検索</span>
+                            </span>
                         </button>
                         <button
                             class="headerMain_humburgerContainer"

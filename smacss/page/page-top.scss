@@ -19,7 +19,7 @@ $breakpoints: (
 .featuredCarousel{
     --featured-carousel-max-width: 1440px;
     --featured-carousel-gap: 24px;
-    --featured-carousel-radius: 28px;
+    --featured-carousel-radius: 26px;
     width: 100%;
     margin: 24px auto 0;
     padding: 0 0 14px;
@@ -27,12 +27,12 @@ $breakpoints: (
     @include media-tablet{
         --featured-carousel-max-width: 1200px;
         --featured-carousel-gap: 18px;
-        --featured-carousel-radius: 24px;
+        --featured-carousel-radius: 22px;
     }
     @include media-sp{
         --featured-carousel-max-width: 100%;
         --featured-carousel-gap: 10px;
-        --featured-carousel-radius: 20px;
+        --featured-carousel-radius: 18px;
         margin-top: 18px;
         padding-bottom: 8px;
     }

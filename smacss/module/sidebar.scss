@@ -37,6 +37,18 @@ $breakpoints: (
     display: block;
     padding-bottom: 30px;
 }
+.sidebarSection{
+    padding: 24px 20px;
+    border-radius: 24px;
+    background-color: var(--gakuson-surface);
+    border: 1px solid var(--gakuson-border-soft);
+    box-shadow: var(--gakuson-shadow-soft);
+
+    @include media-sp{
+        padding: 20px 16px;
+        border-radius: 20px;
+    }
+}
 .sidebarSection + .sidebarSection{
     margin-top: 56px;
 
@@ -48,13 +60,21 @@ $breakpoints: (
     margin-bottom: 22px;
 }
 .feature__sidebar{
-    padding: 20px 10px;
-}
-.feature_text__sidebar{
-    font-size: 1.8vw;
+    padding: 16px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(17, 29, 79, 0.08);
+    box-shadow: 0 12px 26px rgba(17, 29, 79, 0.08);
 
     @include media-sp{
-        font-size: 5dvw;
+        padding: 14px 12px;
+    }
+}
+.feature_text__sidebar{
+    font-size: clamp(1rem, 0.86rem + 0.45vw, 1.22rem);
+    line-height: 1.45;
+
+    @include media-sp{
+        font-size: clamp(1rem, 4.2vw, 1.24rem);
     }
 }
 .popular_title__sidebar{
@@ -66,7 +86,8 @@ $breakpoints: (
     }
 }
 .feature_popularTitle__sidebar{
-    font-size: 2vw;
+    font-size: clamp(1.35rem, 1rem + 0.7vw, 1.8rem);
+    margin-bottom: 16px;
 
     @include media-sp{
         font-size: 1.5rem;
@@ -89,5 +110,19 @@ $breakpoints: (
     aspect-ratio: 128/ 183;
     border-radius: 16px;
     overflow: hidden;
+    border: 1px solid rgba(17, 29, 79, 0.08);
     box-shadow: 0 10px 24px rgba(17, 29, 79, 0.12);
+}
+
+a.feature.feature__sidebar:hover,
+a.feature.feature__sidebar:focus-visible{
+    transform: translateY(-4px);
+    box-shadow: var(--gakuson-shadow-hover);
+    border-color: rgba(97, 123, 250, 0.24);
+}
+
+a.advertisement_content:hover,
+a.advertisement_content:focus-visible{
+    transform: translateY(-4px);
+    box-shadow: var(--gakuson-shadow-hover);
 }

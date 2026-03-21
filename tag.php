@@ -32,6 +32,10 @@ $tag_description = tag_description();
                     </div>
                 <?php endif; ?>
 
+                <p class="archivePage_count">
+                    <?php echo esc_html(number_format_i18n((int) $wp_query->found_posts)); ?>件の記事があります
+                </p>
+
                 <?php if (have_posts()) : ?>
                     <div class="article_content article_content--archive">
                         <?php while (have_posts()) : the_post(); ?>

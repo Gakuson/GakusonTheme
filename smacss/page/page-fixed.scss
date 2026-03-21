@@ -28,12 +28,12 @@ $breakpoints: (
 
 //個別Layout--------------------------------------------------
 .l-article{
-    width: 64%;
-    margin: 100px auto 0;
+    width: min(72%, 980px);
+    margin: clamp(20px, 3vw, 32px) auto 0;
 
     @include media-sp{
         width: 88%;
-        margin-top: 50px;
+        margin-top: 16px;
     }
 }
 
@@ -42,28 +42,65 @@ $breakpoints: (
     display: block;
 }
 .backBoard_item {
-    margin-top: 20vh;
+    margin-top: 0;
 }
 .wp-block-post-title{
     width: 100%;
     box-sizing: border-box;
-    font-size: 32px;
-    padding: 24px 40px;
-    background-color: white;
-    border-left: 29px solid #BDE7FF;
-    margin-bottom: 60px;
-    box-shadow: 0 5px 3px gray;
+    font-size: clamp(2rem, 1.55rem + 1vw, 2.8rem);
+    padding: clamp(26px, 3vw, 38px);
+    background-color: var(--gakuson-surface);
+    border-left: 10px solid rgba(97, 123, 250, 0.28);
+    border-radius: 28px;
+    margin-bottom: 36px;
+    box-shadow: var(--gakuson-shadow-soft);
+    color: #1F2940;
 
     @include media-sp{
         font-size: 24px;
-        padding: 18px 20px;
-        border-left: 22px solid #BDE7FF;
-        box-shadow: 0 4px 2px gray;
+        padding: 22px 18px;
+        border-left-width: 8px;
+        border-radius: 22px;
     }
 }
 .content{
-    width: 90%;
-    margin-bottom: 55px;            
+    width: 100%;
+    margin-bottom: 30px;
+    padding: clamp(28px, 3vw, 40px);
+    border-radius: 28px;
+    border: 1px solid rgba(17, 29, 79, 0.08);
+    border-left: 8px solid rgba(97, 123, 250, 0.18);
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: var(--gakuson-shadow-soft);
+    font-size: 17px;
+    line-height: 1.9;
+    letter-spacing: 0.04em;
+    color: #384153;
+
+    @include media-sp{
+        padding: 22px 18px;
+        border-radius: 22px;
+        border-left-width: 6px;
+        font-size: 16px;
+        line-height: 1.8;
+    }
+}
+.content > *:first-child{
+    margin-top: 0;
+}
+.content > *:last-child{
+    margin-bottom: 0;
+}
+.content p a,
+.content li a,
+.content td a,
+.content figcaption a{
+    display: inline;
+
+    &:hover,
+    &:focus-visible{
+        transform: none;
+    }
 }
 
 .wantToRead_title{
