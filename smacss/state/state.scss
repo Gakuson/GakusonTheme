@@ -5,7 +5,10 @@ a:hover{
     transition: transform 0.3s;
 }
 .slideInput__is-open{
-    right: 0;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
 }
 .kensakuButton:hover{
     transform: scale(1.2);
@@ -28,11 +31,16 @@ a:focus-visible{
     border-radius: 5px;
     outline: 2px solid black;
 }
+.header_searchTrigger:focus-visible,
 .header_searchButton:focus-visible{
     border-radius: 5px;
     outline: 2px solid black;
     transform: scale(1.1);
     transition: transform 0.3s;
+}
+.header_searchClose:focus-visible{
+    border-radius: 5px;
+    outline: 2px solid black;
 }
 .headerMain_humburgerContainer:focus-visible{
     border-radius: 5px;

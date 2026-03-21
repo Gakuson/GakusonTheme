@@ -1,12 +1,124 @@
-﻿    initFeaturedCarousels();
-    initLoadMoreSections();
+jQuery(window).on('load', function () {
+    const $header = jQuery('.l-header');
+    const $mainContent = jQuery('.l-mainContent');
+    const $backBoard = jQuery('.backBoard');
+    const $emptySpacer = jQuery('.l-empty');
+    const $searchPanel = jQuery('#header-search-panel');
+    const $searchToggleButtons = jQuery('.js-header-search-toggle');
+    const $searchCloseButtons = jQuery('[data-search-close]');
+    const $menuButton = jQuery('.headerMain_humburgerContainer');
+    const $menuPanel = jQuery('.dropdown-wrapper');
+    let searchHideTimer = null;
+    let lastSearchTrigger = null;
 
+    function syncBackgroundHeight() {
+        if (!$mainContent.length || !$backBoard.length) {
+            return;
+        }
 
-    initFeaturedCarousels();
-    initLoadMoreSections();
+        $backBoard.css('height', $mainContent.outerHeight() + 'px');
+    }
 
+    function syncHeaderSpacing() {
+        if (!$header.length) {
+            return;
+        }
 
-jQuery(window).on('load', function(){
+        const headerHeight = $header.outerHeight();
+
+        if ($emptySpacer.length) {
+            $emptySpacer.css('height', headerHeight + 'px');
+        }
+
+        if ($searchPanel.length) {
+            $searchPanel.css('top', headerHeight + 10 + 'px');
+        }
+    }
+
+    function closeSearchPanel(restoreFocus) {
+        if (!$searchPanel.length) {
+            return;
+        }
+
+        if (searchHideTimer) {
+            window.clearTimeout(searchHideTimer);
+        }
+
+        $searchPanel.removeClass('slideInput__is-open').attr('aria-hidden', 'true');
+        $searchToggleButtons.attr('aria-expanded', 'false');
+
+        searchHideTimer = window.setTimeout(function () {
+            $searchPanel.prop('hidden', true);
+            searchHideTimer = null;
+        }, 300);
+
+        if (restoreFocus && lastSearchTrigger) {
+            jQuery(lastSearchTrigger).trigger('focus');
+        }
+    }
+
+    function openSearchPanel(triggerButton) {
+        if (!$searchPanel.length) {
+            return;
+        }
+
+        if (searchHideTimer) {
+            window.clearTimeout(searchHideTimer);
+            searchHideTimer = null;
+        }
+
+        lastSearchTrigger = triggerButton || null;
+        closeMenu(false);
+
+        $searchPanel.prop('hidden', false).attr('aria-hidden', 'false');
+        $searchToggleButtons.attr('aria-expanded', 'true');
+
+        window.requestAnimationFrame(function () {
+            $searchPanel.addClass('slideInput__is-open');
+        });
+
+        const $keywordField = $searchPanel.find('[name="s"]').first();
+
+        if ($keywordField.length) {
+            $keywordField.trigger('focus');
+        }
+    }
+
+    function closeMenu(restoreFocus) {
+        if (!$menuButton.length || !$menuPanel.length) {
+            return;
+        }
+
+        $menuButton.removeClass('active').attr({
+            'aria-expanded': 'false',
+            'aria-label': 'メニューを開く'
+        });
+        jQuery('.hamburgerLine__1').removeClass('hamburgerLine__1__is-active');
+        jQuery('.hamburgerLine__2').removeClass('hamburgerLine__2__is-active');
+        jQuery('.hamburgerLine__3').removeClass('hamburgerLine__3__is-active');
+        $menuPanel.stop(true, true).slideUp(200).attr('aria-hidden', 'true');
+
+        if (restoreFocus) {
+            $menuButton.trigger('focus');
+        }
+    }
+
+    function openMenu() {
+        if (!$menuButton.length || !$menuPanel.length) {
+            return;
+        }
+
+        closeSearchPanel(false);
+
+        $menuButton.addClass('active').attr({
+            'aria-expanded': 'true',
+            'aria-label': 'メニューを閉じる'
+        });
+        jQuery('.hamburgerLine__1').addClass('hamburgerLine__1__is-active');
+        jQuery('.hamburgerLine__2').addClass('hamburgerLine__2__is-active');
+        jQuery('.hamburgerLine__3').addClass('hamburgerLine__3__is-active');
+        $menuPanel.stop(true, true).slideDown(200).attr('aria-hidden', 'false');
+    }
 
     function initFeaturedCarousels() {
         jQuery('[data-featured-carousel]').each(function () {
@@ -274,89 +386,70 @@ jQuery(window).on('load', function(){
         });
     }
 
-    //背景部分の高さ調整-----------------------
-    const surHeight = jQuery('.l-mainContent').height();
-    jQuery('.backBoard').css({
-        'height': surHeight + 'px'
-    });
-
-    //l-emptyの高さ調整-----------------------
-    const headerHeight = jQuery('.l-header').height();
-    jQuery('.l-empty').css({
-        'height': headerHeight + 'px'
-    });
-
-    //.slideInputの高さ位置調整-----------------------
-    jQuery('.slideInput').css({
-        'top': headerHeight + '10' +'px'
-    });
-
-    //フォーカス・クリックによる各種変化-----------------------
+    syncBackgroundHeight();
+    syncHeaderSpacing();
     initFeaturedCarousels();
     initLoadMoreSections();
 
-    //.header_searchButtonのクリックによる.slideInputの開閉
-    jQuery('.header_searchButton').click(
-        function(){
-            jQuery('.slideInput').toggleClass('slideInput__is-open');
-
-            if(jQuery('.slideInput').hasClass('slideInput__is-open')){
-                jQuery('.slideInput').attr("aria-hidden", "false");
-            }else{
-                jQuery('.slideInput').attr("aria-hidden", "ture");
-            }
+    $searchToggleButtons.on('click', function () {
+        if ($searchPanel.hasClass('slideInput__is-open')) {
+            closeSearchPanel(true);
+            return;
         }
-    )
 
-    //ハンバーガーメニューフォーカスによる.slideInputの閉鎖
-    jQuery('.headerMain_humburgerContainer').focus(
-        function(){
-            jQuery('.slideInput').removeClass('slideInput__is-open');
-            jQuery('.slideInput').attr("aria-hidden", "ture");
+        openSearchPanel(this);
+    });
+
+    $searchCloseButtons.on('click', function () {
+        closeSearchPanel(true);
+    });
+
+    $menuButton.on('focus', function () {
+        closeSearchPanel(false);
+    });
+
+    $menuButton.on('click', function () {
+        if (jQuery(this).hasClass('active')) {
+            closeMenu(false);
+            return;
         }
-    )
 
-    //ハンバーガーメニューのクリックによるドロップダウンメニュー開閉
-    jQuery('.headerMain_humburgerContainer').click(
-        function(){
-            jQuery('.headerMain_humburgerContainer').toggleClass('active');
+        openMenu();
+    });
 
-            if(jQuery(this).hasClass('active')){
-                jQuery('.hamburgerLine__1').addClass('hamburgerLine__1__is-active');
-                jQuery('.hamburgerLine__2').addClass('hamburgerLine__2__is-active');
-                jQuery('.hamburgerLine__3').addClass('hamburgerLine__3__is-active');
-                jQuery('.dropdown-wrapper').slideDown();
+    jQuery('.dropdown_closeButton').on('click', function () {
+        closeMenu(true);
+    });
 
-                jQuery(this).attr("aria-expanded", "false");
-                jQuery('.navSp_dropdown').attr("aria-hidden", "false");
-            }else{
-                jQuery('.hamburgerLine__1').removeClass('hamburgerLine__1__is-active');
-                jQuery('.hamburgerLine__2').removeClass('hamburgerLine__2__is-active');
-                jQuery('.hamburgerLine__3').removeClass('hamburgerLine__3__is-active');
-                jQuery('.dropdown-wrapper').slideUp();
-
-                jQuery(this).attr("aria-expanded", "true");
-                jQuery('.navSp_dropdown').attr("aria-hidden", "true");
-            }
+    jQuery(document).on('keydown', function (event) {
+        if ('Escape' !== event.key) {
+            return;
         }
-    );
-    
-    
-    //ドロップダウンメニュー内ボタンのクリックによるドロップダウンメニュー閉鎖
-    jQuery('.dropdown_closeButton').click(
-        function(){
-            jQuery('.headerMain_humburgerContainer').removeClass('active');
 
-            if(!jQuery('.headerMain_humburgerContainer').hasClass('active')){
-                jQuery('.hamburgerLine__1').removeClass('hamburgerLine__1__is-active');
-                jQuery('.hamburgerLine__2').removeClass('hamburgerLine__2__is-active');
-                jQuery('.hamburgerLine__3').removeClass('hamburgerLine__3__is-active');
-                jQuery('.dropdown-wrapper').slideUp();
-
-                jQuery(this).attr("aria-expanded", "true");
-                jQuery('.navSp_dropdown').attr("aria-hidden", "true");
-            }
+        if ($searchPanel.hasClass('slideInput__is-open')) {
+            closeSearchPanel(true);
+            return;
         }
-    );
-})
 
+        if ($menuButton.hasClass('active')) {
+            closeMenu(true);
+        }
+    });
+
+    jQuery(document).on('click', function (event) {
+        const $target = jQuery(event.target);
+
+        if ($searchPanel.hasClass('slideInput__is-open') && !$target.closest('#header-search-panel, .js-header-search-toggle').length) {
+            closeSearchPanel(false);
+        }
+
+        if ($menuButton.hasClass('active') && !$target.closest('.headerMain_humburgerContainer, .dropdown-wrapper').length) {
+            closeMenu(false);
+        }
+    });
+
+    jQuery(window).on('resize', function () {
+        syncBackgroundHeight();
+        syncHeaderSpacing();
+    });
+});

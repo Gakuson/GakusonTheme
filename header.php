@@ -18,6 +18,7 @@
     </head>
     <body <?php body_class();?>>  
         <header id="header" class="l-header">
+            <?php $gakuson_search_icon_url = esc_url( get_template_directory_uri() . '/icon/searchIcon.png' ); ?>
             <div class="header_main">
                 <a class="header_logo" href="<?php echo esc_url( home_url( '/' ) ); ?>">
                     <img class="header_logoImg" src="<?php echo get_template_directory_uri();?>/img/nantopiTitleLogo.png" alt="NanTopiのバナーロゴ">
@@ -37,32 +38,47 @@
                         ?>
                     </nav>
                     <div class="header_search">
-                        <input class="header_searchInput" type="text">
-                        <button class="kensakuButton">
-                            <img class="header_searchIcon" src="<?php echo get_template_directory_uri();?>/icon/searchIcon.png" alt="検索アイコン">
+                        <button
+                            class="header_searchTrigger js-header-search-toggle"
+                            type="button"
+                            aria-label="検索フォームを開く"
+                            aria-controls="header-search-panel"
+                            aria-expanded="false"
+                        >
+                            <span class="header_searchTriggerText">検索</span>
+                            <img class="header_searchTriggerIcon" src="<?php echo $gakuson_search_icon_url; ?>" alt="">
                         </button>
                     </div>
                     <div class="header_spMenu">
-                        <button class="header_searchButton">
-                            <img class="header_searchBttonIcon" src="<?php echo get_template_directory_uri();?>/icon/searchIcon.png" alt="検索アイコン">
+                        <button
+                            class="header_searchButton js-header-search-toggle"
+                            type="button"
+                            aria-label="検索フォームを開く"
+                            aria-controls="header-search-panel"
+                            aria-expanded="false"
+                        >
+                            <img class="header_searchButtonIcon" src="<?php echo $gakuson_search_icon_url; ?>" alt="">
                         </button>
-                        <button class="headerMain_humburgerContainer" aria-label="メニューを開く" aria-expanded="true">
+                        <button
+                            class="headerMain_humburgerContainer"
+                            type="button"
+                            aria-label="メニューを開く"
+                            aria-controls="header-menu-panel"
+                            aria-expanded="false"
+                        >
                             <div class="headerMain_hamburger">
                                 <span class="hamburgerLine hamburgerLine__1"></span>
                                 <span class="hamburgerLine hamburgerLine__2"></span>
                                 <span class="hamburgerLine hamburgerLine__3"></span>
                             </div>
                         </button>
-                        <div class="slideInput">
-                            <input class="header_searchInput header_searchInput__sp" type="text">
-                            <button class="kensakuButton kensakuButton__sp">
-                                <img class="header_searchIcon header_searchIcon__sp" src="<?php echo get_template_directory_uri();?>/icon/searchIcon.png" alt="検索アイコン">
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
-            <div class="dropdown-wrapper">   
+            <div id="header-search-panel" class="slideInput" aria-hidden="true" aria-labelledby="header-search-title" hidden>
+                <?php get_search_form( array( 'gakuson_context' => 'header-modal' ) ); ?>
+            </div>
+            <div id="header-menu-panel" class="dropdown-wrapper" aria-hidden="true">
                 <nav class="dropdown">
                     <?php
                     wp_nav_menu(
@@ -82,9 +98,8 @@
                             <span class="arrow_line arrow_line__1"></span>
                             <span class="arrow_line arrow_line__2"></span>
                         </div>
-                        <button class="dropdown_closeButtonText">メニューを閉じる</button>
+                        <button class="dropdown_closeButtonText" type="button">メニューを閉じる</button>
                     </div>
                 </nav>
             </div>
         </header>
-        

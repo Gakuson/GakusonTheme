@@ -215,6 +215,28 @@ $breakpoints: (
         display: none;
     }
 }
+.header_searchTrigger{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    border: 1px solid #75bcfa;
+    border-radius: 999px;
+    background-color: white;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+.header_searchTriggerText{
+    font-size: 0.95rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.header_searchTriggerIcon{
+    width: 1.1rem;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
 .header_searchInput{
     width: 18dvw;
     height: 28px;
@@ -226,6 +248,13 @@ $breakpoints: (
     @include media-tablet{
         width: 15dvw;
     }
+}
+.header_searchInput__modal{
+    width: 100%;
+    min-height: 42px;
+    margin-left: 0;
+    padding: 10px 12px;
+    font-size: 14px;
 }
 .header_searchInput__sp{
     width: 250px;
@@ -265,30 +294,102 @@ $breakpoints: (
     }
 }
 .header_searchButton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-right: 20px;
-    width: 10dvw;
+    width: min(10dvw, 40px);
+    min-width: 32px;
     aspect-ratio: 1/1;
     transition: transform 0.3s;
     cursor: pointer;
 }
-.header_searchBttonIcon{
+.header_searchButtonIcon{
     width: 100%;
     aspect-ratio: 1/1;
     object-fit: cover;
 }
 .slideInput{
     position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block;
     background-color: white;
-    right: -500px;
+    right: 1.5%;
     left: auto;
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease-in-out;
+    width: min(420px, calc(100vw - 32px));
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-12px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
     z-index: 999;
+
+    @include media-sp{
+        right: 10px;
+        left: 10px;
+        width: auto;
+        padding: 16px;
+    }
+}
+.gakuson-search-form--header-modal{
+    display: flex;
+    flex-direction: column;
+}
+.header_searchPanelHeader{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.header_searchPanelTitle{
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+.header_searchClose{
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #43474a;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.header_searchFields{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.header_searchField{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.header_searchLabel{
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+.header_searchSelect{
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid black;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 14px;
+    background-color: white;
+}
+.header_searchActions{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+.kensakuButton__modal{
+    min-height: 42px;
+    height: auto;
+    margin-left: 0;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 700;
 }
 
 .headerMain_humburgerContainer {
