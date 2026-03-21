@@ -69,6 +69,82 @@ function gakuson_get_internal_only_tag_ids() {
 }
 
 /**
+ * Keep default footer-page slugs centralized for fallback navigation and setup docs.
+ *
+ * @return array<int, array{title:string, slug:string}>
+ */
+function gakuson_get_footer_page_specs() {
+    $pages = apply_filters(
+        'gakuson_footer_page_specs',
+        array(
+            array(
+                'title' => 'このサイトについて',
+                'slug'  => 'about',
+            ),
+            array(
+                'title' => '免責事項',
+                'slug'  => 'disclaimer',
+            ),
+            array(
+                'title' => 'お問い合わせ',
+                'slug'  => 'contact',
+            ),
+        )
+    );
+
+    $normalized_pages = array();
+
+    foreach ((array) $pages as $page) {
+        if (! is_array($page)) {
+            continue;
+        }
+
+        $title = isset($page['title']) ? trim((string) $page['title']) : '';
+        $slug  = isset($page['slug']) ? sanitize_title((string) $page['slug']) : '';
+
+        if ('' === $title || '' === $slug) {
+            continue;
+        }
+
+        $normalized_pages[] = array(
+            'title' => $title,
+            'slug'  => $slug,
+        );
+    }
+
+    return $normalized_pages;
+}
+
+/**
+ * Build footer fallback links from the shared slug definitions.
+ *
+ * If the matching page already exists, use its permalink so permalink settings stay authoritative.
+ * Otherwise, fall back to the expected top-level slug URL.
+ *
+ * @return array<int, array{title:string, slug:string, url:string}>
+ */
+function gakuson_get_footer_fallback_menu_items() {
+    $menu_items = array();
+
+    foreach (gakuson_get_footer_page_specs() as $page) {
+        $page_object = get_page_by_path($page['slug']);
+        $url         = home_url(user_trailingslashit($page['slug']));
+
+        if ($page_object instanceof WP_Post) {
+            $url = get_permalink($page_object);
+        }
+
+        $menu_items[] = array(
+            'title' => $page['title'],
+            'slug'  => $page['slug'],
+            'url'   => (string) $url,
+        );
+    }
+
+    return $menu_items;
+}
+
+/**
  * Reuse the same public-facing tag list anywhere the theme renders post tags.
  *
  * @param WP_Post|int|null $post Optional post object or ID.
@@ -129,6 +205,257 @@ function gakuson_get_public_post_tag_ids($post = null, $args = array()) {
     }
 
     return array_values(array_map('intval', wp_list_pluck($tags, 'term_id')));
+}
+
+/**
+ * Keep like-related storage keys centralized for queries, Ajax, and UI helpers.
+ *
+ * @return string
+ */
+function gakuson_get_like_count_meta_key() {
+    return 'gakuson_like_count';
+}
+
+/**
+ * Track per-browser like limits through one cookie name.
+ *
+ * @return string
+ */
+function gakuson_get_like_cookie_name() {
+    return 'gakuson_like_counts';
+}
+
+/**
+ * Expose the per-visitor like ceiling from one helper.
+ *
+ * @return int
+ */
+function gakuson_get_like_max_per_visitor() {
+    return (int) apply_filters('gakuson_like_max_per_visitor', 10);
+}
+
+/**
+ * Keep the browser-side like cookie lifetime configurable from one place.
+ *
+ * @return int
+ */
+function gakuson_get_like_cookie_lifetime() {
+    return (int) apply_filters('gakuson_like_cookie_lifetime', YEAR_IN_SECONDS);
+}
+
+/**
+ * Return a numeric like count without forcing templates to parse raw post meta.
+ *
+ * @param WP_Post|int|null $post Optional post object or ID.
+ * @return int
+ */
+function gakuson_get_post_like_count($post = null) {
+    $post = get_post($post);
+
+    if (! $post instanceof WP_Post) {
+        return 0;
+    }
+
+    $count = get_post_meta($post->ID, gakuson_get_like_count_meta_key(), true);
+
+    if ('' === $count) {
+        return 0;
+    }
+
+    return max(0, (int) $count);
+}
+
+/**
+ * Ensure ranking queries can safely sort every post by a numeric like count.
+ *
+ * @param int $post_id Post ID.
+ * @return void
+ */
+function gakuson_ensure_post_like_meta($post_id) {
+    $post_id = absint($post_id);
+
+    if ($post_id <= 0 || 'post' !== get_post_type($post_id)) {
+        return;
+    }
+
+    if ('' === get_post_meta($post_id, gakuson_get_like_count_meta_key(), true)) {
+        add_post_meta($post_id, gakuson_get_like_count_meta_key(), '0', true);
+    }
+}
+
+/**
+ * Parse and clamp browser-side per-post like counters from the visitor cookie.
+ *
+ * @return array<int, int>
+ */
+function gakuson_get_like_cookie_counts() {
+    $cookie_name = gakuson_get_like_cookie_name();
+
+    if (empty($_COOKIE[$cookie_name])) {
+        return array();
+    }
+
+    $raw_cookie_value = rawurldecode((string) wp_unslash($_COOKIE[$cookie_name]));
+    $decoded_counts   = json_decode($raw_cookie_value, true);
+
+    if (! is_array($decoded_counts)) {
+        return array();
+    }
+
+    $sanitized_counts = array();
+    $max_likes        = gakuson_get_like_max_per_visitor();
+
+    foreach ($decoded_counts as $post_id => $count) {
+        $post_id = absint($post_id);
+
+        if ($post_id <= 0) {
+            continue;
+        }
+
+        $sanitized_counts[$post_id] = min($max_likes, max(0, (int) $count));
+    }
+
+    return $sanitized_counts;
+}
+
+/**
+ * Read the current visitor's like count for a single post.
+ *
+ * @param WP_Post|int|null $post Optional post object or ID.
+ * @return int
+ */
+function gakuson_get_visitor_like_count($post = null) {
+    $post = get_post($post);
+
+    if (! $post instanceof WP_Post) {
+        return 0;
+    }
+
+    $cookie_counts = gakuson_get_like_cookie_counts();
+
+    if (! isset($cookie_counts[$post->ID])) {
+        return 0;
+    }
+
+    return max(0, (int) $cookie_counts[$post->ID]);
+}
+
+/**
+ * Keep the remaining-like message consistent between initial render and Ajax updates.
+ *
+ * @param int $remaining_likes Remaining likes for the current visitor on a post.
+ * @return string
+ */
+function gakuson_get_like_remaining_message($remaining_likes) {
+    $remaining_likes = max(0, (int) $remaining_likes);
+
+    if ($remaining_likes <= 0) {
+        return 'この端末では上限に達しました';
+    }
+
+    return sprintf('この端末ではあと%d回いいねできます', $remaining_likes);
+}
+
+/**
+ * Return the remaining likes allowed for the current visitor on a post.
+ *
+ * @param WP_Post|int|null $post Optional post object or ID.
+ * @return int
+ */
+function gakuson_get_remaining_like_count($post = null) {
+    $max_likes = gakuson_get_like_max_per_visitor();
+
+    return max(0, $max_likes - gakuson_get_visitor_like_count($post));
+}
+
+/**
+ * Persist the sanitized per-post like counters back to the browser cookie.
+ *
+ * @param array<int, int> $counts Like counts keyed by post ID.
+ * @return bool
+ */
+function gakuson_set_like_cookie_counts($counts) {
+    if (headers_sent()) {
+        return false;
+    }
+
+    $sanitized_counts = array();
+    $max_likes        = gakuson_get_like_max_per_visitor();
+
+    foreach ((array) $counts as $post_id => $count) {
+        $post_id = absint($post_id);
+
+        if ($post_id <= 0) {
+            continue;
+        }
+
+        $sanitized_counts[$post_id] = min($max_likes, max(0, (int) $count));
+    }
+
+    $cookie_name  = gakuson_get_like_cookie_name();
+    $cookie_value = rawurlencode(wp_json_encode($sanitized_counts));
+    $expiration   = time() + gakuson_get_like_cookie_lifetime();
+    $cookie_set   = setcookie(
+        $cookie_name,
+        $cookie_value,
+        array(
+            'expires'  => $expiration,
+            'path'     => defined('COOKIEPATH') && COOKIEPATH ? COOKIEPATH : '/',
+            'domain'   => defined('COOKIE_DOMAIN') ? COOKIE_DOMAIN : '',
+            'secure'   => is_ssl(),
+            'httponly' => true,
+            'samesite' => 'Lax',
+        )
+    );
+
+    if ($cookie_set) {
+        $_COOKIE[$cookie_name] = $cookie_value;
+    }
+
+    return $cookie_set;
+}
+
+/**
+ * Increment a post's stored like counter and return the updated total.
+ *
+ * @param WP_Post|int|null $post Optional post object or ID.
+ * @return int
+ */
+function gakuson_increment_post_like_count($post = null) {
+    $post = get_post($post);
+
+    if (! $post instanceof WP_Post) {
+        return 0;
+    }
+
+    gakuson_ensure_post_like_meta($post->ID);
+
+    $updated_count = gakuson_get_post_like_count($post) + 1;
+    update_post_meta($post->ID, gakuson_get_like_count_meta_key(), (string) $updated_count);
+
+    return $updated_count;
+}
+
+/**
+ * Reuse one ranking query baseline wherever the theme shows "popular" posts.
+ *
+ * @param array $overrides Optional query overrides.
+ * @return array
+ */
+function gakuson_get_like_ranking_query_args($overrides = array()) {
+    $defaults = array(
+        'post_type'           => 'post',
+        'post_status'         => 'publish',
+        'meta_key'            => gakuson_get_like_count_meta_key(),
+        'orderby'             => array(
+            'meta_value_num' => 'DESC',
+            'date'           => 'DESC',
+        ),
+        'ignore_sticky_posts' => true,
+        'no_found_rows'       => true,
+    );
+
+    return wp_parse_args($overrides, $defaults);
 }
 
 /**
@@ -918,6 +1245,45 @@ function gakuson_parse_class_names($classes) {
 }
 
 /**
+ * Serialize a small set of HTML attributes without forcing templates to concatenate strings.
+ *
+ * @param array $attributes Attribute map.
+ * @return string
+ */
+function gakuson_format_html_attributes($attributes) {
+    if (! is_array($attributes) || empty($attributes)) {
+        return '';
+    }
+
+    $formatted_attributes = array();
+
+    foreach ($attributes as $attribute_name => $attribute_value) {
+        $attribute_name = preg_replace('/[^a-zA-Z0-9_:\-]/', '', (string) $attribute_name);
+
+        if ('' === $attribute_name || false === $attribute_value || null === $attribute_value) {
+            continue;
+        }
+
+        if (true === $attribute_value) {
+            $formatted_attributes[] = esc_attr($attribute_name);
+            continue;
+        }
+
+        if (is_array($attribute_value)) {
+            $attribute_value = implode(' ', array_map('strval', $attribute_value));
+        }
+
+        $formatted_attributes[] = sprintf(
+            '%1$s="%2$s"',
+            esc_attr($attribute_name),
+            esc_attr((string) $attribute_value)
+        );
+    }
+
+    return implode(' ', $formatted_attributes);
+}
+
+/**
  * Update an HTML class attribute without rewriting unrelated element attributes.
  *
  * @param string          $attributes       Raw attribute string.
@@ -1078,6 +1444,146 @@ function gakuson_get_section_title_markup($title, $icon_path, $args = array()) {
 }
 
 /**
+ * Reuse one heart icon so cards and the single-post reaction button stay visually aligned.
+ *
+ * @param array $args Optional class overrides.
+ * @return string
+ */
+function gakuson_get_heart_icon_markup($args = array()) {
+    $args = wp_parse_args(
+        $args,
+        array(
+            'class' => '',
+        )
+    );
+
+    $classes = array_merge(array('postHeartIcon'), gakuson_parse_class_names($args['class']));
+
+    ob_start();
+    ?>
+    <svg class="<?php echo esc_attr(implode(' ', array_unique($classes))); ?>" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path fill="currentColor" d="M12 21.35 10.55 20.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54Z"/>
+    </svg>
+    <?php
+
+    return trim(ob_get_clean());
+}
+
+/**
+ * Keep compact like counts consistent across cards and the single-page reaction box.
+ *
+ * @param WP_Post|int|null $post Optional post object or ID.
+ * @param array            $args Optional wrapper class modifiers.
+ * @return string
+ */
+function gakuson_get_post_stats_markup($post = null, $args = array()) {
+    $post = get_post($post);
+
+    if (! $post instanceof WP_Post) {
+        return '';
+    }
+
+    $args = wp_parse_args(
+        $args,
+        array(
+            'wrapper_class' => '',
+        )
+    );
+
+    $wrapper_classes = array_merge(array('postStats'), gakuson_parse_class_names($args['wrapper_class']));
+    $like_count      = gakuson_get_post_like_count($post);
+
+    ob_start();
+    ?>
+    <div class="<?php echo esc_attr(implode(' ', array_unique($wrapper_classes))); ?>" data-post-stats data-post-id="<?php echo esc_attr((string) $post->ID); ?>">
+        <span class="postStats_item postStats_item--likes" aria-label="いいね数">
+            <span class="postStats_icon" aria-hidden="true">
+                <?php echo gakuson_get_heart_icon_markup(array('class' => 'postHeartIcon--stats')); ?>
+            </span>
+            <span class="postStats_value" data-post-like-count data-post-id="<?php echo esc_attr((string) $post->ID); ?>">
+                <?php echo esc_html('+' . number_format_i18n($like_count)); ?>
+            </span>
+        </span>
+    </div>
+    <?php
+
+    return trim(ob_get_clean());
+}
+
+/**
+ * Render the single-post reaction box while keeping the interaction logic outside templates.
+ *
+ * @param WP_Post|int|null $post Optional post object or ID.
+ * @return string
+ */
+function gakuson_get_like_panel_markup($post = null) {
+    $post = get_post($post);
+
+    if (! $post instanceof WP_Post || 'post' !== $post->post_type) {
+        return '';
+    }
+
+    $remaining_likes = gakuson_get_remaining_like_count($post);
+    $like_count      = gakuson_get_post_like_count($post);
+    $button_disabled = $remaining_likes <= 0;
+    $counter_label   = sprintf(
+        'この端末では最大10回いいねできます。現在の総いいね数は%s回です。',
+        number_format_i18n($like_count)
+    );
+
+    ob_start();
+    ?>
+    <section class="postReaction" data-like-block data-post-id="<?php echo esc_attr((string) $post->ID); ?>">
+        <div class="postReaction_header">
+            <p class="postReaction_note" data-like-remaining>
+                <?php echo esc_html(gakuson_get_like_remaining_message($remaining_likes)); ?>
+            </p>
+            <h2 class="postReaction_title">ハートでいいね！</h2>
+        </div>
+        <div class="postReaction_body">
+            <div class="postReaction_buttonShell">
+                <button
+                    type="button"
+                    class="postReaction_button<?php echo $button_disabled ? ' is-disabled' : ''; ?>"
+                    data-like-button
+                    data-post-id="<?php echo esc_attr((string) $post->ID); ?>"
+                    <?php disabled($button_disabled); ?>
+                    aria-disabled="<?php echo $button_disabled ? 'true' : 'false'; ?>"
+                >
+                    <span class="postReaction_buttonFace">
+                        <span class="postReaction_buttonIcon" aria-hidden="true">
+                            <?php echo gakuson_get_heart_icon_markup(array('class' => 'postHeartIcon--button')); ?>
+                        </span>
+                        <span class="postReaction_buttonLabel">いいね！</span>
+                    </span>
+                </button>
+            </div>
+            <div class="postReaction_counter" aria-label="<?php echo esc_attr($counter_label); ?>">
+                <span class="postReaction_counterIcon" aria-hidden="true">
+                    <?php echo gakuson_get_heart_icon_markup(array('class' => 'postHeartIcon--stats')); ?>
+                </span>
+                <span class="postReaction_counterBoost" aria-hidden="true">+10</span>
+                <span class="postReaction_counterDivider" aria-hidden="true"></span>
+                <span class="postReaction_counterTotal">
+                    <span class="postReaction_counterTotalLabel">総</span>
+                    <span class="postReaction_counterTotalValue" data-post-like-total data-post-id="<?php echo esc_attr((string) $post->ID); ?>">
+                        <?php echo esc_html(number_format_i18n($like_count)); ?>
+                    </span>
+                    <span class="postReaction_counterTotalSuffix">回</span>
+                </span>
+            </div>
+        </div>
+        <p class="postReaction_status" data-like-status aria-live="polite"></p>
+        <noscript>
+            <p class="postReaction_noscript">いいね機能はJavaScriptを有効にすると使えます。</p>
+        </noscript>
+    </section>
+    <?php
+
+    return trim(ob_get_clean());
+}
+
+/**
  * Keep article cards consistent across archives, related-post lists, and future side rails.
  *
  * @param WP_Post|int|null $post Optional post object or ID.
@@ -1097,9 +1603,11 @@ function gakuson_get_article_card_markup($post = null, $args = array()) {
             'card_classes'  => array(),
             'title_tag'     => 'h3',
             'show_taxonomy' => true,
+            'show_stats'    => true,
             'ranking'       => 0,
             'image_size'    => 'post_thumbnails',
             'link_url'      => '',
+            'attributes'    => array(),
         )
     );
 
@@ -1119,8 +1627,10 @@ function gakuson_get_article_card_markup($post = null, $args = array()) {
     $title            = get_the_title($post);
     $permalink        = '' !== $args['link_url'] ? (string) $args['link_url'] : get_permalink($post);
     $author_name      = get_the_author_meta('display_name', (int) $post->post_author);
+    $stats_markup     = $args['show_stats'] ? gakuson_get_post_stats_markup($post, array('wrapper_class' => 'postStats--card')) : '';
     $taxonomy_pc      = $args['show_taxonomy'] ? gakuson_get_article_taxonomy_markup($post, 'pc') : '';
     $taxonomy_sp      = $args['show_taxonomy'] ? gakuson_get_article_taxonomy_markup($post, 'sp') : '';
+    $attribute_markup = gakuson_format_html_attributes($args['attributes']);
     $thumbnail_markup = has_post_thumbnail($post)
         ? get_the_post_thumbnail($post->ID, $args['image_size'])
         : sprintf(
@@ -1131,7 +1641,7 @@ function gakuson_get_article_card_markup($post = null, $args = array()) {
 
     ob_start();
     ?>
-    <a href="<?php echo esc_url($permalink); ?>" class="<?php echo esc_attr(implode(' ', get_post_class($card_classes, $post->ID))); ?>">
+    <a href="<?php echo esc_url($permalink); ?>" class="<?php echo esc_attr(implode(' ', get_post_class($card_classes, $post->ID))); ?>"<?php echo '' !== $attribute_markup ? ' ' . $attribute_markup : ''; ?>>
         <?php if ($ranking > 0) : ?>
             <p class="article_num<?php echo 1 === $ranking ? ' article_num__1st' : ''; ?>">
                 <?php echo esc_html((string) $ranking); ?>
@@ -1147,6 +1657,9 @@ function gakuson_get_article_card_markup($post = null, $args = array()) {
                     <p class="article_date"><?php echo esc_html(get_the_date('', $post)); ?></p>
                     <p class="article_author"><?php echo esc_html($author_name); ?></p>
                 </div>
+                <?php if ('' !== $stats_markup) : ?>
+                    <?php echo $stats_markup; ?>
+                <?php endif; ?>
                 <?php if ('' !== $taxonomy_pc) : ?>
                     <?php echo $taxonomy_pc; ?>
                 <?php endif; ?>
@@ -1271,3 +1784,114 @@ function gakuson_invalidate_carousel_cache_on_post_delete($post_id) {
     gakuson_delete_cached_picks_response();
 }
 add_action('before_delete_post', 'gakuson_invalidate_carousel_cache_on_post_delete');
+
+/**
+ * Seed zero-value like meta once so ranking queries can sort existing posts safely.
+ *
+ * @return void
+ */
+function gakuson_seed_like_meta_for_existing_posts() {
+    static $has_run = false;
+
+    if ($has_run || get_option('gakuson_like_meta_seeded', false)) {
+        return;
+    }
+
+    $has_run = true;
+
+    $post_ids = get_posts(
+        array(
+            'post_type'      => 'post',
+            'post_status'    => 'publish',
+            'posts_per_page' => -1,
+            'fields'         => 'ids',
+            'no_found_rows'  => true,
+            'meta_query'     => array(
+                array(
+                    'key'     => gakuson_get_like_count_meta_key(),
+                    'compare' => 'NOT EXISTS',
+                ),
+            ),
+        )
+    );
+
+    foreach ($post_ids as $post_id) {
+        gakuson_ensure_post_like_meta($post_id);
+    }
+
+    update_option('gakuson_like_meta_seeded', 1, false);
+}
+add_action('init', 'gakuson_seed_like_meta_for_existing_posts', 20);
+
+/**
+ * Give newly saved posts the same zero-like default as seeded older content.
+ *
+ * @param int $post_id Post ID.
+ * @return void
+ */
+function gakuson_ensure_post_like_meta_on_save($post_id) {
+    if (wp_is_post_revision($post_id) || 'post' !== get_post_type($post_id)) {
+        return;
+    }
+
+    gakuson_ensure_post_like_meta($post_id);
+}
+add_action('save_post_post', 'gakuson_ensure_post_like_meta_on_save');
+
+/**
+ * Handle public like requests through WordPress Ajax without introducing a custom table.
+ *
+ * @return void
+ */
+function gakuson_handle_like_post_ajax() {
+    check_ajax_referer('gakuson_like_post', 'nonce');
+
+    $post_id = isset($_POST['post_id']) ? absint(wp_unslash($_POST['post_id'])) : 0;
+    $post    = get_post($post_id);
+
+    if (! $post instanceof WP_Post || 'post' !== $post->post_type || 'publish' !== $post->post_status) {
+        wp_send_json_error(
+            array(
+                'message' => '対象の記事が見つかりません。',
+            ),
+            404
+        );
+    }
+
+    $max_likes          = gakuson_get_like_max_per_visitor();
+    $cookie_like_counts = gakuson_get_like_cookie_counts();
+    $visitor_like_count = isset($cookie_like_counts[$post_id]) ? max(0, (int) $cookie_like_counts[$post_id]) : 0;
+
+    if ($visitor_like_count >= $max_likes) {
+        wp_send_json_success(
+            array(
+                'likeCount'        => gakuson_get_post_like_count($post),
+                'viewCount'        => function_exists('gakuson_get_post_view_count') ? gakuson_get_post_view_count($post_id) : 0,
+                'visitorLikeCount' => $visitor_like_count,
+                'remainingLikes'   => 0,
+                'reachedLimit'     => true,
+                'message'          => gakuson_get_like_remaining_message(0),
+            )
+        );
+    }
+
+    $cookie_like_counts[$post_id] = $visitor_like_count + 1;
+    gakuson_set_like_cookie_counts($cookie_like_counts);
+
+    $updated_like_count        = gakuson_increment_post_like_count($post);
+    $updated_visitor_like_count = min($max_likes, $visitor_like_count + 1);
+    $remaining_likes           = max(0, $max_likes - $updated_visitor_like_count);
+
+    wp_send_json_success(
+        array(
+            'likeCount'        => $updated_like_count,
+            'viewCount'        => function_exists('gakuson_get_post_view_count') ? gakuson_get_post_view_count($post_id) : 0,
+            'visitorLikeCount' => $updated_visitor_like_count,
+            'remainingLikes'   => $remaining_likes,
+            'reachedLimit'     => 0 === $remaining_likes,
+            'message'          => 0 === $remaining_likes ? gakuson_get_like_remaining_message(0) : 'いいねしました。',
+        )
+    );
+}
+add_action('wp_ajax_gakuson_like_post', 'gakuson_handle_like_post_ajax');
+add_action('wp_ajax_nopriv_gakuson_like_post', 'gakuson_handle_like_post_ajax');

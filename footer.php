@@ -16,11 +16,16 @@
                         )
                     );
                 } else {
+                    $footer_fallback_menu_items = gakuson_get_footer_fallback_menu_items();
                     ?>
                     <ul class="footer_menu">
-                        <li class="menu-item"><a href="#">このサイトについて</a></li>
-                        <li class="menu-item"><a href="#">免責事項</a></li>
-                        <li class="menu-item"><a href="#">お問い合わせ</a></li>
+                        <?php foreach ( $footer_fallback_menu_items as $footer_menu_item ) : ?>
+                            <li class="menu-item">
+                                <a href="<?php echo esc_url( $footer_menu_item['url'] ); ?>">
+                                    <?php echo esc_html( $footer_menu_item['title'] ); ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
                     </ul>
                     <?php
                 }

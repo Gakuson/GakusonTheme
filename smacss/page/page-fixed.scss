@@ -66,6 +66,7 @@ $breakpoints: (
 .content{
     width: 100%;
     margin-bottom: 30px;
+    box-sizing: border-box;
     padding: clamp(28px, 3vw, 40px);
     border-radius: 28px;
     border: 1px solid rgba(17, 29, 79, 0.08);
@@ -75,6 +76,7 @@ $breakpoints: (
     font-size: 17px;
     line-height: 1.9;
     letter-spacing: 0.04em;
+    font-weight: 400;
     color: #384153;
 
     @include media-sp{
@@ -83,23 +85,6 @@ $breakpoints: (
         border-left-width: 6px;
         font-size: 16px;
         line-height: 1.8;
-    }
-}
-.content > *:first-child{
-    margin-top: 0;
-}
-.content > *:last-child{
-    margin-bottom: 0;
-}
-.content p a,
-.content li a,
-.content td a,
-.content figcaption a{
-    display: inline;
-
-    &:hover,
-    &:focus-visible{
-        transform: none;
     }
 }
 

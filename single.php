@@ -44,6 +44,7 @@
                             <?php the_content(); ?>
                             <?php wp_link_pages(); // ページ分割用ページャー ?>
                         </div>
+                        <?php echo gakuson_get_like_panel_markup(get_the_ID()); ?>
                     </article>
                     <?php get_sidebar();?>
                 </div>

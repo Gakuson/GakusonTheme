@@ -9,15 +9,13 @@
         <div class="feature-wrapper feature-wrapper__sidebar">
             <?php
             // サイドバーは順位表現を残しつつ、トップに寄せた見出しトーンで出す。
-            $args = array(
-                'meta_key'            => 'post_views_count',
-                'orderby'             => 'meta_value_num',
-                'posts_per_page'      => 3,
-                'order'               => 'DESC',
-                'ignore_sticky_posts' => true,
+            $popular_posts = new WP_Query(
+                gakuson_get_like_ranking_query_args(
+                    array(
+                        'posts_per_page' => 3,
+                    )
+                )
             );
-
-            $popular_posts = new WP_Query($args);
             $count         = 1;
 
             if ($popular_posts->have_posts()) :
@@ -55,6 +53,7 @@
                                 <p><?php echo esc_html(get_the_author()); ?></p>
                             </div>
                         </div>
+                        <?php echo gakuson_get_post_stats_markup(get_the_ID(), array('wrapper_class' => 'postStats--sidebar')); ?>
                     </a>
                     <?php
                     $count++;

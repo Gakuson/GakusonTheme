@@ -127,12 +127,13 @@
             </div>
             <div id="front-page-latest-list" class="article_content" data-load-more-list data-load-more-initial="<?php echo esc_attr((string) $front_page_list_step); ?>">
                 <?php
-                    // トップでは全文件を出力し、初期表示数だけをJSで見せる
+                    // 初期表示件数を超えるカードは描画時点で隠し、JS前のちらつきを防ぐ
                     $args = array(
                         'posts_per_page' => -1,
                         'no_found_rows'  => true,
                     );
                     $query = new WP_Query($args);
+                    $latest_index = 0;
                     ?>
                     <?php if ($query->have_posts()): ?>
                         <?php while ($query->have_posts()): $query->the_post(); ?>
@@ -145,6 +146,7 @@
                                 href="<?php echo esc_url($href); ?>"
                                 <?php post_class('article_item'); ?>
                                 data-load-more-item
+                                <?php if ($latest_index >= $front_page_list_step) : ?>hidden<?php endif; ?>
                                 <?php if ($is_disabled_article) : ?>style="pointer-events: none;"<?php endif; ?>
                             >
                                 <div class="article_main">
@@ -161,11 +163,13 @@
                                             <p class="article_date"><?php echo get_the_date(); ?></p>
                                             <p class="article_author"><?php echo get_the_author(); ?></p>
                                         </div>
+                                        <?php echo gakuson_get_post_stats_markup($post_id, array('wrapper_class' => 'postStats--card')); ?>
                                         <?php echo gakuson_get_article_taxonomy_markup($post_id, 'pc'); ?>
                                     </div>
                                 </div>
                                 <?php echo gakuson_get_article_taxonomy_markup($post_id, 'sp'); ?>
                             </a>
+                            <?php $latest_index++; ?>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <p>投稿がありません</p>
@@ -192,113 +196,28 @@
             </div>
             <div id="front-page-popular-list" class="article_content" data-load-more-list data-load-more-initial="<?php echo esc_attr((string) $front_page_list_step); ?>">
                 <?php
-                    // 人気記事ランキング用のクエリ
-                    $args = array(
-                        'meta_key'       => 'post_views_count', // ビュー数のカスタムフィールド
-                        'orderby'        => 'meta_value_num',   // 数値としてソート
-                        'posts_per_page' => -1,                 // 全件出力してJSで段階表示
-                        'order'          => 'DESC',             // 降順（閲覧数が多い順）
-                        'ignore_sticky_posts' => true,          // スティッキーポストを除外
-                        'no_found_rows'       => true,
+                    $popular_posts = new WP_Query(
+                        gakuson_get_like_ranking_query_args(
+                            array(
+                                'posts_per_page' => -1,
+                            )
+                        )
                     );
-
-                    $popular_posts = new WP_Query($args);
                     $count = 1;
                     if ($popular_posts->have_posts()): ?>
                         <?php while ($popular_posts->have_posts()): $popular_posts->the_post(); ?>
                             <?php
-                            $taxonomy_pc = gakuson_get_article_taxonomy_markup(get_the_ID(), 'pc');
-                            $taxonomy_sp = gakuson_get_article_taxonomy_markup(get_the_ID(), 'sp');
+                            echo gakuson_get_article_card_markup(
+                                get_the_ID(),
+                                array(
+                                    'ranking'    => $count,
+                                    'attributes' => array(
+                                        'data-load-more-item' => true,
+                                        'hidden'              => $count > $front_page_list_step,
+                                    ),
+                                )
+                            );
                             ?>
-                            <?php if ($count == 1): ?>
-                                <a href="<?php the_permalink(); ?>" <?php post_class(array('article_item', 'article_item__popu')); ?> data-load-more-item>
-                                    <p class="article_num article_num__1st"><?php echo $count; ?></p> 
-                                    <div class="article_main">
-                                        <div class="article_itemThumbnail">
-                                            <?php if (has_post_thumbnail()): ?>
-                                                <?php the_post_thumbnail('post_thumbnails'); ?> 
-                                            <?php else: ?>
-                                                <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="article_text">
-                                            <h3 class="article_title"><?php the_title(); ?></h3>
-                                            <div class="article_desc">
-                                                <p class="article_date"><?php echo get_the_date(); ?></p>
-                                                <p class="article_author"><?php echo get_the_author(); ?></p>
-                                            </div>
-                                            <?php echo $taxonomy_pc; ?>
-                                        </div>
-                                    </div>
-                                    <?php echo $taxonomy_sp; ?>
-                                </a>
-                            <?php elseif ($count == 2): ?>
-                                <a href="<?php the_permalink(); ?>" <?php post_class(array('article_item', 'article_item__popu')); ?> data-load-more-item>
-                                    <p class="article_num"><?php echo $count; ?></p>
-                                    <div class="article_main">
-                                        <div class="article_itemThumbnail">
-                                            <?php if (has_post_thumbnail()): ?>
-                                                <?php the_post_thumbnail('post_thumbnails'); ?> 
-                                            <?php else: ?>
-                                                <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="article_text">
-                                            <h3 class="article_title"><?php the_title(); ?></h3>
-                                            <div class="article_desc">
-                                                <p class="article_date"><?php echo get_the_date(); ?></p>
-                                                <p class="article_author"><?php echo get_the_author(); ?></p>
-                                            </div>
-                                            <?php echo $taxonomy_pc; ?>
-                                        </div>
-                                    </div>
-                                    <?php echo $taxonomy_sp; ?>
-                                </a>
-                            <?php elseif ($count == 3): ?>
-                                <a href="<?php the_permalink(); ?>" <?php post_class(array('article_item', 'article_item__popu')); ?> data-load-more-item>
-                                    <p class="article_num"><?php echo $count; ?></p>
-                                    <div class="article_main">
-                                        <div class="article_itemThumbnail">
-                                            <?php if (has_post_thumbnail()): ?>
-                                                <?php the_post_thumbnail('post_thumbnails'); ?> 
-                                            <?php else: ?>
-                                                <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="article_text">
-                                            <h3 class="article_title"><?php the_title(); ?></h3>
-                                            <div class="article_desc">
-                                                <p class="article_date"><?php echo get_the_date(); ?></p>
-                                                <p class="article_author"><?php echo get_the_author(); ?></p>
-                                            </div>
-                                            <?php echo $taxonomy_pc; ?>
-                                        </div>
-                                    </div>
-                                    <?php echo $taxonomy_sp; ?>
-                                </a>
-                            <?php else: ?>
-                                <a href="<?php the_permalink(); ?>" <?php post_class(array('article_item', 'article_item__popu')); ?> data-load-more-item>
-                                    <p class="article_num"><?php echo $count; ?></p>
-                                    <div class="article_main">
-                                        <div class="article_itemThumbnail">
-                                            <?php if (has_post_thumbnail()): ?>
-                                                <?php the_post_thumbnail('post_thumbnails'); ?> 
-                                            <?php else: ?>
-                                                <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="article_text">
-                                            <h3 class="article_title"><?php the_title(); ?></h3>
-                                            <div class="article_desc">
-                                                <p class="article_date"><?php echo get_the_date(); ?></p>
-                                                <p class="article_author"><?php echo get_the_author(); ?></p>
-                                            </div>
-                                            <?php echo $taxonomy_pc; ?>
-                                        </div>
-                                    </div>
-                                    <?php echo $taxonomy_sp; ?>
-                                </a>
-                           <?php endif; ?>
                            <?php $count++;?>
                         <?php endwhile; ?>
                     <?php wp_reset_postdata(); ?> <!-- WP_Query のデータをリセット -->

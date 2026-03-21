@@ -46,10 +46,7 @@ function gakuson_enqueue_assets() {
     // Google Fonts
     wp_enqueue_style('google-fonts', 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap', array(), null);
 
-    
     // メインのスタイルシート（条件分岐）
-    $css_path = '';
-    
     if (is_front_page()) {
         wp_enqueue_style('gakuson-style-pc', $uri . '/smacss/main/main-top.css', array('ress'), '1.0.1');
     }elseif (is_page()) {
@@ -67,6 +64,18 @@ function gakuson_enqueue_assets() {
     // JavaScript
     // jQueryはWordPress同梱のものを使用
     wp_enqueue_script('gakuson-js-animation', $uri . '/js/script.js', array('jquery'), '1.0.0', true);
+    wp_localize_script(
+        'gakuson-js-animation',
+        'gakusonLikeConfig',
+        array(
+            'ajaxUrl'             => admin_url('admin-ajax.php'),
+            'action'              => 'gakuson_like_post',
+            'nonce'               => wp_create_nonce('gakuson_like_post'),
+            'workingLabel'        => '送信中...',
+            'defaultButtonLabel'  => 'いいね！',
+            'requestErrorMessage' => 'いいねの送信に失敗しました。時間をおいてもう一度お試しください。',
+        )
+    );
 }
 add_action('wp_enqueue_scripts', 'gakuson_enqueue_assets');
 
@@ -105,28 +114,63 @@ add_action('pre_get_posts', 'gakuson_customize_search_query');
 
 /* 人気記事一覧
 ---------------------------------------------------------- */
-//記事閲覧数を取得する
+/**
+ * Ensure views-based UI can always read a numeric counter without parsing display text.
+ *
+ * @param int $post_id Post ID.
+ * @return int
+ */
+function gakuson_get_post_view_count($post_id) {
+    $post_id = absint($post_id);
+
+    if ($post_id <= 0) {
+        return 0;
+    }
+
+    $count = get_post_meta($post_id, 'post_views_count', true);
+
+    if ('' === $count) {
+        return 0;
+    }
+
+    return max(0, (int) $count);
+}
+
+/**
+ * Keep the legacy admin-column display helper intact while reusing the numeric counter.
+ *
+ * @param int $postID Post ID.
+ * @return string
+ */
 function gakuson_get_post_views($postID){
     $count_key = 'post_views_count';
-    $count = get_post_meta($postID, $count_key, true);
+    $count     = get_post_meta($postID, $count_key, true);
+
     if($count==''){
         delete_post_meta($postID, $count_key);
         add_post_meta($postID, $count_key, '0');
         return "0 View";
     }
-    return $count.' Views';
+
+    return gakuson_get_post_view_count($postID) . ' Views';
 }
 
-//記事閲覧数を保存する
+/**
+ * Count single-post views while keeping the existing `post_views_count` meta key.
+ *
+ * @param int $postID Post ID.
+ * @return void
+ */
 function gakuson_set_post_views($postID) {
     if (!is_single()) return; // 投稿ページのみでカウント
-    
+
     $count_key = 'post_views_count';
+
     $count = get_post_meta($postID, $count_key, true);
+
     if($count==''){
-        $count = 0;
         delete_post_meta($postID, $count_key);
-        add_post_meta($postID, $count_key, '0');
+        add_post_meta($postID, $count_key, '1');
     }else{
         $count++;
         update_post_meta($postID, $count_key, $count);
@@ -151,7 +195,7 @@ add_filter('manage_posts_columns', 'gakuson_posts_column_views');
 
 function gakuson_posts_custom_column_views($column_name, $id){
     if ($column_name === 'post_views') {
-        echo gakuson_get_post_views(get_the_ID());
+        echo gakuson_get_post_views($id);
     }
 }
 add_action('manage_posts_custom_column', 'gakuson_posts_custom_column_views', 5, 2);

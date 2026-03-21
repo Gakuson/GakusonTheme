@@ -16,6 +16,7 @@
 7. TK-07 下層デザイン統一
 8. TK-08 REST endpoint / direct fetch
 9. TK-09 総合確認と仕上げ
+10. TK-10 記事いいね機能と likes 順ランキング
 
 ## TK-01 基盤整備
 ### 目的
@@ -270,6 +271,42 @@
 
 ### 確認事項
 - なし
+
+## TK-10 記事いいね機能と likes 順ランキング
+### 目的
+- 記事末尾に共通いいね UI を追加し、カードにハート付き likes 表示を出したうえで、人気記事ランキングを likes 順へ切り替える。
+
+### 対応内容
+- `docs/3-17-yuki-tickets.md` と `AgentLog/TK-10.md` にチケット運用ログを追加する
+- いいね総数を投稿メタ `gakuson_like_count` で管理する
+- 1端末10回制限を cookie `gakuson_like_counts` で扱う
+- `admin-ajax.php?action=gakuson_like_post` を使ったいいね加算処理を実装する
+- 既存の `post_views_count` は維持しつつ、views の整数取得 helper を追加する
+- ハート SVG を使った likes の共通 stats markup helper を追加する
+- `single.php` の本文直後に、丸いハートボタン、likes 数、残り回数、結果メッセージを持つ共通 UI を追加する
+- トップ新着、トップ人気、関連記事、category、tag、search、sidebar のカードへハート付き likes 表示を横展開する
+- トップ人気記事とサイドバー人気記事の並び順を `gakuson_like_count` 降順へ切り替える
+- `wp_localize_script()` と既存 jQuery を使って、like Ajax 成功時の件数更新と上限到達時の無効化を行う
+- 必要な SCSS を更新し、`smacss/main/*.css` を再生成する
+
+### Done Criteria
+- `docs/3-17-yuki-tickets.md` に TK-10 が追加され、`AgentLog/TK-10.md` が作成されている
+- 単記事で views が従来どおり増え、いいね UI が表示される
+- 同一ブラウザで同一記事に10回までいいねでき、11回目は増えない
+- トップ新着、トップ人気、関連記事、category、tag、search、sidebar の各カードにハート付き likes 数が表示される
+- トップ人気記事とサイドバー人気記事が likes 順で表示される
+- PC/SP で stats 表示と単記事リアクション UI が崩れない
+
+### 依存
+- TK-06
+- TK-07
+- TK-09
+
+### 確認事項
+- `1人10回` は `1ブラウザ / 1端末` とみなす
+- cookie 削除や別ブラウザ利用で上限は実質リセットされる
+- v1 はいいね解除なしの加算のみ
+- views は計測と管理確認を維持し、フロント表示には出さない
 
 ## 補足
 - 最小着手順は `TK-01 -> TK-02 -> TK-03 -> TK-04` です。

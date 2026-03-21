@@ -65,47 +65,10 @@
                                 <span class="header_searchButtonText">検索</span>
                             </span>
                         </button>
-                        <button
-                            class="headerMain_humburgerContainer"
-                            type="button"
-                            aria-label="メニューを開く"
-                            aria-controls="header-menu-panel"
-                            aria-expanded="false"
-                        >
-                            <div class="headerMain_hamburger">
-                                <span class="hamburgerLine hamburgerLine__1"></span>
-                                <span class="hamburgerLine hamburgerLine__2"></span>
-                                <span class="hamburgerLine hamburgerLine__3"></span>
-                            </div>
-                        </button>
                     </div>
                 </div>
             </div>
             <div id="header-search-panel" class="slideInput" aria-hidden="true" aria-labelledby="header-search-title" hidden>
                 <?php get_search_form( array( 'gakuson_context' => 'header-modal' ) ); ?>
-            </div>
-            <div id="header-menu-panel" class="dropdown-wrapper" aria-hidden="true">
-                <nav class="dropdown">
-                    <?php
-                    wp_nav_menu(
-                    array(
-                        'menu' => 'mainmenu',
-                        'container' => '',
-                        'container_id' => '',
-                        'container_class' => 'header_list',
-                        'menu_id' => '',
-                        'menu_class' => 'dropdown', // functions.php でこのクラスを検知してフィルタを適用
-                        'fallback_cb' => ''
-                    )
-                    );
-                    ?>
-                    <div class="dropdown_closeButton">
-                        <div class="dropdown_closeButtonArrow">
-                            <span class="arrow_line arrow_line__1"></span>
-                            <span class="arrow_line arrow_line__2"></span>
-                        </div>
-                        <button class="dropdown_closeButtonText" type="button">メニューを閉じる</button>
-                    </div>
-                </nav>
             </div>
         </header>

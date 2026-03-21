@@ -6,8 +6,6 @@ jQuery(window).on('load', function () {
     const $searchPanel = jQuery('#header-search-panel');
     const $searchToggleButtons = jQuery('.js-header-search-toggle');
     const $searchCloseButtons = jQuery('[data-search-close]');
-    const $menuButton = jQuery('.headerMain_humburgerContainer');
-    const $menuPanel = jQuery('.dropdown-wrapper');
     let searchHideTimer = null;
     let lastSearchTrigger = null;
 
@@ -68,7 +66,6 @@ jQuery(window).on('load', function () {
         }
 
         lastSearchTrigger = triggerButton || null;
-        closeMenu(false);
 
         $searchPanel.prop('hidden', false).attr('aria-hidden', 'false');
         $searchToggleButtons.attr('aria-expanded', 'true');
@@ -82,42 +79,6 @@ jQuery(window).on('load', function () {
         if ($keywordField.length) {
             $keywordField.trigger('focus');
         }
-    }
-
-    function closeMenu(restoreFocus) {
-        if (!$menuButton.length || !$menuPanel.length) {
-            return;
-        }
-
-        $menuButton.removeClass('active').attr({
-            'aria-expanded': 'false',
-            'aria-label': 'メニューを開く'
-        });
-        jQuery('.hamburgerLine__1').removeClass('hamburgerLine__1__is-active');
-        jQuery('.hamburgerLine__2').removeClass('hamburgerLine__2__is-active');
-        jQuery('.hamburgerLine__3').removeClass('hamburgerLine__3__is-active');
-        $menuPanel.stop(true, true).slideUp(200).attr('aria-hidden', 'true');
-
-        if (restoreFocus) {
-            $menuButton.trigger('focus');
-        }
-    }
-
-    function openMenu() {
-        if (!$menuButton.length || !$menuPanel.length) {
-            return;
-        }
-
-        closeSearchPanel(false);
-
-        $menuButton.addClass('active').attr({
-            'aria-expanded': 'true',
-            'aria-label': 'メニューを閉じる'
-        });
-        jQuery('.hamburgerLine__1').addClass('hamburgerLine__1__is-active');
-        jQuery('.hamburgerLine__2').addClass('hamburgerLine__2__is-active');
-        jQuery('.hamburgerLine__3').addClass('hamburgerLine__3__is-active');
-        $menuPanel.stop(true, true).slideDown(200).attr('aria-hidden', 'false');
     }
 
     function initFeaturedCarousels() {
@@ -386,10 +347,171 @@ jQuery(window).on('load', function () {
         });
     }
 
+    function initLikeButtons() {
+        const likeConfig = window.gakusonLikeConfig || null;
+
+        if (!likeConfig || !likeConfig.ajaxUrl || !likeConfig.action || !likeConfig.nonce) {
+            return;
+        }
+
+        function formatCount(value) {
+            const numericValue = Number(value);
+
+            if (Number.isNaN(numericValue)) {
+                return '0';
+            }
+
+            return numericValue.toLocaleString('ja-JP');
+        }
+
+        function formatLikeCount(value) {
+            return '+' + formatCount(value);
+        }
+
+        function formatTotalLikeCount(value) {
+            return formatCount(value);
+        }
+
+        function getDefaultButtonHtml($button) {
+            const storedHtml = $button.data('defaultHtml');
+
+            if (typeof storedHtml === 'string' && storedHtml.length) {
+                return storedHtml;
+            }
+
+            return likeConfig.defaultButtonLabel || 'いいね！';
+        }
+
+        function getRemainingMessage(remainingLikes) {
+            const numericValue = Number(remainingLikes);
+
+            if (Number.isNaN(numericValue) || numericValue <= 0) {
+                return 'この端末では上限に達しました';
+            }
+
+            return 'この端末ではあと' + numericValue + '回いいねできます';
+        }
+
+        function syncLikeUi(postId, payload) {
+            const postIdString = String(postId);
+            const likeCount = payload && typeof payload.likeCount !== 'undefined' ? payload.likeCount : 0;
+            const remainingLikes = payload && typeof payload.remainingLikes !== 'undefined' ? payload.remainingLikes : 0;
+            const reachedLimit = !!(payload && payload.reachedLimit);
+            const message = payload && payload.message ? payload.message : '';
+            const remainingMessage = getRemainingMessage(remainingLikes);
+
+            jQuery('[data-post-like-count][data-post-id="' + postIdString + '"]').text(formatLikeCount(likeCount));
+            jQuery('[data-post-like-total][data-post-id="' + postIdString + '"]').text(formatTotalLikeCount(likeCount));
+
+            jQuery('[data-like-block][data-post-id="' + postIdString + '"]').each(function () {
+                const $block = jQuery(this);
+                const $button = $block.find('[data-like-button]').first();
+                const $remaining = $block.find('[data-like-remaining]').first();
+                const $status = $block.find('[data-like-status]').first();
+
+                if ($remaining.length) {
+                    $remaining.text(remainingMessage);
+                }
+
+                if ($status.length) {
+                    $status.text(message === remainingMessage ? '' : message);
+                }
+
+                if ($button.length) {
+                    $button
+                        .prop('disabled', reachedLimit)
+                        .attr('aria-disabled', reachedLimit ? 'true' : 'false')
+                        .toggleClass('is-disabled', reachedLimit)
+                        .html(getDefaultButtonHtml($button));
+                }
+            });
+        }
+
+        jQuery('[data-like-button]').each(function () {
+            const $button = jQuery(this);
+
+            if (!$button.data('defaultHtml')) {
+                $button.data('defaultHtml', $button.html());
+            }
+        });
+
+        jQuery(document).on('click', '[data-like-button]', function () {
+            const $button = jQuery(this);
+            const $block = $button.closest('[data-like-block]');
+            const $status = $block.find('[data-like-status]').first();
+            const postId = Number($button.attr('data-post-id') || $block.attr('data-post-id'));
+
+            if (!$block.length || !postId || $button.data('isSending')) {
+                return;
+            }
+
+            if (!$button.data('defaultHtml')) {
+                $button.data('defaultHtml', $button.html());
+            }
+
+            $button
+                .data('isSending', true)
+                .prop('disabled', true)
+                .attr('aria-disabled', 'true')
+                .html('<span class="postReaction_buttonLoading">' + (likeConfig.workingLabel || '送信中...') + '</span>');
+
+            if ($status.length) {
+                $status.text('');
+            }
+
+            jQuery.ajax({
+                url: likeConfig.ajaxUrl,
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    action: likeConfig.action,
+                    nonce: likeConfig.nonce,
+                    post_id: postId
+                }
+            }).done(function (response) {
+                if (!response || !response.success || !response.data) {
+                    const errorMessage = response && response.data && response.data.message ? response.data.message : likeConfig.requestErrorMessage;
+
+                    if ($status.length) {
+                        $status.text(errorMessage);
+                    }
+
+                    return;
+                }
+
+                syncLikeUi(postId, response.data);
+            }).fail(function (jqXHR) {
+                let errorMessage = likeConfig.requestErrorMessage;
+
+                if (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.data && jqXHR.responseJSON.data.message) {
+                    errorMessage = jqXHR.responseJSON.data.message;
+                }
+
+                if ($status.length) {
+                    $status.text(errorMessage);
+                }
+            }).always(function () {
+                const $currentBlock = jQuery('[data-like-block][data-post-id="' + String(postId) + '"]').first();
+                const $currentButton = $currentBlock.find('[data-like-button]').first();
+                const hasReachedLimit = $currentButton.hasClass('is-disabled');
+
+                if ($currentButton.length && !hasReachedLimit) {
+                    $currentButton
+                        .prop('disabled', false)
+                        .attr('aria-disabled', 'false')
+                        .html(getDefaultButtonHtml($currentButton));
+                }
+
+                $button.data('isSending', false);
+            });
+        });
+    }
+
     syncBackgroundHeight();
     syncHeaderSpacing();
     initFeaturedCarousels();
     initLoadMoreSections();
+    initLikeButtons();
 
     $searchToggleButtons.on('click', function () {
         if ($searchPanel.hasClass('slideInput__is-open')) {
@@ -404,23 +526,6 @@ jQuery(window).on('load', function () {
         closeSearchPanel(true);
     });
 
-    $menuButton.on('focus', function () {
-        closeSearchPanel(false);
-    });
-
-    $menuButton.on('click', function () {
-        if (jQuery(this).hasClass('active')) {
-            closeMenu(false);
-            return;
-        }
-
-        openMenu();
-    });
-
-    jQuery('.dropdown_closeButton').on('click', function () {
-        closeMenu(true);
-    });
-
     jQuery(document).on('keydown', function (event) {
         if ('Escape' !== event.key) {
             return;
@@ -428,11 +533,6 @@ jQuery(window).on('load', function () {
 
         if ($searchPanel.hasClass('slideInput__is-open')) {
             closeSearchPanel(true);
-            return;
-        }
-
-        if ($menuButton.hasClass('active')) {
-            closeMenu(true);
         }
     });
 
@@ -441,10 +541,6 @@ jQuery(window).on('load', function () {
 
         if ($searchPanel.hasClass('slideInput__is-open') && !$target.closest('#header-search-panel, .js-header-search-toggle').length) {
             closeSearchPanel(false);
-        }
-
-        if ($menuButton.hasClass('active') && !$target.closest('.headerMain_humburgerContainer, .dropdown-wrapper').length) {
-            closeMenu(false);
         }
     });
 
