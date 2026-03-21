@@ -210,30 +210,31 @@
 
 ## TK-08 REST endpoint / direct fetch
 ### 目的
-- トップカルーセルの強調データを、WordPress custom REST endpoint として公開し、gakuson 側から direct fetch できるようにする。
+- `nantopi-pick` 記事の軽量データを、WordPress custom REST endpoint として公開し、gakuson 側から direct fetch できるようにする。
 
 ### 対応内容
 - `register_rest_route()` ベースの custom endpoint を実装する
 - route 例:
-  - `GET /wp-json/gakuson/v1/carousel`
+  - `GET /wp-json/gakuson/v1/picks`
 - `permission_callback` を公開読み取り前提で定義する
+- `nantopi-pick` タグ付き記事の最新1件を返す helper を実装する
 - endpoint レスポンス整形を実装する
   - `items[]`
-  - `id`
   - `title`
   - `url`
-  - `category`
   - `tags[]`
-  - `thumbnailUrl`
-  - `excerpt`
-  - `updatedAt`
+  - `image`
 - 表示に不要な WordPress 標準フィールドは返さない
+- `nantopi-pick` タグ自体は `tags[]` から除外する
+- `isKk` は通常タグとして `tags[]` にそのまま含める
 - `transient` などの短時間キャッシュを入れる
+- `GAKUSON_PICKS_ALLOWED_ORIGINS` で allowlist 制御できるようにし、既定値は `https://gakuson.com` にする
+- `GAKUSON_PICKS_CACHE_TTL` で TTL を上書きできるようにする
 - browser からの cross-origin GET を前提に CORS を確認する
 - v1 では push 同期、Bearer token、Xserver 側受け口 PHP は扱わない
 
 ### Done Criteria
-- `featured` 記事の状態が endpoint レスポンスへ反映される
+- `nantopi-pick` 記事の状態が endpoint レスポンスへ反映される
 - endpoint が想定 shape の JSON を返す
 - browser からの direct fetch で CORS エラーが出ない
 - gakuson 側が読み込める前提の公開 GET として成立している
@@ -243,9 +244,7 @@
 - TK-05
 
 ### 確認事項
-- namespace / route 名
-- CORS を public GET のまま許可するか、特定 origin に絞るか
-- cache TTL
+- `GAKUSON_PICKS_CACHE_TTL` の本番値
 
 ## TK-09 総合確認と仕上げ
 ### 目的

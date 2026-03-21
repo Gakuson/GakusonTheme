@@ -6,7 +6,7 @@
 - v1 の正式採用案は `WordPress custom REST endpoint + gakuson 側 direct fetch` です。
 
 ## 結論
-- WordPress 側でカルーセル専用の custom REST endpoint を公開する
+- WordPress 側で外部確認用の custom REST endpoint を公開する
 - gakuson 側の静的 JS がその endpoint を direct fetch して描画する
 - push 同期、Bearer token 認証、Xserver 側受け口 PHP は v1 では採用しない
 
@@ -24,46 +24,49 @@
 ## v1 アーキテクチャ
 ```text
 WordPress
-  └─ GET /wp-json/gakuson/v1/carousel
-       └─ featured 記事の軽量 JSON を返す
+  └─ GET /wp-json/gakuson/v1/picks
+       └─ `nantopi-pick` 記事の軽量 JSON を返す
 
 gakuson (Static site on Xserver)
   └─ JS が endpoint を direct fetch
-       └─ 受け取った JSON でカルーセル描画
+       └─ 受け取った JSON でプレビューカード描画
 ```
 
 ## WordPress 側の要件
 - `register_rest_route()` で custom endpoint を定義する
 - `permission_callback` は公開読み取り前提で定義する
-- `featured` 記事抽出ルールを 1 箇所に閉じ込める
+- `nantopi-pick` 記事抽出ルールを 1 箇所に閉じ込める
 - 表示に不要な WordPress 標準フィールドは返さない
 - `transient` などで短時間キャッシュできるようにする
+- `GAKUSON_PICKS_ALLOWED_ORIGINS` で allowlist 制御できるようにし、既定値は `https://gakuson.com` にする
+- `GAKUSON_PICKS_CACHE_TTL` で TTL を上書きできるようにする
 
 ## レスポンス draft
 ### Route
-- `GET /wp-json/gakuson/v1/carousel`
+- `GET /wp-json/gakuson/v1/picks`
 
 ### Fields
 - `items[]`
 
 ### item
-- `id`
 - `title`
 - `url`
-- `category`
 - `tags[]`
-- `thumbnailUrl`
-- `excerpt`
-- `updatedAt`
+- `image`
+
+### Tags
+- `nantopi-pick` は制御タグとしてレスポンスから除外する
+- `isKk` は通常タグとして `tags[]` に含める
 
 ## gakuson 側の要件
 - ページ描画後に非同期で fetch する
 - loading 表示を持つ
 - 失敗時は fallback message を表示する
-- 0 件、1 件、複数件で UI を分ける
+- 0 件、1 件で UI を分ける
 
 ## CORS の扱い
 - v1 は `public GET only` を前提にする
+- 許可 origin は allowlist に絞る
 - `Authorization` ヘッダや custom header は使わない
 - browser devtools で response header と console error を確認する
 
@@ -78,9 +81,7 @@ gakuson (Static site on Xserver)
 - Xserver 側に PHP を 1 本置いて JSON を代理配信する
 
 ## 未確定事項
-- namespace / route 名の最終確定
-- CORS を public GET のまま許可するか、特定 origin に絞るか
-- cache TTL
+- `GAKUSON_PICKS_CACHE_TTL` の本番値
 - サムネイル未設定時の fallback
 
 ## 関連文書

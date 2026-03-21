@@ -13,6 +13,15 @@ function gakuson_get_featured_tag_slug() {
 }
 
 /**
+ * Keep the external preview source tag configurable without leaking it into templates.
+ *
+ * @return string
+ */
+function gakuson_get_nantopi_pick_tag_slug() {
+    return (string) apply_filters('gakuson_nantopi_pick_tag_slug', 'nantopi-pick');
+}
+
+/**
  * Keep internal processing tags out of public UI by default.
  *
  * @return string[]
@@ -20,7 +29,10 @@ function gakuson_get_featured_tag_slug() {
 function gakuson_get_internal_only_tag_slugs() {
     $slugs = apply_filters(
         'gakuson_internal_only_tag_slugs',
-        array(gakuson_get_featured_tag_slug())
+        array(
+            gakuson_get_featured_tag_slug(),
+            gakuson_get_nantopi_pick_tag_slug(),
+        )
     );
 
     $slugs = array_map('sanitize_title', (array) $slugs);
@@ -129,6 +141,15 @@ function gakuson_get_featured_post_limit() {
 }
 
 /**
+ * Keep the external preview endpoint focused on the newest tagged post.
+ *
+ * @return int
+ */
+function gakuson_get_picks_post_limit() {
+    return (int) apply_filters('gakuson_picks_post_limit', 1);
+}
+
+/**
  * Use one transient key for every carousel payload consumer.
  *
  * @return string
@@ -147,6 +168,34 @@ function gakuson_get_carousel_cache_ttl() {
 }
 
 /**
+ * Use a dedicated transient key so picks payloads do not collide with the carousel cache.
+ *
+ * @return string
+ */
+function gakuson_get_picks_cache_key() {
+    return (string) apply_filters('gakuson_picks_cache_key', 'gakuson_picks_payload_v1');
+}
+
+/**
+ * Read the picks cache TTL from wp-config when available, with a safe default for local work.
+ *
+ * @return int
+ */
+function gakuson_get_picks_cache_ttl() {
+    $default_ttl = 5 * MINUTE_IN_SECONDS;
+
+    if (defined('GAKUSON_PICKS_CACHE_TTL')) {
+        $configured_ttl = (int) GAKUSON_PICKS_CACHE_TTL;
+
+        if ($configured_ttl >= 0) {
+            $default_ttl = $configured_ttl;
+        }
+    }
+
+    return (int) apply_filters('gakuson_picks_cache_ttl', $default_ttl);
+}
+
+/**
  * Reuse the same featured-post query for front-page rendering and the REST layer.
  *
  * @param array $args Optional query overrides.
@@ -158,6 +207,27 @@ function gakuson_get_featured_posts($args = array()) {
         'post_status'         => 'publish',
         'posts_per_page'      => gakuson_get_featured_post_limit(),
         'tag_slug__in'        => array(gakuson_get_featured_tag_slug()),
+        'ignore_sticky_posts' => true,
+        'orderby'             => 'date',
+        'order'               => 'DESC',
+        'no_found_rows'       => true,
+    );
+
+    return get_posts(wp_parse_args($args, $defaults));
+}
+
+/**
+ * Query the tagged post used by the external preview endpoint.
+ *
+ * @param array $args Optional query overrides.
+ * @return WP_Post[]
+ */
+function gakuson_get_nantopi_pick_posts($args = array()) {
+    $defaults = array(
+        'post_type'           => 'post',
+        'post_status'         => 'publish',
+        'posts_per_page'      => gakuson_get_picks_post_limit(),
+        'tag_slug__in'        => array(gakuson_get_nantopi_pick_tag_slug()),
         'ignore_sticky_posts' => true,
         'orderby'             => 'date',
         'order'               => 'DESC',
@@ -482,6 +552,310 @@ function gakuson_get_carousel_response($force_refresh = false) {
 
     return $response;
 }
+
+/**
+ * Build the smallest payload needed by the external preview consumer.
+ *
+ * @param WP_Post|int|null $post Optional post object or ID.
+ * @return array<string, mixed>
+ */
+function gakuson_build_picks_item_response($post = null) {
+    $post = get_post($post);
+
+    if (! $post instanceof WP_Post) {
+        return array();
+    }
+
+    $item = array(
+        'title' => html_entity_decode(wp_strip_all_tags(get_the_title($post)), ENT_QUOTES, get_bloginfo('charset')),
+        'tags'  => gakuson_get_post_tag_names(
+            $post,
+            array(
+                'exclude_slugs' => array(gakuson_get_nantopi_pick_tag_slug()),
+            )
+        ),
+        'image' => gakuson_get_post_thumbnail_url($post),
+        'url'   => (string) get_permalink($post),
+    );
+
+    return apply_filters('gakuson_picks_item_response', $item, $post);
+}
+
+/**
+ * Keep the external preview response shape defined in one place.
+ *
+ * @param WP_Post[]|null $posts Optional posts to shape.
+ * @return array<string, mixed>
+ */
+function gakuson_build_picks_response($posts = null) {
+    if (null === $posts) {
+        $posts = gakuson_get_nantopi_pick_posts();
+    }
+
+    $items = array();
+
+    foreach ($posts as $post) {
+        $item = gakuson_build_picks_item_response($post);
+
+        if (! empty($item)) {
+            $items[] = $item;
+        }
+    }
+
+    $response = array(
+        'items' => $items,
+    );
+
+    return apply_filters('gakuson_picks_response', $response, $posts);
+}
+
+/**
+ * Read the cached picks response so the route callback stays thin.
+ *
+ * @return array<string, mixed>|null
+ */
+function gakuson_get_cached_picks_response() {
+    $cached_response = get_transient(gakuson_get_picks_cache_key());
+
+    return is_array($cached_response) ? $cached_response : null;
+}
+
+/**
+ * Write picks payloads through one cache helper to keep TTL handling consistent.
+ *
+ * @param array $response Response data.
+ * @return bool
+ */
+function gakuson_set_cached_picks_response($response) {
+    if (! is_array($response)) {
+        return false;
+    }
+
+    $ttl = gakuson_get_picks_cache_ttl();
+
+    if ($ttl <= 0) {
+        return false;
+    }
+
+    return set_transient(gakuson_get_picks_cache_key(), $response, $ttl);
+}
+
+/**
+ * Clear the picks cache whenever source content changes.
+ *
+ * @return bool
+ */
+function gakuson_delete_cached_picks_response() {
+    return delete_transient(gakuson_get_picks_cache_key());
+}
+
+/**
+ * Give the route callback one entrypoint for building or refreshing picks payloads.
+ *
+ * @param bool $force_refresh Whether to bypass transient cache.
+ * @return array<string, mixed>
+ */
+function gakuson_get_picks_response($force_refresh = false) {
+    if (! $force_refresh) {
+        $cached_response = gakuson_get_cached_picks_response();
+
+        if (is_array($cached_response)) {
+            return $cached_response;
+        }
+    }
+
+    $response = gakuson_build_picks_response();
+    gakuson_set_cached_picks_response($response);
+
+    return $response;
+}
+
+/**
+ * Normalize origin strings so wp-config values and request headers compare reliably.
+ *
+ * @param string $origin Raw origin string.
+ * @return string
+ */
+function gakuson_normalize_origin($origin) {
+    $origin = trim((string) $origin);
+
+    if ('' === $origin) {
+        return '';
+    }
+
+    $parts = wp_parse_url($origin);
+
+    if (empty($parts['scheme']) || empty($parts['host'])) {
+        return '';
+    }
+
+    $normalized_origin = strtolower((string) $parts['scheme']) . '://' . strtolower((string) $parts['host']);
+
+    if (isset($parts['port'])) {
+        $normalized_origin .= ':' . (int) $parts['port'];
+    }
+
+    return $normalized_origin;
+}
+
+/**
+ * Read the picks CORS allowlist from wp-config, with the production origin as the default.
+ *
+ * @return string[]
+ */
+function gakuson_get_picks_allowed_origins() {
+    $origins = array();
+
+    if (defined('GAKUSON_PICKS_ALLOWED_ORIGINS')) {
+        $configured_origins = GAKUSON_PICKS_ALLOWED_ORIGINS;
+
+        if (is_string($configured_origins)) {
+            $configured_origins = preg_split('/[\s,]+/', trim($configured_origins));
+        }
+
+        if (is_array($configured_origins)) {
+            $origins = $configured_origins;
+        }
+    }
+
+    if (empty($origins)) {
+        $origins = array(
+            'https://gakuson.com',
+        );
+    }
+
+    $normalized_origins = array();
+
+    foreach ((array) $origins as $origin) {
+        $normalized_origin = gakuson_normalize_origin($origin);
+
+        if ('' !== $normalized_origin) {
+            $normalized_origins[] = $normalized_origin;
+        }
+    }
+
+    return array_values(array_unique(apply_filters('gakuson_picks_allowed_origins', $normalized_origins)));
+}
+
+/**
+ * Check the browser origin against the picks-specific allowlist.
+ *
+ * @param string $origin Request origin.
+ * @return bool
+ */
+function gakuson_is_allowed_picks_origin($origin) {
+    $origin = gakuson_normalize_origin($origin);
+
+    if ('' === $origin) {
+        return false;
+    }
+
+    return in_array($origin, gakuson_get_picks_allowed_origins(), true);
+}
+
+/**
+ * Keep the picks REST namespace centralized for header checks and registration.
+ *
+ * @return string
+ */
+function gakuson_get_picks_rest_namespace() {
+    return 'gakuson/v1';
+}
+
+/**
+ * Keep the picks REST route path centralized so the route and CORS filter stay aligned.
+ *
+ * @return string
+ */
+function gakuson_get_picks_rest_route() {
+    return '/picks';
+}
+
+/**
+ * Build the full REST path used by request-route checks.
+ *
+ * @return string
+ */
+function gakuson_get_picks_rest_path() {
+    return '/' . trim(gakuson_get_picks_rest_namespace(), '/') . gakuson_get_picks_rest_route();
+}
+
+/**
+ * Register the public picks endpoint for the external preview consumer.
+ *
+ * @return void
+ */
+function gakuson_register_picks_rest_route() {
+    register_rest_route(
+        gakuson_get_picks_rest_namespace(),
+        gakuson_get_picks_rest_route(),
+        array(
+            array(
+                'methods'             => WP_REST_Server::READABLE,
+                'callback'            => 'gakuson_handle_picks_rest_request',
+                'permission_callback' => '__return_true',
+            ),
+        )
+    );
+}
+add_action('rest_api_init', 'gakuson_register_picks_rest_route');
+
+/**
+ * Serve the picks payload through the shared cache helper.
+ *
+ * @param WP_REST_Request $request REST request instance.
+ * @return WP_REST_Response
+ */
+function gakuson_handle_picks_rest_request($request) {
+    return rest_ensure_response(gakuson_get_picks_response());
+}
+
+/**
+ * Limit cross-origin access for the picks route to the configured consumer origins.
+ *
+ * @param bool             $served  Whether the request has already been served.
+ * @param WP_HTTP_Response $result  Result to send to the client.
+ * @param WP_REST_Request  $request Request used to generate the response.
+ * @param WP_REST_Server   $server  Server instance.
+ * @return bool
+ */
+function gakuson_send_picks_cors_headers($served, $result, $request, $server) {
+    if (! $request instanceof WP_REST_Request) {
+        return $served;
+    }
+
+    if (gakuson_get_picks_rest_path() !== (string) $request->get_route()) {
+        return $served;
+    }
+
+    $origin = function_exists('get_http_origin') ? get_http_origin() : '';
+
+    if (! gakuson_is_allowed_picks_origin($origin)) {
+        if (function_exists('header_remove')) {
+            header_remove('Access-Control-Allow-Origin');
+            header_remove('Access-Control-Allow-Methods');
+            header_remove('Access-Control-Allow-Credentials');
+            header_remove('Access-Control-Allow-Headers');
+        }
+
+        $server->send_header('Vary', 'Origin');
+
+        return $served;
+    }
+
+    $normalized_origin = gakuson_normalize_origin($origin);
+
+    if ('' === $normalized_origin) {
+        return $served;
+    }
+
+    $server->send_header('Access-Control-Allow-Origin', $normalized_origin);
+    $server->send_header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    $server->send_header('Vary', 'Origin');
+
+    return $served;
+}
+add_filter('rest_pre_serve_request', 'gakuson_send_picks_cors_headers', 15, 4);
 
 /**
  * Normalize tag cloud defaults so later template cleanup can call one helper.
@@ -848,7 +1222,7 @@ function gakuson_get_tag_directory_markup($args = array()) {
 }
 
 /**
- * Invalidate the shared carousel cache when post content changes.
+ * Invalidate featured-content caches when post content changes.
  *
  * @param int $post_id Post ID.
  * @return void
@@ -859,11 +1233,12 @@ function gakuson_invalidate_carousel_cache_on_post_save($post_id) {
     }
 
     gakuson_delete_cached_carousel_response();
+    gakuson_delete_cached_picks_response();
 }
 add_action('save_post_post', 'gakuson_invalidate_carousel_cache_on_post_save');
 
 /**
- * Invalidate the shared carousel cache when terms affecting featured content change.
+ * Invalidate featured-content caches when terms affecting tagged source content change.
  *
  * @param int|int[] $object_ids Object IDs being updated.
  * @param int[]     $terms      Term IDs.
@@ -877,11 +1252,12 @@ function gakuson_invalidate_carousel_cache_on_term_change($object_ids, $terms, $
     }
 
     gakuson_delete_cached_carousel_response();
+    gakuson_delete_cached_picks_response();
 }
 add_action('set_object_terms', 'gakuson_invalidate_carousel_cache_on_term_change', 10, 4);
 
 /**
- * Invalidate the shared carousel cache before a post is deleted.
+ * Invalidate featured-content caches before a post is deleted.
  *
  * @param int $post_id Deleted post ID.
  * @return void
@@ -892,5 +1268,6 @@ function gakuson_invalidate_carousel_cache_on_post_delete($post_id) {
     }
 
     gakuson_delete_cached_carousel_response();
+    gakuson_delete_cached_picks_response();
 }
 add_action('before_delete_post', 'gakuson_invalidate_carousel_cache_on_post_delete');

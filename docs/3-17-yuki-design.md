@@ -125,30 +125,30 @@
 
 ### TK-08 REST endpoint / direct fetch
 - `register_rest_route()` ベースの custom REST endpoint を実装する
-- route 仮案
-  - `GET /wp-json/gakuson/v1/carousel`
+- route
+  - `GET /wp-json/gakuson/v1/picks`
 - endpoint は public GET 前提とする
 - `permission_callback` は公開読み取り前提で定義する
-- レスポンスはカルーセル用の最小 JSON に絞る
+- レスポンスは外部確認用の最小 JSON に絞る
+- 抽出タグは専用 slug `nantopi-pick` を使う
+- `isKk` は通常タグ運用とし、JSON には `tags[]` の一要素としてそのまま含める
 
 #### Response shape
 - `items[]`
 
 #### item fields
-- `id`
 - `title`
 - `url`
-- `category`
 - `tags[]`
-- `thumbnailUrl`
-- `excerpt`
-- `updatedAt`
+- `image`
 
 #### 実装条件
-- カルーセル対象の抽出ルールは 1 箇所に閉じ込める
+- `nantopi-pick` 対象の抽出ルールは 1 箇所に閉じ込める
 - 表示に不要な WordPress 標準フィールドは返さない
 - `transient` などで短時間キャッシュできるようにする
 - browser からの cross-origin GET を前提に CORS を確認する
+- CORS は `GAKUSON_PICKS_ALLOWED_ORIGINS` を優先して allowlist 制御し、既定値は `https://gakuson.com` にする
+- cache TTL は `GAKUSON_PICKS_CACHE_TTL` で上書き可能にする
 - gakuson 側はページ本体描画後に非同期ロードする
 - loading と fallback message を用意する
 
@@ -160,7 +160,7 @@
   - `category_name`
   - `tag`
 - 追加 REST endpoint
-  - `GET /wp-json/gakuson/v1/carousel`
+  - `GET /wp-json/gakuson/v1/picks`
 
 ## テスト観点
 - `featured` が 0 件、1 件、複数件で表示が崩れない
@@ -172,8 +172,6 @@
 - endpoint 失敗時に gakuson 側で fallback 表示へ切り替えられる
 
 ## 要相談事項
-- REST endpoint の namespace / route 名
-- CORS を public GET のまま許可するか、特定 origin に絞るか
-- cache TTL
+- `GAKUSON_PICKS_CACHE_TTL` の本番値
 - サムネイル未設定時の fallback
 - CTA 文言の最終確定
