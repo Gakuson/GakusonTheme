@@ -42,6 +42,26 @@ function gakuson_get_internal_only_tag_slugs() {
 }
 
 /**
+ * Keep selected tags out of article-facing tag chips while allowing API payload usage.
+ *
+ * @return string[]
+ */
+function gakuson_get_hidden_article_tag_slugs() {
+    $slugs = apply_filters(
+        'gakuson_hidden_article_tag_slugs',
+        array_merge(
+            gakuson_get_internal_only_tag_slugs(),
+            array('isKk')
+        )
+    );
+
+    $slugs = array_map('sanitize_title', (array) $slugs);
+    $slugs = array_values(array_unique(array_filter($slugs)));
+
+    return $slugs;
+}
+
+/**
  * Resolve internal-only tag IDs once per request for cloud/search exclusions.
  *
  * @return int[]
@@ -668,7 +688,7 @@ function gakuson_get_post_tag_links_markup($post = null, $args = array()) {
         $args,
         array(
             'separator'     => ' ',
-            'exclude_slugs' => gakuson_get_internal_only_tag_slugs(),
+            'exclude_slugs' => gakuson_get_hidden_article_tag_slugs(),
         )
     );
 
@@ -718,7 +738,12 @@ function gakuson_get_article_taxonomy_markup($post = null, $context = '') {
     }
 
     $category_name = gakuson_get_post_primary_category_name($post);
-    $tag_names     = gakuson_get_post_tag_names($post);
+    $tag_names     = gakuson_get_post_tag_names(
+        $post,
+        array(
+            'exclude_slugs' => gakuson_get_hidden_article_tag_slugs(),
+        )
+    );
 
     ob_start();
     ?>
@@ -1026,7 +1051,7 @@ function gakuson_normalize_origin($origin) {
 }
 
 /**
- * Read the picks CORS allowlist from wp-config, with the production origin as the default.
+ * Read the picks CORS allowlist from wp-config, with project defaults for production and local preview.
  *
  * @return string[]
  */
@@ -1048,6 +1073,8 @@ function gakuson_get_picks_allowed_origins() {
     if (empty($origins)) {
         $origins = array(
             'https://gakuson.com',
+            'https://gakuson.xsrv.jp',
+            'http://127.0.0.1:5500',
         );
     }
 
@@ -1183,6 +1210,26 @@ function gakuson_send_picks_cors_headers($served, $result, $request, $server) {
     return $served;
 }
 add_filter('rest_pre_serve_request', 'gakuson_send_picks_cors_headers', 15, 4);
+
+/**
+ * Keep the picks JSON readable for external consumers by disabling Unicode and slash escaping.
+ *
+ * @param int             $options Encoding options used by the REST server.
+ * @param WP_REST_Request $request Request used to generate the response.
+ * @return int
+ */
+function gakuson_get_picks_json_encode_options($options, $request) {
+    if (! $request instanceof WP_REST_Request) {
+        return $options;
+    }
+
+    if (gakuson_get_picks_rest_path() !== (string) $request->get_route()) {
+        return $options;
+    }
+
+    return $options | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+}
+add_filter('rest_json_encode_options', 'gakuson_get_picks_json_encode_options', 10, 2);
 
 /**
  * Normalize tag cloud defaults so later template cleanup can call one helper.

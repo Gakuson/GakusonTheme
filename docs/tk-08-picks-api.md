@@ -11,11 +11,14 @@
 - Auth: なし
 
 ## CORS
-- 許可 origin の既定値: `https://gakuson.com`
+- 許可 origin の既定値:
+  - `https://gakuson.com`
+  - `https://gakuson.xsrv.jp`
+  - `http://127.0.0.1:5500`
 - `wp-config.php` で `GAKUSON_PICKS_ALLOWED_ORIGINS` を定義すると、その値を優先する
 - 許可 origin のときだけ `Access-Control-Allow-Origin` を返す
 - 返すヘッダ
-  - `Access-Control-Allow-Origin: https://gakuson.com`
+  - `Access-Control-Allow-Origin: (request Origin と同じ値)`
   - `Access-Control-Allow-Methods: GET, OPTIONS`
   - `Vary: Origin`
 
@@ -77,6 +80,8 @@
 ```php
 define('GAKUSON_PICKS_ALLOWED_ORIGINS', array(
     'https://gakuson.com',
+  'https://gakuson.xsrv.jp',
+  'http://127.0.0.1:5500',
 ));
 
 define('GAKUSON_PICKS_CACHE_TTL', 300);
