@@ -1,51 +1,56 @@
-<footer id="footer" class="l-footer">
-    <div class="footer_content">
-        <div class="pcFooter">
-            <img class="pcFooter_logo__nantopi" src="<?php echo get_template_directory_uri();?>/icon/NanTopi_logo (5).png">
-            <ul class="pcFooter_list">
-            <?php
-            wp_nav_menu(
-            array(
-                    'menu' => 'mainmenu',
-                    'container' => '',
-                    'container_id' => '',
-                    'container_class' => 'header-list',
-                    'menu_id' => '',
-                    'fallback_cb' => ''
-                )
-            );
-            ?>
-            </ul>
-            <div class="pcFooter_textIcon">
-                <a class="pcFooter_logo__sns" href="https://www.instagram.com/gakuson25/?igsh=NWd3YW45NG41Yzd2#"><img src="<?php echo get_template_directory_uri();?>/icon/Instagram_Glyph_Gradient.png"></a>
-                <a class="pcFooter_logo__sns" href="https://x.com/nanzan_gakuson"><img src="<?php echo get_template_directory_uri();?>/icon/logo-black.png"></a>
-                <a class="pcFooter_logo__gakuson" href="https://www.gakuson.com/"><img src="<?php echo get_template_directory_uri();?>/icon/logo.png"></a>
-                </div>
-            <div class="pcFooter_copyRight">
-                <small>&copy;2025 Nanzan Topics !</small>
-            </div>
-        </div>
-        <div class="spFooter">
-            <div class="spFooter_content">
-                <div class="spFooter_list">
+<footer class="l-footer" id="footer">
+    <div class="footer_inner">
+        <h2 class="footer_title">Nanzan Topics!</h2>
+        <div class="footer_main">
+            <nav class="footer_nav" aria-label="Footer navigation">
                 <?php
-                wp_nav_menu(
-                array(
-                        'menu' => 'mainmenu',
-                        'container' => '',
-                        'container_id' => '',
-                        'container_class' => 'header-list',
-                        'menu_id' => '',
-                        'fallback_cb' => ''
-                    )
-                );
+                if ( has_nav_menu( 'footer-nav' ) ) {
+                    wp_nav_menu(
+                        array(
+                            'theme_location' => 'footer-nav',
+                            'container'      => '',
+                            'menu_class'     => 'footer_menu',
+                            'menu_id'        => '',
+                            'depth'          => 1,
+                            'fallback_cb'    => false,
+                        )
+                    );
+                } else {
+                    $footer_fallback_menu_items = gakuson_get_footer_fallback_menu_items();
+                    ?>
+                    <ul class="footer_menu">
+                        <?php foreach ( $footer_fallback_menu_items as $footer_menu_item ) : ?>
+                            <li class="menu-item">
+                                <a href="<?php echo esc_url( $footer_menu_item['url'] ); ?>">
+                                    <?php echo esc_html( $footer_menu_item['title'] ); ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <?php
+                }
                 ?>
-                </div>   
-                <a href="https://www.gakuson.com/"><img class="spFooter_logo__nantopi" src="<?php echo get_template_directory_uri();?>/icon/logo.png"></a>
-            </div>
-            <div class="spFooter_copyRight">
-                <small>&copy;2025 Nanzan Topics !</small>
-            </div>
+            </nav>
+            <ul class="footer_list" aria-label="Nanzan Topics social links">
+                <li class="footer_item">
+                    <a class="footer_itemLink footer_itemLink__instagram" href="#" aria-label="Instagram">
+                        <img class="footer_itemIcon" src="<?php echo esc_url( get_template_directory_uri() . '/icon/InstagramIcon.png' ); ?>" alt="" aria-hidden="true">
+                    </a>
+                </li>
+                <li class="footer_item">
+                    <a class="footer_itemLink footer_itemLink__x" href="#" aria-label="X">
+                        <img class="footer_itemIcon" src="<?php echo esc_url( get_template_directory_uri() . '/icon/xIcon.png' ); ?>" alt="" aria-hidden="true">
+                    </a>
+                </li>
+                <li class="footer_item footer_item__gakuson">
+                    <a class="footer_itemLink footer_itemLink__gakuson" href="<?php echo esc_url( 'https://gakuson.com/' ); ?>" aria-label="がくそん公式サイト">
+                        <img class="footer_itemIcon footer_itemIcon__gakuson" src="<?php echo esc_url( get_template_directory_uri() . '/icon/logo.png' ); ?>" alt="" aria-hidden="true">
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="footer_copyRight">
+            <small>&copy;<?php echo esc_html( wp_date( 'Y' ) ); ?> Nanzan Topics!</small>
         </div>
     </div>
 </footer>        

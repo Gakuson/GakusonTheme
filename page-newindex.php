@@ -1,74 +1,102 @@
 <?php get_header();?>
 <!-- singleをベースに作成開始 sidebarはそのままに、左側すべてに記事を並べる機能を実装 -->
-        <div class="empty"></div>
-        <main>
-            
-            <div class="mainBody">
-                <section class="article">
-                <h2 class="site-title">新着記事一覧</h2>
-                <?php
-$args = array(
-    'post_type' => 'post', // 投稿タイプを指定
-    'posts_per_page' => -1, // すべての投稿を取得
-    'orderby' => 'date', // 日付順に並べる
-    'order' => 'DESC', // 新しい順に並べる
-);
-$query = new WP_Query($args);
-?>
+<div class="l-empty"></div>
+<main id="main" class="l-main">        
 
-<div class="feature-wrapper">
-    <?php if ($query->have_posts()): ?>
-        <?php while ($query->have_posts()): $query->the_post(); ?>
-            <a href="<?php the_permalink(); ?>" class="feature">
-                <div class="Thumbnail">
-                    <?php the_post_thumbnail('post_thumbnails'); ?> 
-                </div>
-                <h3 class="feature_text"><?php the_title(); ?></h3>
-                <div class="feature_text__small">
-                    <p><?php echo get_the_date(); ?></p>
-                    <div class="feature_textAcount"> 
-                        <img class="feature_textIcon" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png">
-                        <p><?php echo get_the_author(); ?></p>
-                    </div>
-                </div>
-            </a>
-        <?php endwhile; ?>
-    <?php else: ?>
-        <p>投稿がありません</p>
-    <?php endif; ?>
-</div>
-<?php wp_reset_postdata(); // クエリをリセット ?>
-                </section>
-                <?php get_sidebar();?>
+    <div class="backBoard">
+        <div class="backBoard_item backBoard_item__1"></div>
+        <div class="backBoard_item backBoard_item__2"></div>
+        <div class="backBoard_item backBoard_item__3"></div>
+    </div>
+    <div class="l-mainContent">
+        <section class="l-article">
+            <div class="section_TitleConteiner">
+                <img class="section_titleIcon article_titleIcon__latest" src="<?php echo get_template_directory_uri();?>/icon/watchIcon.png">
+                <h2 class="section_title">新着記事一覧</h2>
             </div>
+            <div id="front-page-latest-list" class="article_content" data-load-more-list data-load-more-initial="<?php echo esc_attr((string) $front_page_list_step); ?>">
+                <?php
+                $args = array(
+                'post_type' => 'post',
+                'posts_per_page' => -1,
+                'orderby' => 'date',
+                'order' => 'DESC', 
+                );
+                $query = new WP_Query($args);
+                $latest_index = 0;
+                ?>
+                
 
-
-        <section class="Hashtag">
-            <div class="Hashtag_content">
-            <div class="Hashtag_title">
-            <img class="Hashtag_titleIcon" src="<?php echo get_template_directory_uri();?>/feature_textIcon/線画のフォルダアイコン 2.png">
-            <h2 class="Hashtag_titleText">#ハッシュタグ一覧</h2>
-           </div>
-           <?php   function custom_wp_tag_cloud($tag_string) {
-            // liタグにclass="Hashtag_text"を適用し、aタグの余分なclassを削除
-            $tag_string = preg_replace('/<li(.*?)>/', '<li class="Hashtag_text"$1>', $tag_string);
-            $tag_string = preg_replace('/<a (.*?)class="(.*?)"(.*?)>/', '<a $1$3>', $tag_string);
-            return $tag_string;
-        }
-        add_filter('wp_tag_cloud', 'custom_wp_tag_cloud');?>
-
-        <ul class="Hashtag-wrapper">
-            <?php wp_tag_cloud(array(
-                'format' => 'list', // li形式
-                'smallest' => 1,    // 最小フォントサイズ（無効化）
-                'largest' => 1,     // 最大フォントサイズ（無効化）
-                'unit' => 'em',     // サイズ単位（無効化目的）
-                'orderby' => 'count',
-                'order' => 'DESC',
-                'number' => 0,
-            )); ?>
-        </div>
+                <?php if ($query->have_posts()): ?>
+                    <?php while ($query->have_posts()): $query->the_post(); ?>
+                        <?php
+                            $post_id = get_the_ID();
+                            $is_disabled_article = in_array($post_id, array(555, 553, 551), true);
+                            $href = $is_disabled_article ? '' : get_permalink();
+                        ?>
+                        <a
+                            href="<?php echo esc_url($href); ?>"
+                            <?php post_class('article_item'); ?>
+                            data-load-more-item
+                            <?php if ($latest_index >= $front_page_list_step) : ?>hidden<?php endif; ?>
+                            <?php if ($is_disabled_article) : ?>style="pointer-events: none;"<?php endif; ?>
+                        >
+                            <div class="article_main">
+                                <div class="article_itemThumbnail">
+                                    <?php if (has_post_thumbnail()): ?>
+                                        <?php the_post_thumbnail('post_thumbnails'); ?>
+                                    <?php else: ?>
+                                        <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
+                                    <?php endif; ?>
+                                </div>
+                                    <div class="article_text">
+                                        <h3 class="article_title"><?php the_title(); ?></h3>
+                                        <div class="article_desc">
+                                            <p class="article_date"><?php echo get_the_date(); ?></p>
+                                            <p class="article_author"><?php echo get_the_author(); ?></p>
+                                        </div>
+                                        <?php echo gakuson_get_post_stats_markup($post_id, array('wrapper_class' => 'postStats--card')); ?>
+                                        <?php echo gakuson_get_article_taxonomy_markup($post_id, 'pc'); ?>
+                                    </div>
+                                </div>
+                                <?php echo gakuson_get_article_taxonomy_markup($post_id, 'sp'); ?>
+                            </a>
+                            <?php $latest_index++; ?>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <p>投稿がありません</p>
+                    <?php endif; ?>
+                <?php wp_reset_postdata(); // クエリをリセット ?>
+            </div>
         </section>
-        </main>
-        <?php get_footer();?>
-   
+
+        <section class="l-tag">
+            <div class="section_TitleConteiner">
+                <img class="section_titleIcon article_titleIcon__tag" src="<?php echo get_template_directory_uri();?>/icon/tagIcon.png">
+                <h2 class="section_title">タグ一覧</h2>
+            </div>
+            <?php
+            $tag_cloud_markup = wp_tag_cloud(
+                gakuson_get_tag_cloud_args(
+                    array(
+                        'echo' => false,
+                    )
+                )
+            );
+
+            echo gakuson_format_tag_cloud_markup(
+                $tag_cloud_markup,
+                array(
+                    'list_class'   => 'tag_list',
+                    'item_class'   => 'tag_listItem',
+                    'item_classes' => array(
+                        'tag_listItem__blue',
+                        'tag_listItem__yellow',
+                    ),
+                    'link_class'   => 'tag_itemLink',
+                )
+            );
+            ?>
+        </section>
+    </main>
+    <?php get_footer();?>

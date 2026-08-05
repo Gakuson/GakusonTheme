@@ -1,217 +1,244 @@
 <?php get_header();?>
     <div class="l-empty"></div>
     <main id="main" class="l-main">
-        <div class="backBoard">
-            <div class="backBoard_item backBoard_item__1"></div>
-            <div class="backBoard_item backBoard_item__2"></div>
-            <div class="backBoard_item backBoard_item__3"></div>
-        </div>
-        <div class="l-mainContent">
-        <div class="l-mainVisual">
-            <img src="<?php echo get_template_directory_uri();?>/img/TopiBannerV2.png" class="topi-banner">
-        </div>
-        <article class="l-bestTopics">
-            <h2 class="bestTopics_title">＃BestTopics!</h2>
-            <div class="feature-wrapper feature-wrapper__bestTopics">
+        <?php
+        $featured_posts       = gakuson_get_featured_posts();
+        $featured_post_count  = count($featured_posts);
+        $featured_is_slider   = $featured_post_count > 1;
+        $featured_viewport_id = 'featured-carousel-viewport';
+        $featured_start_index = $featured_post_count > 2 ? 1 : 0;
+        $front_page_list_step = 5;
+        ?>
+        <?php if ($featured_post_count > 0) : ?>
+            <section
+                class="featuredCarousel<?php echo $featured_is_slider ? ' featuredCarousel--slider' : ' featuredCarousel--static'; ?>"
+                data-featured-carousel
+                data-carousel-start-index="<?php echo esc_attr((string) $featured_start_index); ?>"
+                aria-label="<?php echo esc_attr__('注目記事', 'gakuson'); ?>"
+            >
+                <div id="<?php echo esc_attr($featured_viewport_id); ?>" class="featuredCarousel_viewport" data-carousel-viewport>
+                    <div class="featuredCarousel_track" data-carousel-track>
+                    <?php foreach ($featured_posts as $featured_index => $featured_post) : ?>
+                        <?php
+                        $featured_title        = get_the_title($featured_post);
+                        $featured_permalink    = get_permalink($featured_post);
+                        $featured_thumbnail    = gakuson_get_post_thumbnail_url($featured_post, 'large');
+                        $featured_author_name  = get_the_author_meta('display_name', (int) $featured_post->post_author);
+                        $featured_date         = get_the_date('Y年n月j日', $featured_post);
+                        $featured_category     = gakuson_get_post_primary_category_name($featured_post);
+                        $featured_slide_id     = 'featured-slide-' . $featured_post->ID;
+                        $featured_is_active    = $featured_index === $featured_start_index;
+                        $featured_slide_class = implode(
+                            ' ',
+                            get_post_class(
+                                array_filter(
+                                    array(
+                                        'featuredCarousel_slide',
+                                        $featured_is_active ? 'is-active' : '',
+                                    )
+                                ),
+                                $featured_post->ID
+                            )
+                        );
+
+                        if ('' === $featured_thumbnail) {
+                            $featured_thumbnail = get_template_directory_uri() . '/img/no-image.png';
+                        }
+                        ?>
+                        <article
+                            id="<?php echo esc_attr($featured_slide_id); ?>"
+                            class="<?php echo esc_attr($featured_slide_class); ?>"
+                            data-carousel-slide
+                            data-slide-index="<?php echo esc_attr((string) $featured_index); ?>"
+                            aria-current="<?php echo $featured_is_active ? 'true' : 'false'; ?>"
+                        >
+                            <a class="featuredCarousel_card" href="<?php echo esc_url($featured_permalink); ?>">
+                                <div class="featuredCarousel_visual">
+                                    <img
+                                        class="featuredCarousel_image"
+                                        src="<?php echo esc_url($featured_thumbnail); ?>"
+                                        alt="<?php echo esc_attr($featured_title); ?>"
+                                    >
+                                    <div class="featuredCarousel_scrim" aria-hidden="true"></div>
+                                    <div class="featuredCarousel_caption">
+                                        <?php if ('' !== $featured_category) : ?>
+                                            <span class="featuredCarousel_categoryBadge">
+                                                <?php echo esc_html($featured_category); ?>
+                                            </span>
+                                        <?php endif; ?>
+                                        <h3 class="featuredCarousel_slideTitle"><?php echo esc_html($featured_title); ?></h3>
+                                        <div class="featuredCarousel_meta">
+                                            <span class="featuredCarousel_author">
+                                                <?php echo '' !== $featured_author_name ? esc_html($featured_author_name) : esc_html__('がくそん編集部', 'gakuson'); ?>
+                                            </span>
+                                            <time class="featuredCarousel_date" datetime="<?php echo esc_attr(get_the_date(DATE_W3C, $featured_post)); ?>">
+                                                <?php echo esc_html($featured_date); ?>
+                                            </time>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </article>
+                    <?php endforeach; ?>
+                    </div>
+                    <?php if ($featured_is_slider) : ?>
+                        <button
+                            type="button"
+                            class="featuredCarousel_navButton featuredCarousel_navButton--prev"
+                            data-carousel-prev
+                            aria-controls="<?php echo esc_attr($featured_viewport_id); ?>"
+                            aria-label="<?php echo esc_attr__('前の注目記事を表示', 'gakuson'); ?>"
+                        >
+                            <span aria-hidden="true">&lt;</span>
+                        </button>
+                        <button
+                            type="button"
+                            class="featuredCarousel_navButton featuredCarousel_navButton--next"
+                            data-carousel-next
+                            aria-controls="<?php echo esc_attr($featured_viewport_id); ?>"
+                            aria-label="<?php echo esc_attr__('次の注目記事を表示', 'gakuson'); ?>"
+                        >
+                            <span aria-hidden="true">&gt;</span>
+                        </button>
+                    <?php endif; ?>
+                </div>
+                <?php if ($featured_is_slider) : ?>
+                    <div class="featuredCarousel_dots" aria-label="<?php echo esc_attr__('注目記事の切り替え', 'gakuson'); ?>">
+                        <?php foreach ($featured_posts as $featured_index => $featured_post) : ?>
+                            <?php $featured_slide_id = 'featured-slide-' . $featured_post->ID; ?>
+                            <button
+                                type="button"
+                                class="featuredCarousel_dot<?php echo $featured_index === $featured_start_index ? ' is-active' : ''; ?>"
+                                data-carousel-dot
+                                data-slide-index="<?php echo esc_attr((string) $featured_index); ?>"
+                                aria-controls="<?php echo esc_attr($featured_slide_id); ?>"
+                                aria-current="<?php echo $featured_index === $featured_start_index ? 'true' : 'false'; ?>"
+                                aria-label="<?php echo esc_attr(sprintf('注目記事 %d を表示', $featured_index + 1)); ?>"
+                            ></button>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </section>
+        <?php endif; ?>
+        <section class="l-article">
+            <div class="section_TitleConteiner">
+                <img class="section_titleIcon article_titleIcon__latest" src="<?php echo get_template_directory_uri();?>/icon/watchIcon.png">
+                <h2 class="section_title">新着記事</h2>
+            </div>
+            <div id="front-page-latest-list" class="article_content" data-load-more-list data-load-more-initial="<?php echo esc_attr((string) $front_page_list_step); ?>">
                 <?php
-                    // 投稿を9件に制限
+                    // 初期表示件数を超えるカードは描画時点で隠し、JS前のちらつきを防ぐ
                     $args = array(
-                        'posts_per_page' => 9, // 表示する投稿数を9件に設定
+                        'posts_per_page' => -1,
+                        'no_found_rows'  => true,
                     );
                     $query = new WP_Query($args);
-                ?>
-                <?php if ($query->have_posts()): ?>
-                    <?php while ($query->have_posts()): $query->the_post(); ?>
-                        <?php
-                        // 投稿のIDを取得
-                        $post_id = get_the_ID();
-
-                        // 条件に応じて href を空白にし、pointer-events: none を追加
-                        $href = (in_array($post_id, array(555, 553, 551))) ? '' : get_permalink();
-                        $style = (in_array($post_id, array(555, 553, 551))) ? 'style="pointer-events: none;"' : '';
-                        ?>
-                    <a href="<?php echo $href; ?>" class="feature feature__bestTopics" <?php echo $style; ?>>
-                        <div class="Thumbnail">
-                            <?php if (has_post_thumbnail()): ?>
-                            <?php the_post_thumbnail('post_thumbnails'); ?> 
-                            <?php else: ?>
-                            <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
-                            <?php endif; ?>
-                        </div>
-                        <h3 class="feature_text"><?php the_title(); ?></h3>
-                        <div class="feature_text__small">
-                            <p class="feature_textDate"><?php echo get_the_date(); ?></p>
-                            <div class="feature_textAcount"> 
-                                <img class="feature_textIcon" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png">
-                                <p class="feature_textAuthor"><?php echo get_the_author(); ?></p>
-                           </div>
-                        </div>
-                    </a>
-                <?php endwhile; ?>
-                <?php else: ?>
-                    <p>投稿がありません</p>
-                <?php endif; ?>
-                <?php wp_reset_postdata(); // クエリをリセット ?>
+                    $latest_index = 0;
+                    ?>
+                    <?php if ($query->have_posts()): ?>
+                        <?php while ($query->have_posts()): $query->the_post(); ?>
+                            <?php
+                            $post_id = get_the_ID();
+                            $is_disabled_article = in_array($post_id, array(555, 553, 551), true);
+                            $href                = $is_disabled_article ? '' : get_permalink();
+                            ?>
+                            <a
+                                href="<?php echo esc_url($href); ?>"
+                                <?php post_class('article_item'); ?>
+                                data-load-more-item
+                                <?php if ($latest_index >= $front_page_list_step) : ?>hidden<?php endif; ?>
+                                <?php if ($is_disabled_article) : ?>style="pointer-events: none;"<?php endif; ?>
+                            >
+                                <div class="article_main">
+                                    <div class="article_itemThumbnail">
+                                        <?php if (has_post_thumbnail()): ?>
+                                            <?php the_post_thumbnail('post_thumbnails'); ?>
+                                        <?php else: ?>
+                                            <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="article_text">
+                                        <h3 class="article_title"><?php the_title(); ?></h3>
+                                        <div class="article_desc">
+                                            <p class="article_date"><?php echo get_the_date(); ?></p>
+                                            <p class="article_author"><?php echo get_the_author(); ?></p>
+                                        </div>
+                                        <?php echo gakuson_get_post_stats_markup($post_id, array('wrapper_class' => 'postStats--card')); ?>
+                                        <?php echo gakuson_get_article_taxonomy_markup($post_id, 'pc'); ?>
+                                    </div>
+                                </div>
+                                <?php echo gakuson_get_article_taxonomy_markup($post_id, 'sp'); ?>
+                            </a>
+                            <?php $latest_index++; ?>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <p>投稿がありません</p>
+                    <?php endif; ?>
+                <?php wp_reset_postdata();?>
             </div>
-            <a class="bestTopics_button" href="<?php echo home_url( '/newindex' );?>" >
-                <div class="bestTopics_buttonContent" >
-                    <p class="bestTopics_buttonText">記事一覧はコチラ</p>
-                    <img class="bestTopics_buttonIcon" src="<?php echo get_template_directory_uri();?>/icon/右向きの矢印のアイコン素材.png">
-                </div>
-            </a>
-        </article>
-    
-        <section class="l-popular">
-            <div class="popular_content">
-                <h2 class="popular_title">#人気記事ランキング</h2>
-                <div class="feature-wrapper feature-wrapper__popular">
-                    <?php
-                    // 人気記事ランキング用のクエリ
-                    $args = array(
-                        'meta_key'       => 'post_views_count', // ビュー数のカスタムフィールド
-                        'orderby'        => 'meta_value_num',   // 数値としてソート
-                        'posts_per_page' => 5,                  // 取得する記事数
-                        'order'          => 'DESC',             // 降順（閲覧数が多い順）
-                        'ignore_sticky_posts' => true           // スティッキーポストを除外
+        </section>
+        <section class="l-article">
+            <div class=section_TitleConteiner>
+                <img class="section_titleIcon article_titleIcon__popu" src="<?php echo get_template_directory_uri();?>/icon/graphIcon.png">
+                <h2 class="section_title">人気記事</h2>
+            </div>
+            <div id="front-page-popular-list" class="article_content" data-load-more-list data-load-more-initial="<?php echo esc_attr((string) $front_page_list_step); ?>">
+                <?php
+                    $popular_posts = new WP_Query(
+                        gakuson_get_like_ranking_query_args(
+                            array(
+                                'posts_per_page' => -1,
+                            )
+                        )
                     );
-
-                    $popular_posts = new WP_Query($args);
                     $count = 1;
                     if ($popular_posts->have_posts()): ?>
                         <?php while ($popular_posts->have_posts()): $popular_posts->the_post(); ?>
-                            <?php if ($count == 1): ?>
-                                <a href="<?php the_permalink(); ?>" class="feature feature__popular">
-                                    <h3 class="feature_popularTitle feature_popularTitle__st">1st.TIPS</h3>
-                                    <div class="Thumbnail">
-                                        <?php if (has_post_thumbnail()): ?>
-                                            <?php the_post_thumbnail('post_thumbnails'); ?> 
-                                        <?php else: ?>
-                                            <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
-                                        <?php endif; ?>
-                                    </div>
-                                    <h3 class="feature_text"><?php the_title(); ?></h3>
-                                    <div class="feature_text__small">
-                                        <p class="feature_textDate"><?php echo get_the_date(); ?></p>
-                                        <div class="feature_textAcount"> 
-                                            <img class="feature_textIcon" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png">
-                                            <p class="feature_textAuthor"><?php echo get_the_author(); ?></p>
-                                        </div>
-                                    </div>
-                                </a>
-                            <?php elseif ($count == 2): ?>
-                                <a href="<?php the_permalink(); ?>" class="feature">
-                                    <h3 class="feature_popularTitle feature_popularTitle__nd">2nd.TIPS</h3>
-                                    <div class="Thumbnail">
-                                        <?php if (has_post_thumbnail()): ?>
-                                            <?php the_post_thumbnail('post_thumbnails'); ?> 
-                                        <?php else: ?>
-                                            <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
-                                        <?php endif; ?>
-                                    </div>
-                                    <h3 class="feature_text"><?php the_title(); ?></h3>
-                                    <div class="feature_text__small">
-                                        <p class="feature_textDate"><?php echo get_the_date(); ?></p>
-                                        <div class="feature_textAcount"> 
-                                            <img class="feature_textIcon" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png">
-                                            <p class="feature_textAuthor"><?php echo get_the_author(); ?></p>
-                                        </div>
-                                    </div>
-                                </a>
-                            <?php elseif ($count == 3): ?>
-                                <a href="<?php the_permalink(); ?>" class="feature">
-                                    <h3 class="feature_popularTitle feature_popularTitle__rd">3rd.TIPS</h3>
-                                    <div class="Thumbnail">
-                                        <?php if (has_post_thumbnail()): ?>
-                                            <?php the_post_thumbnail('post_thumbnails'); ?> 
-                                        <?php else: ?>
-                                            <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
-                                        <?php endif; ?>
-                                    </div>
-                                    <h3 class="feature_text"><?php the_title(); ?></h3>
-                                    <div class="feature_text__small">
-                                        <p class="feature_textDate"><?php echo get_the_date(); ?></p>
-                                        <div class="feature_textAcount"> 
-                                            <img class="feature_textIcon" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png">
-                                            <p class="feature_textAuthor"><?php echo get_the_author(); ?></p>
-                                        </div>
-                                    </div>
-                                </a>
-                            <?php else: ?>
-                                <a href="<?php the_permalink(); ?>" class="feature">
-                                    <h3 class="feature_popularTitle"><?php echo $count;?>th.TIPS</h3>
-                                    <div class="Thumbnail">
-                                        <?php if (has_post_thumbnail()): ?>
-                                            <?php the_post_thumbnail('post_thumbnails'); ?> 
-                                        <?php else: ?>
-                                            <img src="<?php echo get_template_directory_uri(); ?>/img/no-image.png" alt="No Image">
-                                        <?php endif; ?>
-                                    </div>
-                                    <h3 class="feature_text"><?php the_title(); ?></h3>
-                                    <div class="feature_text__small">
-                                        <p class="feature_textDate"><?php echo get_the_date(); ?></p>
-                                        <div class="feature_textAcount"> 
-                                            <img class="feature_textIcon" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png">
-                                            <p class="feature_textAuthor"><?php echo get_the_author(); ?></p>
-                                        </div>
-                                    </div>
-                                </a>                        
-                           <?php endif; ?>
+                            <?php
+                            echo gakuson_get_article_card_markup(
+                                get_the_ID(),
+                                array(
+                                    'ranking'    => $count,
+                                    'attributes' => array(
+                                        'data-load-more-item' => true,
+                                        'hidden'              => $count > $front_page_list_step,
+                                    ),
+                                )
+                            );
+                            ?>
                            <?php $count++;?>
                         <?php endwhile; ?>
-                    <?php wp_reset_postdata(); ?> <!-- WP_Query のデータをリセット -->
-                    <?php endif; ?>
-                </div>
+                    <?php wp_reset_postdata(); ?>
+                <?php endif; ?>
             </div>
         </section>
+        <section class="l-tag">
+            <div class="section_TitleConteiner">
+                <img class="section_titleIcon article_titleIcon__tag" src="<?php echo get_template_directory_uri();?>/icon/tagIcon.png">
+                <h2 class="section_title">タグ一覧</h2>
+            </div>
+            <?php
+            $tag_cloud_markup = wp_tag_cloud(
+                gakuson_get_tag_cloud_args(
+                    array(
+                        'echo' => false,
+                    )
+                )
+            );
 
-        <section class="l-Hashtag">
-            <div class="Hashtag_content">
-                <div class="Hashtag_title">
-                    <img class="Hashtag_titleIcon" src="<?php echo get_template_directory_uri();?>/icon/線画のフォルダアイコン 2.png">
-                    <h2 class="Hashtag_titleText">#ハッシュタグ一覧</h2>
-                </div>
-                <?php   function custom_wp_tag_cloud($tag_string) {
-                // liタグにclass="Hashtag_text"を適用し、aタグの余分なclassを削除
-                $tag_string = preg_replace('/<li(.*?)>/', '<li class="Hashtag_text"$1>', $tag_string);
-                $tag_string = preg_replace('/<a (.*?)class="(.*?)"(.*?)>/', '<a $1$3>', $tag_string);
-                return $tag_string;
-                }
-                add_filter('wp_tag_cloud', 'custom_wp_tag_cloud');?>
-                <div class="wp_tag_cloud-wrapper">
-                    <?php wp_tag_cloud(array(
-                    'format' => 'list', // li形式
-                    'smallest' => 1,    // 最小フォントサイズ（無効化）
-                    'largest' => 1,     // 最大フォントサイズ（無効化）
-                    'unit' => 'em',     // サイズ単位（無効化目的）
-                    'orderby' => 'count',//タグ内の記事数が多ければ多いほど左に来る
-                    'order' => 'DESC',//降順
-                    'number' => 0,//０は表示数に上限がないということ
-                    )); ?>
-                </div>
-            </div>
+            echo gakuson_format_tag_cloud_markup(
+                $tag_cloud_markup,
+                array(
+                    'list_class'   => 'tag_list',
+                    'item_class'   => 'tag_listItem',
+                    'item_classes' => array(
+                        'tag_listItem__blue',
+                        'tag_listItem__yellow',
+                    ),
+                    'link_class'   => 'tag_itemLink',
+                )
+            );
+            ?>
         </section>
-        <section class="l-about">
-            <h2 class="about_title">#Nan トピ！とは？</h2>
-            <div class="about_contentContainer">
-                <div class="about_contentWrapper">
-                    <div class="about_content">
-                        <h3 class="about_contentTitle">#Nanトピ! の目標</h3>
-                        <p class="about_contentText">
-                        Nanzan Topics！(通称Nanトピ！)は南山大学生によって運営されている、南山大学生の為のメディアサイトです！南山の大学生活について、今まで知らなかったことに加え、既存の情報を新しい視点から見ることもできます！現在はがくそん編集部の記事のみですが、将来的には有志の学生による寄稿も募集していく予定です！<br>がくそん代表 鈴木 海斗
-                <!--この文章も適切かどうか見極める必要がある。-->
-                        </p>
-                    </div>
-                </div>
-                <div class="about_contentWrapper">
-                    <div class="about_content">
-                        <h3 class="about_contentTitle">#運営団体について</h3>
-                        <p class="about_contentText">
-                        がくそんは、「学生の尊厳の為に」をモットーに活動している南山大学の有志団体です！Nanトピ！の他には南山大学でよく使うリンクを一括管理したサイト、「がくそん」の運営を始め、SNSにおける情報発信も行っています！2025年度は、南山大学生にとっての望遠鏡のような存在となり、より近くの情報、遠くの情報にピントを当てることをビジョンとして掲げています！一緒に望遠鏡を作っていくメンバーもがくそんでは募集しています！<br>ご連絡はgakuson23@gmail.comまで！
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        </div>
     </main>
-<?php get_footer();?> 
+<?php get_footer();?>

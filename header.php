@@ -14,62 +14,62 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="<?php echo get_template_directory_uri();?>/favicon/favicon.svg" type="image/x-icon">
         <?php wp_head(); ?>
     </head>
-    <body <?php body_class();?>>        
+    <body <?php body_class();?>>  
         <header id="header" class="l-header">
+            <?php $gakuson_search_icon_url = esc_url( get_template_directory_uri() . '/icon/searchIcon.png' ); ?>
             <div class="header_main">
-                <div class="header_mainContent">
-                    <a  class="headerMain_logo" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-                        <img class="headerMain_logoImg" src="<?php echo get_template_directory_uri();?>/icon/NanTopi_logo (5).png"  alt="souzou">
-                    </a>
-                    <nav class="headerMain_list">   
-                    <?php
-                        wp_nav_menu(
-                        array(
-                            'menu' => 'mainmenu',
-                            'container' => '',
-                            'container_id' => '',
-                            'container_class' => 'headerMain_list',
-                            'menu_id' => '',
-                            'fallback_cb' => ''
-                        )
-                        );
-                    ?>
+                <a class="header_logo" href="<?php echo esc_url( home_url( '/' ) ); ?>">
+                    <img class="header_logoImg" src="<?php echo get_template_directory_uri();?>/img/nantopiTitleLogo.png" alt="NanTopiのバナーロゴ">
+                </a>
+                <div class="header_side">
+                    <nav class="header_menu">
+                        <?php
+                            wp_nav_menu(
+                            array(
+                                'menu' => 'mainmenu',
+                                'container' => '',
+                                'menu_class' => 'header_list',
+                                'menu_id' => '',
+                                'fallback_cb' => ''
+                            )
+                            );
+                        ?>
                     </nav>
-                    <button class="headerMain_humburgerContainer" aria-label="メニューを開く" aria-expanded="true">
-                        <div class="headerMain_hamburger">
-                            <span class="hamburgerLine hamburgerLine__1"></span>
-                            <span class="hamburgerLine hamburgerLine__2"></span>
-                            <span class="hamburgerLine hamburgerLine__3"></span>
-                        </div>
-                    </button>
+                    <div class="header_search">
+                        <button
+                            class="header_searchTrigger js-header-search-toggle"
+                            type="button"
+                            aria-label="検索フォームを開く"
+                            aria-controls="header-search-panel"
+                            aria-expanded="false"
+                        >
+                            <span class="header_searchTriggerText">検索</span>
+                            <img class="header_searchTriggerIcon" src="<?php echo $gakuson_search_icon_url; ?>" alt="">
+                        </button>
+                    </div>
+                    <div class="header_spMenu">
+                        <button
+                            class="header_searchButton js-header-search-toggle"
+                            type="button"
+                            aria-label="検索フォームを開く"
+                            aria-controls="header-search-panel"
+                            aria-expanded="false"
+                        >
+                            <span class="header_searchButtonInner">
+                                <svg class="header_searchButtonIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <circle cx="11" cy="11" r="6.5"></circle>
+                                    <path d="M16 16L21 21"></path>
+                                </svg>
+                                <span class="header_searchButtonText">検索</span>
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="dropdown-wrapper">   
-                <nav class="dropdown">
-                <?php
-                // フィルタ処理は functions.php に移動しました
-        
-                wp_nav_menu(
-                array(
-                    'menu' => 'mainmenu',
-                    'container' => '',
-                    'container_id' => '',
-                    'container_class' => 'headerMain_list',
-                    'menu_id' => '',
-                    'menu_class' => 'dropdown', // functions.php でこのクラスを検知してフィルタを適用
-                    'fallback_cb' => ''
-                )
-                );
-                ?>
-                <div class="dropdown_closeButton">
-                    <div class="dropdown_closeButtonArrow">
-                        <span class="arrow_line arrow_line__1"></span>
-                        <span class="arrow_line arrow_line__2"></span>
-                    </div>
-                    <button class="dropdown_closeButtonText">メニューを閉じる</button>
-                </div>
-                </nav>
+            <div id="header-search-panel" class="slideInput" aria-hidden="true" aria-labelledby="header-search-title" hidden>
+                <?php get_search_form( array( 'gakuson_context' => 'header-modal' ) ); ?>
             </div>
         </header>
