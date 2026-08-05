@@ -5,21 +5,23 @@
                 <div class="backBoard_item backBoard_item__1"></div>
             </div>
             <div class="l-mainContent">
-                <article class="l-article">
+                <article <?php post_class('l-article'); ?>>
                     <div class="content">
                         <?php the_content(); wp_link_pages();?>
                     </div>
                 </article>
-                <section class="l-wantToRead">
-                    <h2 class="wantToRead_title">#あわせて読みたいTopics</h2>
+                <section class="l-article contentRail">
                     <?php
-                        // 現在の投稿のタグを取得
-                        $current_tags = wp_get_post_tags(get_the_ID());
-                        if ($current_tags) {
-                            // タグIDを取得
-                            $tag_ids = array_map(function($tag) {
-                                return $tag->term_id;
-                            }, $current_tags);
+                    echo gakuson_get_section_title_markup(
+                        'あわせて読みたい記事',
+                        'icon/watchIcon.png'
+                    );
+                    ?>
+                    <?php
+                        // 裏側専用の featured タグは関連記事の関連キーからも外す。
+                        $tag_ids = gakuson_get_public_post_tag_ids(get_the_ID());
+
+                        if (! empty($tag_ids)) {
 
                             // タグに関連する記事を取得
                             $args = array(
@@ -42,57 +44,19 @@
                         $query = new WP_Query($args);
                     ?>
 
-                    <div class="feature-wrapper">
+                    <div class="article_content article_content--secondary">
                         <?php if ($query->have_posts()): ?>
                             <?php while ($query->have_posts()): $query->the_post(); ?>
-                                <a href="<?php the_permalink(); ?>" class="feature">
-                                    <div class="Thumbnail">
-                                        <?php the_post_thumbnail('post_thumbnails'); ?> 
-                                    </div>
-                                    <p class="feature_text"><?php the_title(); ?></p>
-                                    <div class="feature_text__small">
-                                        <p><?php echo get_the_date(); ?></p>
-                                        <div class="feature_textAcount"> 
-                                            <img class="feature_textIcon" src="<?php echo get_template_directory_uri(); ?>/img/GakusonLogo.png">
-                                            <p><?php echo get_the_author(); ?></p>
-                                        </div>
-                                    </div>
-                                </a>
+                                <?php echo gakuson_get_article_card_markup(get_the_ID()); ?>
                             <?php endwhile; ?>
                         <?php else: ?>
-                            <p>投稿がありません</p>
+                            <p class="article_emptyMessage">投稿がありません</p>
                         <?php endif; ?>
                     </div>
                     <?php wp_reset_postdata(); // クエリをリセット ?>
                 </section>
 
-                <section class="l-Hashtag">
-                    <div class="Hashtag_content">
-                        <div class="Hashtag_title">
-                            <img class="Hashtag_titleIcon" src="<?php echo get_template_directory_uri();?>/icon/線画のフォルダアイコン 2.png">
-                            <h2 class="Hashtag_titleText">#ハッシュタグ一覧</h2>
-                        </div>
-                        <?php   function custom_wp_tag_cloud($tag_string) {
-                            // liタグにclass="Hashtag_text"を適用し、aタグの余分なclassを削除
-                            $tag_string = preg_replace('/<li(.*?)>/', '<li class="Hashtag_text"$1>', $tag_string);
-                            $tag_string = preg_replace('/<a (.*?)class="(.*?)"(.*?)>/', '<a $1$3>', $tag_string);
-                            return $tag_string;
-                        }
-                        add_filter('wp_tag_cloud', 'custom_wp_tag_cloud');?>
-
-                        <div class="wp_tag_cloud-wrapper">
-                            <?php wp_tag_cloud(array(
-                                'format' => 'list', // li形式
-                                'smallest' => 1,    // 最小フォントサイズ（無効化）
-                                'largest' => 1,     // 最大フォントサイズ（無効化）
-                                'unit' => 'em',     // サイズ単位（無効化目的）
-                                'orderby' => 'count',
-                                'order' => 'DESC',
-                                'number' => 0,
-                            )); ?>
-                        </div>
-                    </div>
-                </section>
+                <?php echo gakuson_get_tag_directory_markup(array('section_class' => 'l-tag l-tag--secondary')); ?>
             </div>
         </main>
-        <?php get_footer();?>       
+        <?php get_footer();?>
