@@ -1,0 +1,25 @@
+
+name: main-yml-1
+
+on:
+  push:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run a one-line script
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with: 
+         server: ${{ secrets.FTP_SERVER}}
+         username: ${{ secrets.FTP_USERNAME}}
+         password: ${{ secrets.FTP_PASSWORD }}
+         server-dir: ${{ secrets.FTP_SERVER_DIR }}
+         local-dir: ./
+        
