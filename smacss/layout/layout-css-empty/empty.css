@@ -1,5 +1,6 @@
 /*testtesttest*/
 
-.testForCicd__empty {
+.testForCicd__empty{
     color: red;
+    display: none;
 }
