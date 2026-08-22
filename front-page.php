@@ -125,12 +125,16 @@
                 <img class="section_titleIcon article_titleIcon__latest" src="<?php echo get_template_directory_uri();?>/icon/watchIcon.png">
                 <h2 class="section_title">新着記事</h2>
             </div>
-            <div id="front-page-latest-list" class="article_content" data-load-more-list data-load-more-initial="<?php echo esc_attr((string) $front_page_list_step); ?>">
+            <div class="article_content" data-load-more-list data-load-more-initial="<?php echo esc_attr((string) $front_page_list_step); ?>">
                 <?php
-                    // 初期表示件数を超えるカードは描画時点で隠し、JS前のちらつきを防ぐ
                     $args = array(
-                        'posts_per_page' => -1,
-                        'no_found_rows'  => true,
+                        'post_type'           => 'post',
+                        'post_status'         => 'publish',
+                        'posts_per_page'      => $front_page_list_step,
+                        'orderby'             => 'date',
+                        'order'               => 'DESC',
+                        'ignore_sticky_posts' => true,
+                        'no_found_rows'       => true,
                     );
                     $query = new WP_Query($args);
                     $latest_index = 0;
@@ -140,11 +144,11 @@
                             <?php
                             $post_id = get_the_ID();
                             $is_disabled_article = in_array($post_id, array(555, 553, 551), true);
-                            $href                = $is_disabled_article ? '' : get_permalink();
+                            $href = $is_disabled_article ? '' : get_permalink();
                             ?>
                             <a
+                                class="article_item"
                                 href="<?php echo esc_url($href); ?>"
-                                <?php post_class('article_item'); ?>
                                 data-load-more-item
                                 <?php if ($latest_index >= $front_page_list_step) : ?>hidden<?php endif; ?>
                                 <?php if ($is_disabled_article) : ?>style="pointer-events: none;"<?php endif; ?>
@@ -175,6 +179,7 @@
                         <p>投稿がありません</p>
                     <?php endif; ?>
                 <?php wp_reset_postdata();?>
+                <a class="article_moreLink" href="<?php echo get_permalink( get_page_by_path( 'newindex' ) ); ?>">もっと見る</a>
             </div>
         </section>
         <section class="l-article">
@@ -182,12 +187,12 @@
                 <img class="section_titleIcon article_titleIcon__popu" src="<?php echo get_template_directory_uri();?>/icon/graphIcon.png">
                 <h2 class="section_title">人気記事</h2>
             </div>
-            <div id="front-page-popular-list" class="article_content" data-load-more-list data-load-more-initial="<?php echo esc_attr((string) $front_page_list_step); ?>">
+            <div class="article_content" data-load-more-list data-load-more-initial="<?php echo esc_attr((string) $front_page_list_step); ?>">
                 <?php
                     $popular_posts = new WP_Query(
                         gakuson_get_like_ranking_query_args(
                             array(
-                                'posts_per_page' => -1,
+                                'posts_per_page' => $front_page_list_step,
                             )
                         )
                     );
@@ -201,7 +206,7 @@
                                     'ranking'    => $count,
                                     'attributes' => array(
                                         'data-load-more-item' => true,
-                                        'hidden'              => $count > $front_page_list_step,
+                                        'hidden'=> $count > $front_page_list_step,
                                     ),
                                 )
                             );

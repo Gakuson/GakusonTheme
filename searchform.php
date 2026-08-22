@@ -14,14 +14,14 @@ if ( in_array( $current_tag_slug, gakuson_get_internal_only_tag_slugs(), true ) 
     $current_tag_slug = '';
 }
 
-$categories            = get_categories(
+$categories = get_categories(
     array(
         'hide_empty' => true,
         'orderby'    => 'name',
         'order'      => 'ASC',
     )
 );
-$tags                  = get_tags(
+$tags = get_tags(
     array(
         'hide_empty' => true,
         'orderby'    => 'name',
@@ -38,7 +38,7 @@ if ( is_wp_error( $tags ) ) {
     $tags = array();
 }
 ?>
-<form role="search" method="get" class="searchform gakuson-search-form gakuson-search-form--<?php echo esc_attr( $context ); ?>" action="<?php echo esc_url( home_url( '/' ) ); ?>">
+<form method="get" class="searchform gakuson-search-form gakuson-search-form--<?php echo esc_attr( $context ); ?>" action="<?php echo esc_url( home_url( '/' ) ); ?>">
     <?php if ( 'header-modal' === $context ) : ?>
         <div class="header_searchPanelHeader">
             <p class="header_searchPanelTitle" id="header-search-title">記事を検索</p>

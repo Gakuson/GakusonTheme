@@ -62,21 +62,4 @@
             ?>
         </div>
     </section>
-
-    <section class="sidebarSection sidebarSection--links">
-        <?php
-        echo gakuson_get_section_title_markup(
-            '公式リンク',
-            'icon/watchIcon.png'
-        );
-        ?>
-        <div class="advertisement">
-            <a href="<?php echo esc_url('https://forms.gle/9A2BdhN4CRiVN3dZ9/'); ?>" class="advertisement_content">
-                <img src="<?php echo esc_url(get_template_directory_uri() . '/poster/placeholder.png'); ?>" class="advertisement_contentImg" alt="がくそん公式Xへのリンク">
-            </a>
-            <a href="<?php echo esc_url('https://docs.google.com/forms/d/e/1FAIpQLScTLI8qRoDnSZGA4BpXaavgjXD8Y6B9TYYuB3fNIHpD6dyhAA/viewform?usp=dialog'); ?>" class="advertisement_content">
-                <img src="<?php echo esc_url(get_template_directory_uri() . '/poster/surveyOngoing.png'); ?>" class="advertisement_contentImg" alt="NRL公式Instagramへのリンク">
-            </a>
-        </div>
-    </section>
 </aside>
