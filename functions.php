@@ -89,7 +89,7 @@ add_action('wp_enqueue_scripts', 'gakuson_enqueue_assets');
 if(is_category()){
     $robots['noindex'] = true;
     $robots['follow']  = true;
-}else if(is_sarch()){
+}else if(is_search()){
     $robots['noindex'] = true;
     $robots['follow']  = true;    
 }else if(is_tag()){
