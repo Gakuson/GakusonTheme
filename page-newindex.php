@@ -1,5 +1,4 @@
 <?php get_header();?>
-<!-- singleをベースに作成開始 sidebarはそのままに、左側すべてに記事を並べる機能を実装 -->
 <div class="l-empty"></div>
 <main id="main" class="l-main">        
 
@@ -9,12 +8,13 @@
         <div class="backBoard_item backBoard_item__3"></div>
     </div>
     <div class="l-mainContent">
-        <section class="l-article">
+        <div class="l-mainBody">
+        <article class="l-article">
             <div class="section_TitleConteiner">
                 <img class="section_titleIcon article_titleIcon__latest" src="<?php echo get_template_directory_uri();?>/icon/watchIcon.png">
                 <h2 class="section_title">新着記事一覧</h2>
             </div>
-            <div id="front-page-latest-list" class="article_content" data-load-more-list data-load-more-initial="<?php echo esc_attr((string) $front_page_list_step); ?>">
+            <div class="article_content" data-load-more-list data-load-more-initial="<?php echo esc_attr((string) $front_page_list_step); ?>">
                 <?php
                 $args = array(
                 'post_type' => 'post',
@@ -38,7 +38,6 @@
                             href="<?php echo esc_url($href); ?>"
                             <?php post_class('article_item'); ?>
                             data-load-more-item
-                            <?php if ($latest_index >= $front_page_list_step) : ?>hidden<?php endif; ?>
                             <?php if ($is_disabled_article) : ?>style="pointer-events: none;"<?php endif; ?>
                         >
                             <div class="article_main">
@@ -68,8 +67,9 @@
                     <?php endif; ?>
                 <?php wp_reset_postdata(); // クエリをリセット ?>
             </div>
-        </section>
-
+        </article>
+        <?php get_sidebar();?>
+        </div>
         <section class="l-tag">
             <div class="section_TitleConteiner">
                 <img class="section_titleIcon article_titleIcon__tag" src="<?php echo get_template_directory_uri();?>/icon/tagIcon.png">

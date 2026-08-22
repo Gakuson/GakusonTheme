@@ -18,12 +18,10 @@
                     );
                     ?>
                     <?php
-                        // 裏側専用の featured タグは関連記事の関連キーからも外す。
                         $tag_ids = gakuson_get_public_post_tag_ids(get_the_ID());
 
                         if (! empty($tag_ids)) {
 
-                            // タグに関連する記事を取得
                             $args = array(
                                 'tag__in' => $tag_ids, // 現在のタグに一致する記事
                                 'post__not_in' => array(get_the_ID()), // 現在の投稿を除外
