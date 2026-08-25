@@ -237,3 +237,12 @@ function gakuson_limit_wp_nav_menu_items($items, $args) {
     return $items;
 }
 add_filter('wp_nav_menu_objects', 'gakuson_limit_wp_nav_menu_items', 10, 2);
+
+add_action('template_redirect', function() {
+    if (is_feed() && headers_sent() === false ) {
+        header('X-Robots-Tag: noindex, follow');
+    }
+});
+add_action('rest_api_init', function() {
+    header('X-Robots-Tag: noindex, follow');
+});
